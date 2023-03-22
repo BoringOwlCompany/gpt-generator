@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "tests",
+  "info": {
+    "singularName": "test",
+    "pluralName": "tests",
+    "displayName": "test",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Generator": {
+      "type": "customField",
+      "customField": "plugin::generator.generator"
+    },
+    "title": {
+      "type": "string"
+    },
+    "content": {
+      "type": "richtext"
+    },
+    "introduction": {
+      "type": "text"
+    },
+    "seo_title": {
+      "type": "string"
+    },
+    "seo_desctiption": {
+      "type": "string"
+    }
+  }
+}

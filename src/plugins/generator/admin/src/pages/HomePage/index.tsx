@@ -1,19 +1,9 @@
-/*
- *
- * HomePage
- *
- */
+import React from "react";
 
-import React from 'react';
-import pluginId from '../../pluginId';
+import { GenerateArticle } from "../../components";
 
 const HomePage = () => {
-  return (
-    <div>
-      <h1>{pluginId}&apos;s HomePage</h1>
-      <p>Happy coding</p>
-    </div>
-  );
+  return <GenerateArticle />;
 };
 
 export default HomePage;
