@@ -1,9 +1,9 @@
-import { prefixPluginTranslations } from '@strapi/helper-plugin';
+import { prefixPluginTranslations } from "@strapi/helper-plugin";
 
-import pluginPkg from '../../package.json';
-import pluginId from './pluginId';
-import Initializer from './components/Initializer';
-import PluginIcon from './components/PluginIcon';
+import pluginPkg from "../../package.json";
+import pluginId from "./pluginId";
+import Initializer from "./components/Initializer";
+import PluginIcon from "./components/PluginIcon";
 
 const name = pluginPkg.strapi.name;
 
@@ -17,7 +17,9 @@ export default {
         defaultMessage: name,
       },
       Component: async () => {
-        const component = await import(/* webpackChunkName: "[request]" */ './pages/App');
+        const component = await import(
+          /* webpackChunkName: "[request]" */ "./pages/App"
+        );
 
         return component;
       },
@@ -28,6 +30,24 @@ export default {
         //   subject: null,
         // },
       ],
+    });
+    app.customFields.register({
+      name: "generator",
+      pluginId: "generator",
+      type: "string",
+      intlLabel: {
+        id: "generator.label",
+        defaultMessage: "generator",
+      },
+      intlDescription: {
+        id: "generator.description",
+        defaultMessage: "generator",
+      },
+      // …
+      components: {
+        Input: async () => import("./pages/HomePage"),
+      },
+      // …
     });
     const plugin = {
       id: pluginId,
