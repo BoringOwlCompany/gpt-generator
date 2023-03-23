@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { ModalLayout, ModalHeader, Typography } from "@strapi/design-system";
 import GenerateArticleResultForm from "../GenerateArticleResultForm";
 import GenerateArticleForm from "../GenerateArticleForm";
-import { type IMockResults } from "../../../../mock";
+import type { IGeneratedArticleResponse } from "../../../../types";
 
 interface IProps {
   onClose: () => void;
 }
 
 const GenerateArticleModal = ({ onClose }: IProps) => {
-  const [result, setResult] = useState<IMockResults | null>(null);
+  const [result, setResult] = useState<IGeneratedArticleResponse | null>(null);
 
   return (
     <ModalLayout onClose={onClose} labelledBy="title">
