@@ -1,10 +1,12 @@
 export default [
   {
-    method: 'GET',
-    path: '/',
-    handler: 'myController.index',
-    config: {
-      policies: [],
-    },
+    method: "POST",
+    path: "/",
+    handler: "controller.generate",
+  },
+  {
+    method: "POST",
+    path: "/save",
+    handler: "controller.save",
   },
 ];

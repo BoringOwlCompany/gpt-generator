@@ -1,0 +1,2 @@
+export const titleAndDescriptionPrompt = `Wygeneruj dwa pola dla SEO odnośnie tego artykułu czyli Tytuł i Opis i zwróc w postaci JSON: { title: "Tutaj tytuł", description: "Tutaj opis"}`;
+export const faqPrompt = `Wymyśl od 2 do 3 pytań odnośnie tego artykułu wraz z odpowiedziami. Podaj w postaci JSON'a: [{question: "Tutaj pytanie pierwsze", answer: "Tutaj odpowiedź do pytania pierwszego"}, {question: "Tutaj pytanie drugie", answer: "Tutaj odpowiedź do pytania drugiego"}]`;
