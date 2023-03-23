@@ -1,4 +1,5 @@
 export interface IArticleResponse {
+  title: string;
   content: string;
   excerpt: string;
 }
@@ -14,7 +15,6 @@ export type IFaqResponse = Array<{
 }>;
 
 export interface IGeneratedResponse {
-  title: string;
   article: IArticleResponse;
   seo: ISeoResponse;
   faq: IFaqResponse;

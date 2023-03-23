@@ -16,7 +16,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const faq = await generateArticleFaq(article.content, data.language);
 
     return {
-      title: data.title,
       article,
       seo,
       faq,
@@ -27,8 +26,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     return await strapi.entityService.create("api::article.article", {
       data: {
         content: {
-          title: data.title,
           slug: "",
+          title: data.article.title,
           introduction: data.article.excerpt,
           content: data.article.content,
         },

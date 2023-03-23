@@ -10,13 +10,14 @@ import {
   resultReducer,
   ResultAction,
 } from "./GenerateArticleResultForm.reducer";
+import GenerateArticleResultFaqForm from "../GenerateArticleResultFaqForm";
 import { useStatus } from "../../../../hooks";
-import type { IMockResults } from "../../../../mock";
+import type { IGeneratedArticleResponse } from "../../../../types";
 
 import * as S from "./GenerateArticleResultForm.styled";
 
 interface IProps {
-  data: IMockResults;
+  data: IGeneratedArticleResponse;
   onClose: () => void;
   onClearResult: () => void;
 }
@@ -27,7 +28,8 @@ const GenerateArticleResultForm = ({
   onClearResult,
 }: IProps) => {
   const [state, dispatch] = useReducer(resultReducer, data);
-  const { setStatus, Status, isLoading, isError } = useStatus();
+  const { setStatus, Status, isLoading } = useStatus();
+  const faq = state.faq;
 
   const handleApply = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,14 +51,26 @@ const GenerateArticleResultForm = ({
   return (
     <S.Container onSubmit={handleApply}>
       <ModalBody>
+        <TextInput
+          name="title"
+          label="title"
+          disabled={isLoading}
+          value={state.article.title}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            dispatch({
+              type: ResultAction.SET_TITLE,
+              payload: e.target.value,
+            })
+          }
+        />
         <Textarea
           style={{
-            minHeight: "300px",
+            minHeight: "250px",
           }}
           name="content"
           label="content"
           disabled={isLoading}
-          value={state.content}
+          value={state.article.content}
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
             dispatch({
               type: ResultAction.SET_CONTENT,
@@ -68,17 +82,17 @@ const GenerateArticleResultForm = ({
           name="introduction"
           label="introduction"
           disabled={isLoading}
-          value={state.introduction}
+          value={state.article.excerpt}
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
             dispatch({
-              type: ResultAction.SET_INTRODUCTION,
+              type: ResultAction.SET_EXCERPT,
               payload: e.target.value,
             })
           }
         />
         <TextInput
           name="seo_title"
-          label="Seo title"
+          label="seo title"
           disabled={isLoading}
           value={state.seo.title}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -88,9 +102,9 @@ const GenerateArticleResultForm = ({
             })
           }
         />
-        <TextInput
+        <Textarea
           name="seo_description"
-          label="Seo description"
+          label="seo description"
           disabled={isLoading}
           value={state.seo.description}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -100,6 +114,14 @@ const GenerateArticleResultForm = ({
             })
           }
         />
+
+        {faq.length > 0 && (
+          <GenerateArticleResultFaqForm
+            faq={faq}
+            dispatch={dispatch}
+            isLoading={isLoading}
+          />
+        )}
       </ModalBody>
 
       <ModalFooter

@@ -7,18 +7,19 @@ import {
   ComboboxOption,
 } from "@strapi/design-system";
 import { Language } from "./GenerateArticleForm.config";
-import { mockResult, type IMockResults } from "../../../../mock";
 import { useStatus } from "../../../../hooks";
+import { api } from "../../../../api";
+import type { IGeneratedArticleResponse } from "../../../../types";
 
-import * as S from "./GenerateArticleForm";
+import * as S from "./GenerateArticleForm.styled";
 
 interface IProps {
-  setResult: (results: IMockResults) => void;
+  setResult: (results: IGeneratedArticleResponse) => void;
 }
 
 const GenerateArticleForm = ({ setResult }: IProps) => {
   const [topic, setTopic] = useState("");
-  const [language, setLanguage] = useState<Language>(Language.EN);
+  const [language, setLanguage] = useState<Language>(Language.PL);
   const { setStatus, Status, isLoading, isError } = useStatus();
 
   const handleGenerate = async (e: FormEvent<HTMLFormElement>) => {
@@ -27,12 +28,15 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
     if (!topic) return;
 
     try {
-      // TODO: handleGenerateArticle(topic, language)
       setStatus(Status.LOADING);
-      setTimeout(() => {
-        setStatus(Status.SUCCESS);
-        setResult(mockResult);
-      }, 2000);
+
+      const result: IGeneratedArticleResponse = await api.generateArticle({
+        title: topic,
+        language: language,
+      });
+
+      setStatus(Status.SUCCESS);
+      setResult(result);
     } catch (e) {
       setStatus(Status.ERROR);
     }
@@ -46,7 +50,11 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
           label="Topic"
           name="text"
           disabled={isLoading}
-          hint={isLoading ? "Generating article please wait..." : ""}
+          hint={
+            isLoading
+              ? "Generating an article can take more than a minute, do not close this window..."
+              : ""
+          }
           error={
             isError ? "Something went wrong please try again later..." : ""
           }
@@ -59,6 +67,7 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
           value={language}
           label="Language"
           onChange={(value: Language) => setLanguage(value)}
+          disabled={isLoading}
         >
           {Object.values(Language).map((lang) => (
             <ComboboxOption key={lang} value={lang}>
