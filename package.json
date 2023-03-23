@@ -1,29 +1,52 @@
 {
-  "name": "strapigpt",
-  "private": true,
-  "version": "0.1.0",
-  "description": "A Strapi application",
-  "scripts": {
-    "develop": "strapi develop",
-    "start": "strapi start",
-    "build": "strapi build",
-    "strapi": "strapi"
+  "name": "generator",
+  "version": "0.0.0",
+  "description": "This is the description of the plugin.",
+  "strapi": {
+    "name": "generator",
+    "description": "Description of generator plugin",
+    "kind": "plugin"
   },
   "dependencies": {
-    "@strapi/plugin-i18n": "4.8.2",
-    "@strapi/plugin-users-permissions": "4.8.2",
-    "@strapi/strapi": "4.8.2",
-    "better-sqlite3": "8.0.1"
+    "@strapi/design-system": "^1.6.3",
+    "@strapi/helper-plugin": "^4.6.0",
+    "@strapi/icons": "^1.6.3",
+    "openai": " 3.2.1",
+    "prop-types": "^15.7.2"
+  },
+  "devDependencies": {
+    "@strapi/typescript-utils": "^4.6.0",
+    "@types/react": "^17.0.53",
+    "@types/react-dom": "^17.0.18",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/styled-components": "^5.1.26",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.3.4",
+    "styled-components": "^5.3.6",
+    "typescript": "4.6.3"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.3.4",
+    "styled-components": "^5.3.6"
   },
   "author": {
     "name": "A Strapi developer"
   },
-  "strapi": {
-    "uuid": "e7124075-822e-44c7-8fd0-13017492588e"
-  },
+  "maintainers": [
+    {
+      "name": "A Strapi developer"
+    }
+  ],
   "engines": {
     "node": ">=14.19.1 <=18.x.x",
     "npm": ">=6.0.0"
+  },
+  "scripts": {
+    "develop": "tsc -p tsconfig.server.json -w",
+    "build": "tsc -p tsconfig.server.json"
   },
   "license": "MIT"
 }
