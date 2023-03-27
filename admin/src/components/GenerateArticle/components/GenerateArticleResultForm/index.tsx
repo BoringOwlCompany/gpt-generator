@@ -1,4 +1,8 @@
-import React, { useReducer, type ChangeEvent, FormEvent } from "react";
+import React, {
+  useReducer,
+  type ChangeEvent,
+  FormEvent,
+} from "react";
 import {
   ModalBody,
   ModalFooter,
@@ -11,8 +15,8 @@ import {
   ResultAction,
 } from "./GenerateArticleResultForm.reducer";
 import GenerateArticleResultFaqForm from "../GenerateArticleResultFaqForm";
-import { useStatus } from "../../../../hooks";
-import type { IGeneratedArticleResponse } from "../../../../types";
+import type { IComponentProps } from "../../../../types";
+import { IGeneratedArticleResponse } from '../../../../../../shared'
 
 import * as S from "./GenerateArticleResultForm.styled";
 
@@ -26,26 +30,25 @@ const GenerateArticleResultForm = ({
   data,
   onClose,
   onClearResult,
-}: IProps) => {
+  onChange,
+}: IProps & IComponentProps) => {
   const [state, dispatch] = useReducer(resultReducer, data);
-  const { setStatus, Status, isLoading } = useStatus();
-  const faq = state.faq;
+  const { article, faq, seo } = state;
 
   const handleApply = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    try {
-      setStatus(Status.LOADING);
-
-      setTimeout(() => {
-        setStatus(Status.SUCCESS);
-        console.log(state, "SUBMITED STATE");
-        onClose();
-      }, 2000);
-    } catch (e) {
-      setStatus(Status.ERROR);
-    }
+    onChange({ target: { name: "content.title", value: article.title } });
+    onChange({ target: { name: "content.introduction", value: article.excerpt } });
+    onChange({ target: { name: "content.content", value: article.content } });
+    onChange({ target: { name: "seo.0.title", value: seo.title } });
+    onChange({ target: { name: "seo.0.description", value: seo.description } });
+    faq.forEach(({ answer, question }, index) => {
+      onChange({ target: { name: `seo.0.faq.${index}.question`, value: question } });
+      onChange({ target: { name: `seo.0.faq.${index}.answer`, value: answer } });
+    })
+    onClose();
   };
 
   return (
@@ -54,7 +57,6 @@ const GenerateArticleResultForm = ({
         <TextInput
           name="title"
           label="title"
-          disabled={isLoading}
           value={state.article.title}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             dispatch({
@@ -69,7 +71,6 @@ const GenerateArticleResultForm = ({
           }}
           name="content"
           label="content"
-          disabled={isLoading}
           value={state.article.content}
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
             dispatch({
@@ -81,7 +82,6 @@ const GenerateArticleResultForm = ({
         <Textarea
           name="introduction"
           label="introduction"
-          disabled={isLoading}
           value={state.article.excerpt}
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
             dispatch({
@@ -93,7 +93,6 @@ const GenerateArticleResultForm = ({
         <TextInput
           name="seo_title"
           label="seo title"
-          disabled={isLoading}
           value={state.seo.title}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             dispatch({
@@ -105,7 +104,6 @@ const GenerateArticleResultForm = ({
         <Textarea
           name="seo_description"
           label="seo description"
-          disabled={isLoading}
           value={state.seo.description}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             dispatch({
@@ -119,7 +117,6 @@ const GenerateArticleResultForm = ({
           <GenerateArticleResultFaqForm
             faq={faq}
             dispatch={dispatch}
-            isLoading={isLoading}
           />
         )}
       </ModalBody>
@@ -131,7 +128,9 @@ const GenerateArticleResultForm = ({
           </Button>
         }
         endActions={
-          <Button type="submit" loading={isLoading} disabled={isLoading}>
+          <Button
+            type="submit"
+          >
             Apply
           </Button>
         }

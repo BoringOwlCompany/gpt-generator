@@ -1,7 +1,7 @@
 import utils from "@strapi/utils";
 import { CreateChatCompletionResponse } from "openai";
+import { IArticleResponse, IFaqResponse, ISeoResponse } from "../../shared";
 import openai from "./openai";
-import { IArticleResponse, IFaqResponse, ISeoResponse } from "./interfaces";
 import {
   articlePrompt,
   faqPrompt,
@@ -75,7 +75,7 @@ export const generateArticleSEO = async (
 export const generateArticleFaq = async (
   article: string,
   language: string
-): Promise<IFaqResponse> => {
+): Promise<IFaqResponse[]> => {
   const completion = await openai.createChatCompletion({
     model: "gpt-3.5-turbo-0301",
     messages: [

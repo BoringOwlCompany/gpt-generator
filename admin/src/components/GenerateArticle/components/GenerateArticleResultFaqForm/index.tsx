@@ -8,7 +8,7 @@ import {
   Box,
 } from "@strapi/design-system";
 
-import type { IFaqResponse } from "../../../../types";
+import type { IFaqResponse } from "../../../../../../shared";
 import {
   ResultAction,
   type IAction,
@@ -19,10 +19,9 @@ import * as S from "./GenerateArticleResultFaqForm.styled";
 interface IProps {
   faq: IFaqResponse[];
   dispatch: Dispatch<IAction>;
-  isLoading: boolean;
 }
 
-const GenerateArticleResultFaqForm = ({ faq, dispatch, isLoading }: IProps) => {
+const GenerateArticleResultFaqForm = ({ faq, dispatch }: IProps) => {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const handleToggle = (id: number) => {
@@ -47,7 +46,6 @@ const GenerateArticleResultFaqForm = ({ faq, dispatch, isLoading }: IProps) => {
                   <Textarea
                     name={`faq_question_${index}`}
                     label="question"
-                    disabled={isLoading}
                     value={item.question}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                       dispatch({
@@ -62,7 +60,6 @@ const GenerateArticleResultFaqForm = ({ faq, dispatch, isLoading }: IProps) => {
                   <Textarea
                     name={`faq_answer_${index}`}
                     label="answer"
-                    disabled={isLoading}
                     value={item.answer}
                     onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
                       dispatch({

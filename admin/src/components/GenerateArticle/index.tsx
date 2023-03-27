@@ -5,10 +5,11 @@ import { Magic } from "@strapi/icons";
 import { GenerateArticleModal } from "./components";
 
 import * as S from "./GenerateArticle.styled";
+import { IComponentProps } from "../../types";
 
-const GenerateArticle = () => {
+
+const GenerateArticle = (props: IComponentProps) => {
   const [isOpen, setIsOpen] = useState(false);
-
   return (
     <S.Container>
       <Typography
@@ -18,12 +19,18 @@ const GenerateArticle = () => {
         id="title"
         variant="pi"
       >
-        generate with AI
+        {props.name}
       </Typography>
-      <Button size="S" onClick={() => setIsOpen(true)} endIcon={<Magic />}>
+      <Button
+        size="S"
+        onClick={() => setIsOpen(true)}
+        endIcon={<Magic />}
+      >
         Generate
       </Button>
-      {isOpen && <GenerateArticleModal onClose={() => setIsOpen(false)} />}
+      {isOpen && (
+        <GenerateArticleModal {...props} onClose={() => setIsOpen(false)} />
+      )}
     </S.Container>
   );
 };

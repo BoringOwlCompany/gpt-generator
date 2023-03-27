@@ -9,7 +9,7 @@ import {
 import { Language } from "./GenerateArticleForm.config";
 import { useStatus } from "../../../../hooks";
 import { api } from "../../../../api";
-import type { IGeneratedArticleResponse } from "../../../../types";
+import { IGeneratedArticleResponse } from '../../../../../../shared'
 
 import * as S from "./GenerateArticleForm.styled";
 
@@ -30,10 +30,12 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
     try {
       setStatus(Status.LOADING);
 
-      const result: IGeneratedArticleResponse = await api.generateArticle({
-        title: topic,
-        language: language,
-      });
+      const result: IGeneratedArticleResponse = await api.generateArticle(
+        {
+          title: topic,
+          language,
+        }
+      );
 
       setStatus(Status.SUCCESS);
       setResult(result);
@@ -56,7 +58,9 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
               : ""
           }
           error={
-            isError ? "Something went wrong please try again later..." : ""
+            isError
+              ? "Something went wrong please try again later..."
+              : ""
           }
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setTopic(e.target.value)

@@ -1,4 +1,4 @@
-import type { IGeneratedArticleResponse } from "../../../../types";
+import { IGeneratedArticleResponse } from "../../../../../../shared";
 
 export enum ResultAction {
   SET_TITLE = "SET_TITLE",
@@ -12,11 +12,11 @@ export enum ResultAction {
 
 export type IResultActionsContent = {
   type:
-    | ResultAction.SET_TITLE
-    | ResultAction.SET_CONTENT
-    | ResultAction.SET_EXCERPT
-    | ResultAction.SET_SEO_TITLE
-    | ResultAction.SET_SEO_DESCRIPTION;
+  | ResultAction.SET_TITLE
+  | ResultAction.SET_CONTENT
+  | ResultAction.SET_EXCERPT
+  | ResultAction.SET_SEO_TITLE
+  | ResultAction.SET_SEO_DESCRIPTION;
   payload: string;
 };
 

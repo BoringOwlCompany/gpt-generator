@@ -4,9 +4,4 @@ export default [
     path: "/",
     handler: "controller.generate",
   },
-  {
-    method: "POST",
-    path: "/save",
-    handler: "controller.save",
-  },
 ];

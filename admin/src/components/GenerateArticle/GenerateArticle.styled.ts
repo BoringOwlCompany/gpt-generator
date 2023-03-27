@@ -1,9 +1,11 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  display: flex;
-  align-items: center;
-  column-gap: 1rem;
-  width: 100%;
-  justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    button {
+        width: fit-content;
+    }
 `;
