@@ -20,7 +20,7 @@ interface IProps {
 const GenerateArticleForm = ({ setResult }: IProps) => {
   const [topic, setTopic] = useState("");
   const [language, setLanguage] = useState<Language>(Language.PL);
-  const { setStatus, Status, isLoading, isError } = useStatus();
+  const { setStatus, Status, isLoading, isError, statusMessage, setStatusMessage } = useStatus();
 
   const handleGenerate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,12 +34,15 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
 
     try {
       setStatus(Status.LOADING);
-
       let articleContent = '';
 
+      setStatusMessage('Generating title...');
       const { title } = await api.generateTitle(titleRequest);
 
+      setStatusMessage('Generating paragraphs...');
       const paragraphsTitles = await api.generateParagraphs(titleRequest);
+
+      setStatusMessage(`Generating paragraphs (${paragraphsTitles.length})...`);
       await Promise.all(paragraphsTitles.map(async ({ paragraph }) => {
         const content = await api.generateParagraph({
           ...titleRequest,
@@ -49,13 +52,18 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
         articleContent += `<h2>${paragraph}</h2><p>${content.paragraph}</p>`;
       }));
 
+      setStatusMessage('Generating excerpt...');
       const { excerpt } = await api.generateExcerpt(titleRequest);
 
       const contentRequest = {
         content: articleContent,
         language
       }
+
+      setStatusMessage('Generating seo fields...');
       const seo = await api.generateSeo(contentRequest);
+
+      setStatusMessage('Generating faq...');
       const faq = await api.generateFaq(contentRequest);
 
       const result: IGeneratedArticleResponse = {
@@ -83,11 +91,7 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
           label="Topic"
           name="text"
           disabled={isLoading}
-          hint={
-            isLoading
-              ? "Generating an article can take more than a minute, do not close this window..."
-              : ""
-          }
+          hint={statusMessage}
           error={
             isError
               ? "Something went wrong please try again later..."
