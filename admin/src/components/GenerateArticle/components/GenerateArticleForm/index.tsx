@@ -60,9 +60,9 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
 
       const result: IGeneratedArticleResponse = {
         article: {
+          title,
           content: articleContent,
           excerpt,
-          title
         },
         seo,
         faq
