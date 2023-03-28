@@ -27,15 +27,46 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
     e.stopPropagation();
     if (!topic) return;
 
+    const titleRequest = {
+      title: topic,
+      language,
+    }
+
     try {
       setStatus(Status.LOADING);
 
-      const result: IGeneratedArticleResponse = await api.generateArticle(
-        {
-          title: topic,
-          language,
-        }
-      );
+      let articleContent = '';
+
+      const { title } = await api.generateTitle(titleRequest);
+
+      const paragraphsTitles = await api.generateParagraphs(titleRequest);
+      await Promise.all(paragraphsTitles.map(async ({ paragraph }) => {
+        const content = await api.generateParagraph({
+          ...titleRequest,
+          paragraph
+        })
+
+        articleContent += `<h2>${paragraph}</h2><p>${content.paragraph}</p>`;
+      }));
+
+      const { excerpt } = await api.generateExcerpt(titleRequest);
+
+      const contentRequest = {
+        content: articleContent,
+        language
+      }
+      const seo = await api.generateSeo(contentRequest);
+      const faq = await api.generateFaq(contentRequest);
+
+      const result: IGeneratedArticleResponse = {
+        article: {
+          content: articleContent,
+          excerpt,
+          title
+        },
+        seo,
+        faq
+      }
 
       setStatus(Status.SUCCESS);
       setResult(result);

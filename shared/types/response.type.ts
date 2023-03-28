@@ -1,6 +1,29 @@
-export interface IGenerateArticleRequest {
+export interface ITitleRequest {
   title: string;
   language: string;
+}
+
+export interface ITitleWithParagrapgRequest extends ITitleRequest {
+  paragraph: string;
+}
+
+export interface IContentRequest {
+  content: string;
+  language: string;
+}
+
+export interface ITitleResponse {
+  title: string
+}
+
+export type IParagraphsResponse = IParagraphResponse[]
+
+export interface IParagraphResponse {
+  paragraph: string;
+}
+
+export interface IExcerptResponse {
+  excerpt: string;
 }
 
 export interface ISeoResponse {

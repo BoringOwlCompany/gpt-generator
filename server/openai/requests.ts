@@ -1,12 +1,15 @@
 import utils from "@strapi/utils";
 import { CreateChatCompletionResponse } from "openai";
-import { IArticleResponse, IFaqResponse, ISeoResponse } from "../../shared";
+import { IFaqResponse, IParagraphResponse, IParagraphsResponse, ISeoResponse, ITitleResponse } from "../../shared";
 import openai from "./openai";
 import {
-  articlePrompt,
+  excerptPrompt,
   faqPrompt,
+  paragraphPrompt,
+  paragraphsPrompt,
   systemPrompt,
   titleAndDescriptionPrompt,
+  titlePrompt,
 } from "./prompts";
 const { ApplicationError } = utils.errors;
 
@@ -26,10 +29,10 @@ const tryParse = (stringified: string) => {
   }
 };
 
-export const generateArticle = async (
+export const generateTitle = async (
   title: string,
   language: string
-): Promise<IArticleResponse> => {
+): Promise<ITitleResponse> => {
   const completion = await openai.createChatCompletion({
     model: "gpt-3.5-turbo-0301",
     messages: [
@@ -39,7 +42,70 @@ export const generateArticle = async (
       },
       {
         role: "user",
-        content: articlePrompt(title),
+        content: titlePrompt(title),
+      },
+    ],
+  });
+
+  return tryParse(getContent(completion.data));
+}
+export const generateParagraphs = async (
+  title: string,
+  language: string
+): Promise<IParagraphsResponse> => {
+  const completion = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo-0301",
+    messages: [
+      {
+        role: "system",
+        content: systemPrompt(language),
+      },
+      {
+        role: "user",
+        content: paragraphsPrompt(title),
+      },
+    ],
+  });
+
+  return tryParse(getContent(completion.data));
+}
+
+export const generateParagraph = async (
+  title: string,
+  paragraph: string,
+  language: string
+): Promise<IParagraphResponse> => {
+  const completion = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo-0301",
+    messages: [
+      {
+        role: "system",
+        content: systemPrompt(language),
+      },
+      {
+        role: "user",
+        content: paragraphPrompt(title, paragraph),
+      },
+    ],
+  });
+
+  return tryParse(getContent(completion.data));
+};
+
+export const generateExcerpt = async (
+  title: string,
+  language: string
+): Promise<IParagraphResponse> => {
+  const completion = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo-0301",
+    messages: [
+      {
+        role: "system",
+        content: systemPrompt(language),
+      },
+      {
+        role: "user",
+        content: excerptPrompt(title),
       },
     ],
   });
