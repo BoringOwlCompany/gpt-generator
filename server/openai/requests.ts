@@ -31,7 +31,6 @@ export const generateTitle = async (data: ITitleRequest): Promise<ITitleResponse
   return tryParse(getContent(completion.data));
 }
 export const generateParagraphs = async (data: ITitleRequest): Promise<IParagraphsResponse> => {
-  console.log(messages.paragraphs(data));
   const completion = await openai.createChatCompletion({
     model: MODEL,
     messages: messages.paragraphs(data)
@@ -50,7 +49,6 @@ export const generateParagraph = async (data: ITitleWithParagraphRequest): Promi
 };
 
 export const generateExcerpt = async (data: ITitleRequest): Promise<IParagraphResponse> => {
-  console.log(messages.excerpt(data));
   const completion = await openai.createChatCompletion({
     model: MODEL,
     messages: messages.excerpt(data)

@@ -50,7 +50,7 @@ const GenerateArticleResultForm = ({
     })
     onClose();
   };
-  console.log(state);
+
   return (
     <S.Container onSubmit={handleApply}>
       <ModalBody>
