@@ -1,11 +1,16 @@
 export const titlePrompt = (title: string) =>
-  `Napisz mi tytuł do artykułu na temat: ${title}. Zwróć w postaci JSON: { title: "tytuł akapitu pierszego" }`;
+  `Napisz mi tytuł do artykułu na temat: ${title}.`;
 
 export const paragraphsPrompt = (title: string) =>
-  `Napisz mi tytuły od 4 do 5 akapitów na bloga do artykułu o tytule: ${title}. Zwróć w postaci tablicy JSON: [{ paragraph: "tytuł akapitu pierszego" }, { paragraph: "tytuł akapitu drugiego" }]`;
+  `Mam artykuł o tytule: ${title}. Napisz mi 5 tytułów akapitów do niego.`;
 
 export const paragraphPrompt = (title: string, paragraph: string) =>
-  `Napisz mi kilka zdań do akapitu o tytule akapitu: ${paragraph}. Zwróć w postaci JSON: { paragraph: "Tutaj treść bez nagłówków" }`;
+  `Napisz mi kilka zdań akapitu do artykułu: ${title}. Tytuł akapitu: ${paragraph}.`;
 
 export const excerptPrompt = (title: string) =>
-  `Napisz mi na około 300 znaków wstęp do artykułu na temat: ${title}. Zwróć w postaci JSON: { excerpt: "Tutaj wstęp" }`;
+  `Napisz mi na około 300 znaków wstęp do artykułu na temat: ${title}.`;
+
+export const seoPrompt = `Wygeneruj dwa pola dla SEO odnośnie tego artykułu czyli Tytuł i Opis.`;
+export const faqPrompt = `Napisz mi 3 pytania odpowiedziami do tego artykułu, nie przekraczaj 200 znaków na pytanie jak i odpowiedź.`;
+
+export const articleContentPrompt = (content: string) => `Napisales artykuł: "${content}."`;

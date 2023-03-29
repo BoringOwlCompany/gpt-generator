@@ -1,6 +1,6 @@
 import { request } from "@strapi/helper-plugin";
 
-import type { IContentRequest, IExcerptResponse, IFaqResponse, IParagraphResponse, IParagraphsResponse, ISeoResponse, ITitleRequest, ITitleResponse, ITitleWithParagrapgRequest } from "../../../shared";
+import type { IContentRequest, IExcerptResponse, IFaqResponse, IParagraphResponse, IParagraphsResponse, ISeoResponse, ITitleRequest, ITitleResponse, ITitleWithParagraphRequest } from "../../../shared";
 
 export const api = {
   generateTitle: async (data: ITitleRequest): Promise<ITitleResponse> => {
@@ -15,7 +15,7 @@ export const api = {
       body: data,
     });
   },
-  generateParagraph: async (data: ITitleWithParagrapgRequest): Promise<IParagraphResponse> => {
+  generateParagraph: async (data: ITitleWithParagraphRequest): Promise<IParagraphResponse> => {
     return await request(`/gpt-generator/paragraph`, {
       method: "POST",
       body: data,

@@ -2,14 +2,14 @@ import React, { useState, type ChangeEvent, FormEvent } from "react";
 import {
   ModalBody,
   Button,
+  Checkbox,
   TextInput,
   Combobox,
   ComboboxOption,
 } from "@strapi/design-system";
-import { Language } from "./GenerateArticleForm.config";
-import { useStatus } from "../../../../hooks";
+import { useGpt, useStatus } from "../../../../hooks";
 import { api } from "../../../../api";
-import { IGeneratedArticleResponse } from '../../../../../../shared'
+import { IGeneratedArticleResponse, Language } from '../../../../../../shared'
 
 import * as S from "./GenerateArticleForm.styled";
 
@@ -20,71 +20,29 @@ interface IProps {
 const GenerateArticleForm = ({ setResult }: IProps) => {
   const [topic, setTopic] = useState("");
   const [language, setLanguage] = useState<Language>(Language.PL);
-  const { setStatus, Status, isLoading, isError, statusMessage, setStatusMessage } = useStatus();
+  const [generateImages, setGenerateImages] = useState(false);
+  const [imagesPrompt, setImagesPrompt] = useState('');
+
+  const { generateArticle, progress, isError, isLoading, statusMessage } = useGpt()
+
+  const handleTopicChange = (e: ChangeEvent<HTMLInputElement>) => setTopic(e.target.value)
+  const handleGenerateImagesChange = (e: ChangeEvent<HTMLInputElement>) => setGenerateImages(e.target.checked)
+  const handleImagesPromptChange = (e: ChangeEvent<HTMLInputElement>) => setImagesPrompt(e.target.value)
 
   const handleGenerate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
     if (!topic) return;
 
-    const titleRequest = {
-      title: topic,
-      language,
-    }
+    const result = await generateArticle(topic, language);
+    if (!result) return;
 
-    try {
-      setStatus(Status.LOADING);
-      let articleContent = '';
-
-      setStatusMessage('Generating title...');
-      const { title } = await api.generateTitle(titleRequest);
-
-      setStatusMessage('Generating paragraphs...');
-      const paragraphsTitles = await api.generateParagraphs(titleRequest);
-
-      setStatusMessage(`Generating paragraphs (${paragraphsTitles.length})...`);
-      await Promise.all(paragraphsTitles.map(async ({ paragraph }) => {
-        const content = await api.generateParagraph({
-          ...titleRequest,
-          paragraph
-        })
-
-        articleContent += `<h2>${paragraph}</h2><p>${content.paragraph}</p>`;
-      }));
-
-      setStatusMessage('Generating excerpt...');
-      const { excerpt } = await api.generateExcerpt(titleRequest);
-
-      const contentRequest = {
-        content: articleContent,
-        language
-      }
-
-      setStatusMessage('Generating seo fields...');
-      const seo = await api.generateSeo(contentRequest);
-
-      setStatusMessage('Generating faq...');
-      const faq = await api.generateFaq(contentRequest);
-
-      const result: IGeneratedArticleResponse = {
-        article: {
-          title,
-          content: articleContent,
-          excerpt,
-        },
-        seo,
-        faq
-      }
-
-      setStatus(Status.SUCCESS);
-      setResult(result);
-    } catch (e) {
-      setStatus(Status.ERROR);
-    }
+    setResult(result);
   };
 
   return (
-    <ModalBody>
+    <ModalBody style={{ position: 'relative' }}>
+      {isLoading && <S.Progress size='s' value={100 / 10 * progress} />}
       <S.Form onSubmit={handleGenerate}>
         <TextInput
           placeholder="Provide a topic for your article"
@@ -94,18 +52,16 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
           hint={statusMessage}
           error={
             isError
-              ? "Something went wrong please try again later..."
+              ? "Something went wrong, please try again..."
               : ""
           }
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setTopic(e.target.value)
-          }
+          onChange={handleTopicChange}
           value={topic}
         />
         <Combobox
           value={language}
           label="Language"
-          onChange={(value: Language) => setLanguage(value)}
+          onChange={setLanguage}
           disabled={isLoading}
         >
           {Object.values(Language).map((lang) => (
@@ -114,6 +70,18 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
             </ComboboxOption>
           ))}
         </Combobox>
+        <Checkbox value={generateImages} onChange={handleGenerateImagesChange}>Generate images</Checkbox>
+        {generateImages && <div>
+          <TextInput
+            placeholder="Custom images prompt"
+            label="Prompt"
+            name="text"
+            hint="Provide your own prompt to generate images. If left blank, the topic will be used as a prompt"
+            disabled={isLoading}
+            onChange={handleImagesPromptChange}
+            value={imagesPrompt}
+          />
+        </div>}
         <Button
           loading={isLoading}
           disabled={isLoading || !topic}

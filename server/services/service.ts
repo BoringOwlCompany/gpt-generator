@@ -1,4 +1,5 @@
 import { Strapi } from "@strapi/strapi";
+import { ITitleRequest, IContentRequest, ITitleWithParagraphRequest } from "../../shared";
 import {
   generateArticleFaq,
   generateArticleSEO,
@@ -9,46 +10,27 @@ import {
 } from "../openai/requests";
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async generateTitle(data: {
-    title: string;
-    language: string;
-  }) {
-    return await generateTitle(data.title, data.language);
+  async generateTitle(data: ITitleRequest) {
+    return await generateTitle(data);
   },
 
-  async generateParagraphs(data: {
-    title: string;
-    language: string;
-  }) {
-    return await generateParagraphs(data.title, data.language);
+  async generateParagraphs(data: ITitleRequest) {
+    return await generateParagraphs(data);
   },
 
-  async generateParagraph(data: {
-    title: string;
-    paragraph: string;
-    language: string;
-  }) {
-    return await generateParagraph(data.title, data.paragraph, data.language);
+  async generateParagraph(data: ITitleWithParagraphRequest) {
+    return await generateParagraph(data);
   },
 
-  async generateExcerpt(data: {
-    title: string;
-    language: string;
-  }) {
-    return await generateExcerpt(data.title, data.language);
+  async generateExcerpt(data: ITitleRequest) {
+    return await generateExcerpt(data);
   },
 
-  async generateSeo(data: {
-    content: string;
-    language: string;
-  }) {
-    return await generateArticleSEO(data.content, data.language);
+  async generateSeo(data: IContentRequest) {
+    return await generateArticleSEO(data);
   },
 
-  async generateFaq(data: {
-    content: string;
-    language: string;
-  }) {
-    return await generateArticleFaq(data.content, data.language);
+  async generateFaq(data: IContentRequest) {
+    return await generateArticleFaq(data);
   }
 });

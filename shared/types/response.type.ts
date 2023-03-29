@@ -3,7 +3,7 @@ export interface ITitleRequest {
   language: string;
 }
 
-export interface ITitleWithParagrapgRequest extends ITitleRequest {
+export interface ITitleWithParagraphRequest extends ITitleRequest {
   paragraph: string;
 }
 
