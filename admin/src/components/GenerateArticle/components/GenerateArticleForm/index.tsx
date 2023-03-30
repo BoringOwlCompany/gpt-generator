@@ -7,8 +7,7 @@ import {
   Combobox,
   ComboboxOption,
 } from "@strapi/design-system";
-import { useGpt, useStatus } from "../../../../hooks";
-import { api } from "../../../../api";
+import { useGpt } from "../../../../hooks";
 import { IGeneratedArticleResponse, Language } from '../../../../../../shared'
 
 import * as S from "./GenerateArticleForm.styled";
@@ -20,13 +19,14 @@ interface IProps {
 const GenerateArticleForm = ({ setResult }: IProps) => {
   const [topic, setTopic] = useState("");
   const [language, setLanguage] = useState<Language>(Language.PL);
-  const [generateImages, setGenerateImages] = useState(false);
+  const [shouldGenerateImages, setShouldGenerateImages] = useState(false);
+  const [numberOfImages, setNumberOfImages] = useState(4);
   const [imagesPrompt, setImagesPrompt] = useState('');
 
-  const { generateArticle, progress, isError, isLoading, statusMessage } = useGpt()
+  const { generateArticle, generateImages, progress, isError, isLoading, statusMessage } = useGpt()
 
   const handleTopicChange = (e: ChangeEvent<HTMLInputElement>) => setTopic(e.target.value)
-  const handleGenerateImagesChange = (e: ChangeEvent<HTMLInputElement>) => setGenerateImages(e.target.checked)
+  const handleGenerateImagesChange = (e: ChangeEvent<HTMLInputElement>) => setShouldGenerateImages(e.target.checked)
   const handleImagesPromptChange = (e: ChangeEvent<HTMLInputElement>) => setImagesPrompt(e.target.value)
 
   const handleGenerate = async (e: FormEvent<HTMLFormElement>) => {
@@ -34,15 +34,35 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
     e.stopPropagation();
     if (!topic) return;
 
-    const result = await generateArticle(topic, language);
+    const result = await generateArticle({
+      language,
+      title: topic
+    });
     if (!result) return;
 
-    setResult(result);
+    if (!shouldGenerateImages) {
+      setResult(result);
+      return;
+    }
+
+    const images = await generateImages({
+      title: topic,
+      language,
+      prompt: imagesPrompt,
+      numberOfImages
+    });
+
+    setResult({
+      ...result,
+      images
+    })
   };
+
+  const numberOfSteps = shouldGenerateImages ? 6 : 5;
 
   return (
     <ModalBody style={{ position: 'relative' }}>
-      {isLoading && <S.Progress size='s' value={100 / 10 * progress} />}
+      {isLoading && <S.Progress size='S' value={100 / numberOfSteps * progress} />}
       <S.Form onSubmit={handleGenerate}>
         <TextInput
           placeholder="Provide a topic for your article"
@@ -70,18 +90,32 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
             </ComboboxOption>
           ))}
         </Combobox>
-        <Checkbox value={generateImages} onChange={handleGenerateImagesChange}>Generate images</Checkbox>
-        {generateImages && <div>
-          <TextInput
-            placeholder="Custom images prompt"
-            label="Prompt"
-            name="text"
-            hint="Provide your own prompt to generate images. If left blank, the topic will be used as a prompt"
-            disabled={isLoading}
-            onChange={handleImagesPromptChange}
-            value={imagesPrompt}
-          />
-        </div>}
+        <Checkbox value={shouldGenerateImages} onChange={handleGenerateImagesChange}>Generate images</Checkbox>
+        {shouldGenerateImages &&
+          <>
+            <Combobox
+              value={`${numberOfImages}`}
+              label="Number of images"
+              onChange={setNumberOfImages}
+              disabled={isLoading}
+            >
+              {Array.from({ length: 10 }).map((_, index) => (
+                <ComboboxOption key={index + 1} value={`${index + 1}`}>
+                  {index + 1}
+                </ComboboxOption>
+              ))}
+            </Combobox>
+            <TextInput
+              placeholder="Custom images prompt"
+              label="Prompt"
+              name="text"
+              hint="Provide your own prompt to generate images. If left blank, the topic will be used as a prompt"
+              disabled={isLoading}
+              onChange={handleImagesPromptChange}
+              value={imagesPrompt}
+            />
+          </>
+        }
         <Button
           loading={isLoading}
           disabled={isLoading || !topic}

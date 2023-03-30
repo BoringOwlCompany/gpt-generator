@@ -7,18 +7,21 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       .service("service")
       .generateTitle(ctx.request.body);
   },
+
   async generateParagraphs(ctx) {
     ctx.body = await strapi
       .plugin("gpt-generator")
       .service("service")
       .generateParagraphs(ctx.request.body);
   },
+
   async generateParagraph(ctx) {
     ctx.body = await strapi
       .plugin("gpt-generator")
       .service("service")
       .generateParagraph(ctx.request.body);
   },
+
   async generateExcerpt(ctx) {
     ctx.body = await strapi
       .plugin("gpt-generator")
@@ -38,5 +41,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       .plugin("gpt-generator")
       .service("service")
       .generateFaq(ctx.request.body);
+  },
+
+  async generateImages(ctx) {
+    ctx.body = await strapi
+      .plugin("gpt-generator")
+      .service("service")
+      .generateImages(ctx.request.body);
+  },
+
+  async uploadImage(ctx) {
+    ctx.body = await strapi
+      .plugin("gpt-generator")
+      .service("service")
+      .uploadImage(ctx.request.files);
   },
 });

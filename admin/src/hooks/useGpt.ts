@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { IGeneratedArticleResponse, Language } from "../../../shared";
+import { IGeneratedArticleResponse, IImagesRequest, ITitleRequest, Language } from "../../../shared";
+import { ImagesResponse } from 'openai'
 import { api } from '../api';
 import { useStatus } from "./useStatus"
 
@@ -7,44 +8,38 @@ export const useGpt = () => {
   const { isError, isLoading, statusMessage, Status, setStatus, setStatusMessage } = useStatus();
   const [progress, setProgress] = useState(0);
 
-  const generateArticle = async (topic: string, language: Language): Promise<IGeneratedArticleResponse | null> => {
+  const generateArticle = async (data: ITitleRequest): Promise<IGeneratedArticleResponse | null> => {
     try {
       setStatus(Status.LOADING);
       setProgress(0);
 
-      const titleRequest = {
-        title: topic,
-        language,
-      }
 
       setStatusMessage('Generating title...');
-      const { title } = await api.generateTitle(titleRequest);
+      const { title } = await api.generateTitle(data);
       setProgress(prev => prev + 1);
 
       setStatusMessage('Generating paragraphs...');
-      const paragraphsTitles = await api.generateParagraphs(titleRequest);
+      const paragraphsTitles = await api.generateParagraphs(data);
       setProgress(prev => prev + 1);
 
       const articleContent: string[] = [];
-      setStatusMessage(`Generating paragraphs (${paragraphsTitles.length})...`);
       await Promise.all(paragraphsTitles.map(async ({ paragraph }, index) => {
         const content = await api.generateParagraph({
-          ...titleRequest,
+          ...data,
           paragraph
         })
-        setProgress(prev => prev + 1);
         articleContent[index] = `<h2>${paragraph}</h2><p>${content.paragraph}</p>`;
       }));
 
       const content = articleContent.join('');
 
       setStatusMessage('Generating excerpt...');
-      const { excerpt } = await api.generateExcerpt(titleRequest);
+      const { excerpt } = await api.generateExcerpt(data);
       setProgress(prev => prev + 1);
 
       const contentRequest = {
         content,
-        language
+        language: data.language
       }
 
       setStatusMessage('Generating seo fields...');
@@ -72,5 +67,21 @@ export const useGpt = () => {
     }
   }
 
-  return { generateArticle, progress, isError, isLoading, statusMessage }
+  const generateImages = async (data: IImagesRequest): Promise<ImagesResponse | null> => {
+    try {
+      setStatus(Status.LOADING);
+
+      setStatusMessage('Generating images...');
+      const images = await api.generateImages(data);
+      setProgress(prev => prev + 1);
+
+      setStatus(Status.SUCCESS);
+      return images;
+    } catch (e) {
+      setStatus(Status.ERROR);
+      return null;
+    }
+  }
+
+  return { generateArticle, generateImages, progress, isError, isLoading, statusMessage }
 }

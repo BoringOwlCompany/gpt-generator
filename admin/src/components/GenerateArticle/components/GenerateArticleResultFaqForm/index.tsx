@@ -18,10 +18,11 @@ import * as S from "./GenerateArticleResultFaqForm.styled";
 
 interface IProps {
   faq: IFaqResponse[];
+  disabled: boolean;
   dispatch: Dispatch<IAction>;
 }
 
-const GenerateArticleResultFaqForm = ({ faq, dispatch }: IProps) => {
+const GenerateArticleResultFaqForm = ({ faq, disabled, dispatch }: IProps) => {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const handleToggle = (id: number) => {
@@ -47,6 +48,7 @@ const GenerateArticleResultFaqForm = ({ faq, dispatch }: IProps) => {
                     name={`faq_question_${index}`}
                     label="question"
                     value={item.question}
+                    disabled={disabled}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                       dispatch({
                         type: ResultAction.SET_FAQ_QUESTION,
@@ -61,6 +63,7 @@ const GenerateArticleResultFaqForm = ({ faq, dispatch }: IProps) => {
                     name={`faq_answer_${index}`}
                     label="answer"
                     value={item.answer}
+                    disabled={disabled}
                     onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
                       dispatch({
                         type: ResultAction.SET_FAQ_ANSWER,

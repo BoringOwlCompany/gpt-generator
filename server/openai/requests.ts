@@ -1,8 +1,8 @@
 import utils from "@strapi/utils";
-import { messages, MODEL } from './requests.config'
+import { messages } from './requests.config'
 import { CreateChatCompletionResponse } from "openai";
-import { IContentRequest, IFaqResponse, IParagraphResponse, IParagraphsResponse, ISeoResponse, ITitleRequest, ITitleResponse, ITitleWithParagraphRequest, Language } from "../../shared";
-import openai from "./openai";
+import { IContentRequest, IFaqResponse, IImagesRequest, IParagraphResponse, IParagraphsResponse, ISeoResponse, ITitleRequest, ITitleResponse, ITitleWithParagraphRequest, Language } from "../../shared";
+import { createChatCompletion, createImages } from './methods'
 
 const { ApplicationError } = utils.errors;
 
@@ -23,54 +23,36 @@ const tryParse = (stringified: string) => {
 };
 
 export const generateTitle = async (data: ITitleRequest): Promise<ITitleResponse> => {
-  const completion = await openai.createChatCompletion({
-    model: MODEL,
-    messages: messages.title(data)
-  });
-
+  const completion = await createChatCompletion(messages.title(data));
   return tryParse(getContent(completion.data));
 }
-export const generateParagraphs = async (data: ITitleRequest): Promise<IParagraphsResponse> => {
-  const completion = await openai.createChatCompletion({
-    model: MODEL,
-    messages: messages.paragraphs(data)
-  });
 
+export const generateParagraphs = async (data: ITitleRequest): Promise<IParagraphsResponse> => {
+  const completion = await createChatCompletion(messages.paragraphs(data));
   return tryParse(getContent(completion.data));
 }
 
 export const generateParagraph = async (data: ITitleWithParagraphRequest): Promise<IParagraphResponse> => {
-  const completion = await openai.createChatCompletion({
-    model: MODEL,
-    messages: messages.paragraph(data)
-  });
-
+  const completion = await createChatCompletion(messages.paragraph(data));
   return tryParse(getContent(completion.data));
 };
 
 export const generateExcerpt = async (data: ITitleRequest): Promise<IParagraphResponse> => {
-  const completion = await openai.createChatCompletion({
-    model: MODEL,
-    messages: messages.excerpt(data)
-  });
-
+  const completion = await createChatCompletion(messages.excerpt(data));
   return tryParse(getContent(completion.data));
 };
 
 export const generateArticleSEO = async (data: IContentRequest): Promise<ISeoResponse> => {
-  const completion = await openai.createChatCompletion({
-    model: MODEL,
-    messages: messages.seo(data)
-  });
-
+  const completion = await createChatCompletion(messages.seo(data));
   return tryParse(getContent(completion.data));
 };
 
 export const generateArticleFaq = async (data: IContentRequest): Promise<IFaqResponse[]> => {
-  const completion = await openai.createChatCompletion({
-    model: MODEL,
-    messages: messages.faq(data)
-  });
-
+  const completion = await createChatCompletion(messages.faq(data));
   return tryParse(getContent(completion.data));
 };
+
+export const generateImages = async (data: IImagesRequest) => {
+  const images = await createImages(data);
+  return images.data;
+}

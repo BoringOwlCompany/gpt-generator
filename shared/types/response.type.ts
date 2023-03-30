@@ -1,3 +1,5 @@
+import { ImagesResponse } from 'openai'
+
 export interface ITitleRequest {
   title: string;
   language: string;
@@ -10,6 +12,14 @@ export interface ITitleWithParagraphRequest extends ITitleRequest {
 export interface IContentRequest {
   content: string;
   language: string;
+}
+
+export interface IImagesRequest {
+  title: string;
+  language: string;
+
+  prompt?: string;
+  numberOfImages?: number;
 }
 
 export interface ITitleResponse {
@@ -37,13 +47,19 @@ export interface IArticleResponse {
   excerpt: string;
 }
 
-export type IFaqResponse = {
+export interface IFaqResponse {
   question: string;
   answer: string;
 };
+
+export interface IImageResponse {
+  id: number;
+  name: string;
+}
 
 export interface IGeneratedArticleResponse {
   article: IArticleResponse;
   seo: ISeoResponse;
   faq: IFaqResponse[];
+  images?: ImagesResponse | null
 }
