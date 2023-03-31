@@ -1,10 +1,9 @@
-import generator from './generator'
+import generalRoutes from './general.routes';
+import multipleArticlesRoutes from './multipleArticles.routes';
+import singleArticleRoutes from './singleArticle.routes'
 
 export default [
-  ...generator,
-  {
-    method: "POST",
-    path: "/upload-image",
-    handler: "controller.uploadImage",
-  },
+  ...generalRoutes,
+  ...multipleArticlesRoutes,
+  ...singleArticleRoutes,
 ];

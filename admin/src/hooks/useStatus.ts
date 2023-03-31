@@ -1,20 +1,15 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-enum Status {
-  IDLE = "idle",
-  LOADING = "loading",
-  ERROR = "error",
-  SUCCESS = "success",
-}
+type Status = 'idle' | 'loading' | 'error' | 'success';
 
 export const useStatus = () => {
-  const [status, setStatus] = useState<Status>(Status.IDLE);
-  const [statusMessage, setStatusMessage] = useState("");
+  const [status, setStatus] = useState<Status>('idle');
+  const [statusMessage, setStatusMessage] = useState('');
 
-  const isLoading = status === Status.LOADING;
-  const isError = status === Status.ERROR;
-  const isSuccess = status === Status.SUCCESS;
-  const isIdle = status === Status.IDLE;
+  const isLoading = status === 'loading';
+  const isError = status === 'error';
+  const isSuccess = status === 'success';
+  const isIdle = status === 'idle';
 
-  return { isIdle, isLoading, isSuccess, isError, setStatus, Status, statusMessage, setStatusMessage };
+  return { isIdle, isLoading, isSuccess, isError, setStatus, statusMessage, setStatusMessage };
 };

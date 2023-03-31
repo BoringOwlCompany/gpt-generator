@@ -1,7 +1,13 @@
-import { ImagesResponse } from 'openai'
+import { ImagesResponse } from 'openai';
 
 export interface ITitleRequest {
   title: string;
+  language: string;
+}
+
+export interface ITitlesRequest {
+  keywords: string;
+  numberOfTitles: number;
   language: string;
 }
 
@@ -23,10 +29,10 @@ export interface IImagesRequest {
 }
 
 export interface ITitleResponse {
-  title: string
+  title: string;
 }
 
-export type IParagraphsResponse = IParagraphResponse[]
+export type IParagraphsResponse = IParagraphResponse[];
 
 export interface IParagraphResponse {
   paragraph: string;
@@ -50,7 +56,7 @@ export interface IArticleResponse {
 export interface IFaqResponse {
   question: string;
   answer: string;
-};
+}
 
 export interface IImageResponse {
   id: number;
@@ -61,5 +67,5 @@ export interface IGeneratedArticleResponse {
   article: IArticleResponse;
   seo: ISeoResponse;
   faq: IFaqResponse[];
-  images?: ImagesResponse | null
+  images?: ImagesResponse | null;
 }

@@ -24,7 +24,7 @@ const GenerateArticle = (props: IComponentProps) => {
       <Button
         size="S"
         onClick={() => setIsOpen(true)}
-        endIcon={<Magic />}
+        endIcon={Magic}
       >
         Generate
       </Button>

@@ -1,91 +1,125 @@
-import { IContentRequest, ITitleRequest, ITitleWithParagraphRequest } from "../../shared";
-import { articleContentPrompt, excerptJsonPrompt, excerptPrompt, faqJsonPrompt, faqPrompt, paragraphJsonPrompt, paragraphPrompt, paragraphsJsonPrompt, paragraphsPrompt, seoJsonPrompt, seoPrompt, systemPrompt, titleJsonPrompt, titlePrompt } from "./prompts";
-import { ChatCompletionRequestMessage } from 'openai'
+import {
+  IContentRequest,
+  ITitleRequest,
+  ITitlesRequest,
+  ITitleWithParagraphRequest,
+} from '../../shared';
+import {
+  articleContentPrompt,
+  excerptJsonPrompt,
+  excerptPrompt,
+  faqJsonPrompt,
+  faqPrompt,
+  paragraphJsonPrompt,
+  paragraphPrompt,
+  paragraphsJsonPrompt,
+  paragraphsPrompt,
+  seoJsonPrompt,
+  seoPrompt,
+  systemPrompt,
+  titleJsonPrompt,
+  titlePrompt,
+  titlesJsonPrompt,
+  titlesPrompt,
+} from './prompts';
+import { ChatCompletionRequestMessage } from 'openai';
 
-export const MODEL = "gpt-3.5-turbo-0301"
+export const MODEL = 'gpt-3.5-turbo-0301';
 
 interface IMessages {
-  title: (props: ITitleRequest) => ChatCompletionRequestMessage[]
-  paragraphs: (props: ITitleRequest) => ChatCompletionRequestMessage[]
-  paragraph: (props: ITitleWithParagraphRequest) => ChatCompletionRequestMessage[]
-  excerpt: (props: ITitleRequest) => ChatCompletionRequestMessage[]
-  seo: (props: IContentRequest) => ChatCompletionRequestMessage[]
-  faq: (props: IContentRequest) => ChatCompletionRequestMessage[]
+  title: (props: ITitleRequest) => ChatCompletionRequestMessage[];
+  paragraphs: (props: ITitleRequest) => ChatCompletionRequestMessage[];
+  paragraph: (props: ITitleWithParagraphRequest) => ChatCompletionRequestMessage[];
+  excerpt: (props: ITitleRequest) => ChatCompletionRequestMessage[];
+  seo: (props: IContentRequest) => ChatCompletionRequestMessage[];
+  faq: (props: IContentRequest) => ChatCompletionRequestMessage[];
+  titles: (props: ITitlesRequest) => ChatCompletionRequestMessage[];
 }
 
 export const messages: IMessages = {
   title: ({ language, title }) => [
     {
-      role: "system",
+      role: 'system',
       content: systemPrompt(language),
     },
     {
-      role: "user",
+      role: 'user',
       content: titlePrompt(title) + titleJsonPrompt,
     },
   ],
 
   paragraphs: ({ language, title }) => [
     {
-      role: "system",
+      role: 'system',
       content: systemPrompt(language),
     },
 
     {
-      role: "user",
+      role: 'user',
       content: paragraphsPrompt(title) + paragraphsJsonPrompt,
     },
   ],
 
   paragraph: ({ language, title, paragraph }) => [
     {
-      role: "system",
+      role: 'system',
       content: systemPrompt(language),
     },
     {
-      role: "user",
+      role: 'user',
       content: paragraphPrompt(title, paragraph) + paragraphJsonPrompt,
     },
   ],
 
   excerpt: ({ language, title }) => [
     {
-      role: "system",
+      role: 'system',
       content: systemPrompt(language),
     },
     {
-      role: "user",
+      role: 'user',
       content: excerptPrompt(title) + excerptJsonPrompt,
     },
   ],
 
   seo: ({ content, language }) => [
     {
-      role: "system",
+      role: 'system',
       content: systemPrompt(language),
     },
     {
-      role: "assistant",
+      role: 'assistant',
       content: articleContentPrompt(content),
     },
     {
-      role: "user",
+      role: 'user',
       content: seoPrompt + seoJsonPrompt,
     },
   ],
 
   faq: ({ content, language }) => [
     {
-      role: "system",
+      role: 'system',
       content: systemPrompt(language),
     },
     {
-      role: "assistant",
+      role: 'assistant',
       content: articleContentPrompt(content),
     },
     {
-      role: "user",
+      role: 'user',
       content: faqPrompt + faqJsonPrompt,
     },
   ],
-}
+
+  titles: ({ keywords, numberOfTitles, language }) => [
+    {
+      role: 'system',
+      content: systemPrompt(language),
+    },
+    {
+      role: 'user',
+      content: titlesPrompt(keywords, numberOfTitles) + titlesJsonPrompt,
+    },
+  ],
+};

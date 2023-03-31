@@ -1,5 +1,7 @@
-export const titlePrompt = (title: string) =>
-  `Napisz mi tytuł do artykułu na temat: ${title}.`;
+export const titlesPrompt = (keywords: string, numberOfTitle: number) =>
+  `Wymyśl mi ${numberOfTitle} tytułów na bloga na podstawie tych słów kluczowych: ${keywords}.`;
+
+export const titlePrompt = (title: string) => `Napisz mi tytuł do artykułu na temat: ${title}.`;
 
 export const paragraphsPrompt = (title: string) =>
   `Mam artykuł o tytule: ${title}. Napisz mi 5 tytułów akapitów do niego.`;

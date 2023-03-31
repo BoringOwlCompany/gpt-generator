@@ -37,17 +37,4 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   async generateFaq(data: IContentRequest) {
     return await generateArticleFaq(data);
   },
-
-  async generateImages(data: IImagesRequest) {
-    return await generateImages(data);
-  },
-
-  async uploadImage(data: any) {
-    if (!data.file) throw new NotFoundError("File not found");
-
-    return await strapi.plugins.upload.services.upload.upload({
-      data: {},
-      files: data.file
-    });
-  }
 });

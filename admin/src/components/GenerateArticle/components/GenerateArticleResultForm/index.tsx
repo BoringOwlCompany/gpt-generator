@@ -1,9 +1,4 @@
-import React, {
-  useReducer,
-  type ChangeEvent,
-  FormEvent,
-  useState
-} from "react";
+import React, { useReducer, type ChangeEvent, FormEvent, useState } from 'react';
 import {
   Card,
   CardHeader,
@@ -19,19 +14,16 @@ import {
   Button,
   TextInput,
   Textarea,
-  Typography
-} from "@strapi/design-system";
-import {
-  resultReducer,
-  ResultAction,
-} from "./GenerateArticleResultForm.reducer";
-import GenerateArticleResultFaqForm from "../GenerateArticleResultFaqForm";
-import type { IComponentProps } from "../../../../types";
-import { IGeneratedArticleResponse } from '../../../../../../shared'
+  Typography,
+} from '@strapi/design-system';
+import { resultReducer, ResultAction } from './GenerateArticleResultForm.reducer';
+import GenerateArticleResultFaqForm from '../GenerateArticleResultFaqForm';
+import type { IComponentProps } from '../../../../types';
+import { IGeneratedArticleResponse } from '../../../../../../shared';
 
-import * as S from "./GenerateArticleResultForm.styled";
-import { api } from "../../../../api";
-import { useStatus } from "../../../../hooks";
+import * as S from './GenerateArticleResultForm.styled';
+import { api } from '../../../../api';
+import { useStatus } from '../../../../hooks';
 
 interface IProps {
   data: IGeneratedArticleResponse;
@@ -48,17 +40,19 @@ const GenerateArticleResultForm = ({
   const [state, dispatch] = useReducer(resultReducer, data);
   const [pickedImage, setPickedImage] = useState<number | null>(null);
   const [seoPickedImage, setSeoPickedImage] = useState<number | null>(null);
-  const { setStatus, isError, isLoading, Status } = useStatus();
+  const { setStatus, isError, isLoading } = useStatus();
   const { article, faq, seo } = state;
 
-  const handleImageChange = (index: number) => index === pickedImage ? setPickedImage(null) : setPickedImage(index);
-  const handleSeoImageChange = (index: number) => index === seoPickedImage ? setSeoPickedImage(null) : setSeoPickedImage(index);
+  const handleImageChange = (index: number) =>
+    index === pickedImage ? setPickedImage(null) : setPickedImage(index);
+  const handleSeoImageChange = (index: number) =>
+    index === seoPickedImage ? setSeoPickedImage(null) : setSeoPickedImage(index);
 
   const handleApply = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    setStatus(Status.LOADING);
+    setStatus('loading');
 
     if (pickedImage !== null) {
       const image = state.images?.data[pickedImage];
@@ -66,9 +60,9 @@ const GenerateArticleResultForm = ({
 
       try {
         const file = await api.uploadImage(image);
-        onChange({ target: { name: "content.image", value: file } });
+        onChange({ target: { name: 'content.image', value: file } });
       } catch (e) {
-        setStatus(Status.ERROR);
+        setStatus('error');
         return;
       }
     }
@@ -79,22 +73,22 @@ const GenerateArticleResultForm = ({
 
       try {
         const file = await api.uploadImage(image);
-        onChange({ target: { name: "seo.0.image", value: file } });
+        onChange({ target: { name: 'seo.0.image', value: file } });
       } catch (e) {
-        setStatus(Status.ERROR);
+        setStatus('error');
         return;
       }
     }
 
-    onChange({ target: { name: "content.title", value: article.title } });
-    onChange({ target: { name: "content.introduction", value: article.excerpt } });
-    onChange({ target: { name: "content.content", value: article.content } });
-    onChange({ target: { name: "seo.0.title", value: seo.title } });
-    onChange({ target: { name: "seo.0.description", value: seo.description } });
+    onChange({ target: { name: 'content.title', value: article.title } });
+    onChange({ target: { name: 'content.introduction', value: article.excerpt } });
+    onChange({ target: { name: 'content.content', value: article.content } });
+    onChange({ target: { name: 'seo.0.title', value: seo.title } });
+    onChange({ target: { name: 'seo.0.description', value: seo.description } });
     faq.forEach(({ answer, question }, index) => {
       onChange({ target: { name: `seo.0.faq.${index}.question`, value: question } });
       onChange({ target: { name: `seo.0.faq.${index}.answer`, value: answer } });
-    })
+    });
 
     onClose();
   };
@@ -114,12 +108,18 @@ const GenerateArticleResultForm = ({
             })
           }
         />
-        {state.images &&
+        {state.images && (
           <div>
-            <Typography variant="pi" fontWeight="bold">Image</Typography>
+            <Typography variant="pi" fontWeight="bold">
+              Image
+            </Typography>
             <S.ImagesContainer>
-              {state.images.data.map((image, index) =>
-                <Card key={index} style={{ cursor: "pointer" }} onClick={() => !isLoading && handleImageChange(index)}>
+              {state.images.data.map((image, index) => (
+                <Card
+                  key={index}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => !isLoading && handleImageChange(index)}
+                >
                   <CardHeader>
                     <CardCheckbox disabled={isLoading} value={index === pickedImage} />
                     <CardAsset src={`data:image/png;base64,${image.b64_json}`} />
@@ -132,14 +132,18 @@ const GenerateArticleResultForm = ({
                     <CardBadge>Image</CardBadge>
                   </CardBody>
                 </Card>
-              )}
+              ))}
             </S.ImagesContainer>
-            {isError && <Typography textColor="danger600" variant="pi" >Couldn't upload image to media library</Typography>}
+            {isError && (
+              <Typography textColor="danger600" variant="pi">
+                Couldn't upload image to media library
+              </Typography>
+            )}
           </div>
-        }
+        )}
         <Textarea
           style={{
-            minHeight: "250px",
+            minHeight: '250px',
           }}
           name="content"
           label="content"
@@ -188,12 +192,18 @@ const GenerateArticleResultForm = ({
             })
           }
         />
-        {state.images &&
+        {state.images && (
           <div>
-            <Typography variant="pi" fontWeight="bold">SEO image</Typography>
+            <Typography variant="pi" fontWeight="bold">
+              SEO image
+            </Typography>
             <S.ImagesContainer>
-              {state.images.data.map((image, index) =>
-                <Card key={index} style={{ cursor: "pointer" }} onClick={() => !isLoading && handleSeoImageChange(index)}>
+              {state.images.data.map((image, index) => (
+                <Card
+                  key={index}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => !isLoading && handleSeoImageChange(index)}
+                >
                   <CardHeader>
                     <CardCheckbox disabled={isLoading} value={index === seoPickedImage} />
                     <CardAsset src={`data:image/png;base64,${image.b64_json}`} />
@@ -206,18 +216,18 @@ const GenerateArticleResultForm = ({
                     <CardBadge>Image</CardBadge>
                   </CardBody>
                 </Card>
-              )}
+              ))}
             </S.ImagesContainer>
-            {isError && <Typography textColor="danger600" variant="pi" >Couldn't upload image to media library</Typography>}
+            {isError && (
+              <Typography textColor="danger600" variant="pi">
+                Couldn't upload image to media library
+              </Typography>
+            )}
           </div>
-        }
+        )}
 
         {faq.length > 0 && (
-          <GenerateArticleResultFaqForm
-            faq={faq}
-            disabled={isLoading}
-            dispatch={dispatch}
-          />
+          <GenerateArticleResultFaqForm faq={faq} disabled={isLoading} dispatch={dispatch} />
         )}
       </ModalBody>
 
