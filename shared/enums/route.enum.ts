@@ -10,4 +10,5 @@ export enum Route {
   SINGLE_ARTICLE_FAQ = '/single-article/faq',
 
   MULTIPLE_ARTICLES_TITLES = '/multiple-articles/titles',
+  MULTIPLE_ARTICLES_NEW_JOB = '/multiple-articles/new-job',
 }

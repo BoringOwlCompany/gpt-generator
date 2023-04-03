@@ -9,4 +9,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       .service(Service.MULTIPLE_ARTICLES)
       .generateTitles(ctx.request.body);
   },
+  async createNewJob(ctx) {
+    ctx.body = await strapi
+      .plugin(Constant.PLUGIN_NAME)
+      .service(Service.MULTIPLE_ARTICLES)
+      .createNewJob(ctx.request.body);
+  },
 });

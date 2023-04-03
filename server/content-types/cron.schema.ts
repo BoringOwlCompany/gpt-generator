@@ -16,11 +16,24 @@ export const GptCron = {
     },
     'content-type-builder': {
       visible: true,
-    }
+    },
   },
   attributes: {
     keywords: {
       type: 'string',
     },
-  }
+    language: {
+      type: 'string',
+    },
+    titles: {
+      type: 'json',
+    },
+    status: {
+      type: 'string',
+    },
+    isDone: {
+      type: 'boolean',
+      default: false,
+    },
+  },
 };

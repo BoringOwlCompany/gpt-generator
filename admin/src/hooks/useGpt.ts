@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { IGeneratedArticleResponse, IImagesRequest, ITitleRequest } from '../../../shared';
 import { ImagesResponse } from 'openai';
-import { api } from '../api';
+import { generateApi } from '../api';
 import { useStatus } from './useStatus';
 
 export const useGpt = () => {
@@ -16,17 +16,17 @@ export const useGpt = () => {
       setProgress(0);
 
       setStatusMessage('Generating title...');
-      const { title } = await api.generateTitle(data);
+      const { title } = await generateApi.generateTitle(data);
       setProgress((prev) => prev + 1);
 
       setStatusMessage('Generating paragraphs...');
-      const paragraphsTitles = await api.generateParagraphs(data);
+      const paragraphsTitles = await generateApi.generateParagraphs(data);
       setProgress((prev) => prev + 1);
 
       const articleContent: string[] = [];
       await Promise.all(
         paragraphsTitles.map(async ({ paragraph }, index) => {
-          const content = await api.generateParagraph({
+          const content = await generateApi.generateParagraph({
             ...data,
             paragraph,
           });
@@ -37,7 +37,7 @@ export const useGpt = () => {
       const content = articleContent.join('');
 
       setStatusMessage('Generating excerpt...');
-      const { excerpt } = await api.generateExcerpt(data);
+      const { excerpt } = await generateApi.generateExcerpt(data);
       setProgress((prev) => prev + 1);
 
       const contentRequest = {
@@ -46,11 +46,11 @@ export const useGpt = () => {
       };
 
       setStatusMessage('Generating seo fields...');
-      const seo = await api.generateSeo(contentRequest);
+      const seo = await generateApi.generateSeo(contentRequest);
       setProgress((prev) => prev + 1);
 
       setStatusMessage('Generating faq...');
-      const faq = await api.generateFaq(contentRequest);
+      const faq = await generateApi.generateFaq(contentRequest);
       setProgress((prev) => prev + 1);
 
       setStatus('success');
@@ -75,7 +75,7 @@ export const useGpt = () => {
       setStatus('loading');
 
       setStatusMessage('Generating images...');
-      const images = await api.generateImages(data);
+      const images = await generateApi.generateImages(data);
       setProgress((prev) => prev + 1);
 
       setStatus('success');

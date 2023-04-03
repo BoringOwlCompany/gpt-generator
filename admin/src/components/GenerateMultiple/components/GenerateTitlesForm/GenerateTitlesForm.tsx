@@ -1,22 +1,18 @@
 import React, { FormEvent } from 'react';
 import { Button, NumberInput, TextInput, Combobox, ComboboxOption } from '@strapi/design-system';
 
-import * as S from './GenerateTitlesForm.styled';
-import { useForm, useStatus } from '../../../../hooks';
+import { IUseForm, useForm, useStatus } from '../../../../hooks';
 import { ITitleResponse, Language } from '../../../../../../shared';
-import { api } from '../../../../api';
+import { generateApi } from '../../../../api';
+import { FormWrapper } from '../../../Global';
+import { IForm } from '../AddJobModal/AddJobModal';
 
 interface IProps {
-  setTitles: (titles: ITitleResponse[]) => void;
+  form: IUseForm<IForm>;
 }
 
-const GenerateTitlesForm = ({ setTitles }: IProps) => {
+const GenerateTitlesForm = ({ form: { state, handleChange, handleValueChange } }: IProps) => {
   const { isError, isLoading, setStatus } = useStatus();
-  const { state, handleChange, handleValueChange } = useForm({
-    keywords: '',
-    numberOfTitles: 5,
-    language: Language.PL,
-  });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,16 +20,19 @@ const GenerateTitlesForm = ({ setTitles }: IProps) => {
     setStatus('loading');
 
     try {
-      const titlesResponse = await api.generateTitles(state);
+      const titlesResponse = await generateApi.generateTitles(state);
       setStatus('success');
-      setTitles(titlesResponse);
+      handleValueChange(
+        'titles',
+        titlesResponse.map(({ title }) => title)
+      );
     } catch (e) {
       setStatus('error');
     }
   };
 
   return (
-    <S.Form onSubmit={handleSubmit}>
+    <FormWrapper onSubmit={handleSubmit}>
       <TextInput
         placeholder="Provide keywords to generate titles"
         label="Keywords"
@@ -46,6 +45,7 @@ const GenerateTitlesForm = ({ setTitles }: IProps) => {
       <NumberInput
         placeholder="Number of titles"
         label="Number of titles"
+        name="numberOfTitles"
         disabled={isLoading}
         onValueChange={(value: number) => handleValueChange('numberOfTitles', value)}
         value={state.numberOfTitles}
@@ -67,7 +67,7 @@ const GenerateTitlesForm = ({ setTitles }: IProps) => {
       <Button loading={isLoading} disabled={!state.keywords || isLoading} type="submit">
         Submit
       </Button>
-    </S.Form>
+    </FormWrapper>
   );
 };
 

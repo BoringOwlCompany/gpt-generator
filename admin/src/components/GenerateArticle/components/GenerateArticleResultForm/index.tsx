@@ -22,7 +22,7 @@ import type { IComponentProps } from '../../../../types';
 import { IGeneratedArticleResponse } from '../../../../../../shared';
 
 import * as S from './GenerateArticleResultForm.styled';
-import { api } from '../../../../api';
+import { generateApi } from '../../../../api';
 import { useStatus } from '../../../../hooks';
 
 interface IProps {
@@ -59,7 +59,7 @@ const GenerateArticleResultForm = ({
       if (!image?.b64_json) return;
 
       try {
-        const file = await api.uploadImage(image);
+        const file = await generateApi.uploadImage(image);
         onChange({ target: { name: 'content.image', value: file } });
       } catch (e) {
         setStatus('error');
@@ -72,7 +72,7 @@ const GenerateArticleResultForm = ({
       if (!image?.b64_json) return;
 
       try {
-        const file = await api.uploadImage(image);
+        const file = await generateApi.uploadImage(image);
         onChange({ target: { name: 'seo.0.image', value: file } });
       } catch (e) {
         setStatus('error');

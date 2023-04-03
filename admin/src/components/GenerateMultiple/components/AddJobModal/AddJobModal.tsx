@@ -1,25 +1,48 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ModalLayout, ModalBody, ModalHeader, Typography } from '@strapi/design-system';
 import GenerateTitlesForm from '../GenerateTitlesForm';
-import { ITitleResponse } from '../../../../../../shared';
+import { Language } from '../../../../../../shared';
 import AddJobForm from '../AddJobForm';
+import { useForm } from '../../../../hooks';
 
 interface IProps {
-  handleClose: () => void;
+  handleDone: () => void;
+  handleClose: (withConfirmation: boolean) => void;
 }
 
-const AddJobModal = ({ handleClose }: IProps) => {
-  const [titles, setTitles] = useState<ITitleResponse[] | null>(null);
+export interface IForm {
+  keywords: string;
+  numberOfTitles: number;
+  language: Language;
+  titles: string[];
+}
+
+const AddJobModal = ({ handleClose, handleDone }: IProps) => {
+  const form = useForm<IForm>({
+    keywords: '',
+    numberOfTitles: 5,
+    language: Language.PL,
+    titles: [],
+  });
+
+  const handleFinish = () => {
+    handleClose(false);
+    handleDone();
+  };
 
   return (
     <ModalLayout onClose={handleClose} labelledBy="title">
       <ModalHeader color="white" labeledBy="">
-        <Typography fontWeight="bold" textColor="neutral800" as="h2" id="title">
+        <Typography fontWeight="bold" as="h2" id="title">
           Add new job
         </Typography>
       </ModalHeader>
       <ModalBody>
-        {titles ? <AddJobForm titles={titles} /> : <GenerateTitlesForm setTitles={setTitles} />}
+        {form.state.titles.length ? (
+          <AddJobForm handleFinish={handleFinish} titlesFormState={form.state} />
+        ) : (
+          <GenerateTitlesForm form={form} />
+        )}
       </ModalBody>
     </ModalLayout>
   );

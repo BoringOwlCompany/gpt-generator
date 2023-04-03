@@ -11,6 +11,7 @@ import { useGpt } from '../../../../hooks';
 import { IGeneratedArticleResponse, Language } from '../../../../../../shared';
 
 import * as S from './GenerateArticleForm.styled';
+import { FormWrapper } from '../../../Global';
 
 interface IProps {
   setResult: (results: IGeneratedArticleResponse) => void;
@@ -65,7 +66,7 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
   return (
     <ModalBody style={{ position: 'relative' }}>
       {isLoading && <S.Progress size="S" value={(100 / numberOfSteps) * progress} />}
-      <S.Form onSubmit={handleGenerate}>
+      <FormWrapper onSubmit={handleGenerate}>
         <TextInput
           placeholder="Provide a topic for your article"
           label="Topic"
@@ -114,7 +115,7 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
         <Button loading={isLoading} disabled={isLoading || !topic} type="submit">
           Submit
         </Button>
-      </S.Form>
+      </FormWrapper>
     </ModalBody>
   );
 };

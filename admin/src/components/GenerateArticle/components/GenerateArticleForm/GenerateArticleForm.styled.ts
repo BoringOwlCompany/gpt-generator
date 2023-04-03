@@ -1,16 +1,5 @@
-import styled from "styled-components";
-import { ProgressBar } from "@strapi/design-system";
-
-export const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  row-gap: 1rem;
-
-  button {
-    width: fit-content;
-    align-self: flex-end;
-  }
-`;
+import styled from 'styled-components';
+import { ProgressBar } from '@strapi/design-system';
 
 export const Progress = styled(ProgressBar)`
   position: absolute;
@@ -20,9 +9,9 @@ export const Progress = styled(ProgressBar)`
   width: 100%;
   border-radius: 0;
 
-  ::before{
+  ::before {
     border-radius: 0;
     background-color: green;
-    transition: width .3s ease-in-out;
+    transition: width 0.3s ease-in-out;
   }
-`
+`;

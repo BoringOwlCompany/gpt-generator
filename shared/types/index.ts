@@ -1,1 +1,2 @@
-export * from './response.type'
+export * from './api.type';
+export * from './collection.type';

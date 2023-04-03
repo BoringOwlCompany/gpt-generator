@@ -1,4 +1,5 @@
 import { ImagesResponse } from 'openai';
+import { Language } from '../enums';
 
 export interface ITitleRequest {
   title: string;
@@ -68,4 +69,13 @@ export interface IGeneratedArticleResponse {
   seo: ISeoResponse;
   faq: IFaqResponse[];
   images?: ImagesResponse | null;
+}
+
+export interface INewJobRequest {
+  keywords: string;
+  language: Language;
+  titles: {
+    title: string;
+    timestamp: number;
+  }[];
 }

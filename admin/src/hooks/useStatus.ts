@@ -1,9 +1,8 @@
 import { useState } from 'react';
+import { IStatus } from '../../../shared';
 
-type Status = 'idle' | 'loading' | 'error' | 'success';
-
-export const useStatus = () => {
-  const [status, setStatus] = useState<Status>('idle');
+export const useStatus = (initial: IStatus = 'idle') => {
+  const [status, setStatus] = useState(initial);
   const [statusMessage, setStatusMessage] = useState('');
 
   const isLoading = status === 'loading';
