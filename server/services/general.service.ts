@@ -26,22 +26,6 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     language,
   }: IGeneratedArticleResponse & { language: Language }) {
     const languageCode = getLanguageCode(language);
-    console.log({
-      locale: languageCode,
-      content: {
-        title: article.title,
-        introduction: article.excerpt,
-        content: article.content,
-        slug: '',
-      },
-      seo: [
-        {
-          title: seo.title,
-          description: seo.description,
-          faq,
-        },
-      ],
-    });
     return await strapi.entityService.create(`api::article.article`, {
       data: {
         locale: languageCode,
