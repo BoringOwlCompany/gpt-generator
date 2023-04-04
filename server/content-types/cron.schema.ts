@@ -28,12 +28,5 @@ export const GptCron = {
     titles: {
       type: 'json',
     },
-    status: {
-      type: 'string',
-    },
-    isDone: {
-      type: 'boolean',
-      default: false,
-    },
   },
 };

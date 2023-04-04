@@ -11,7 +11,7 @@ export const Progress = styled(ProgressBar)`
 
   ::before {
     border-radius: 0;
-    background-color: green;
+    background-color: ${({ theme }) => theme.colors.success500};
     transition: width 0.3s ease-in-out;
   }
 `;

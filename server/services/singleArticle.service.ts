@@ -1,40 +1,77 @@
-import { Strapi } from "@strapi/strapi";
-import { ITitleRequest, IContentRequest, ITitleWithParagraphRequest, IImagesRequest } from "../../shared";
+import { Strapi } from '@strapi/strapi';
 import {
-  generateArticleFaq,
-  generateArticleSEO,
-  generateExcerpt,
-  generateImages,
-  generateParagraph,
-  generateParagraphs,
-  generateTitle,
-} from "../openai/requests";
-import utils from "@strapi/utils";
-
-const { NotFoundError } = utils.errors;
+  ITitleRequest,
+  IContentRequest,
+  ITitleWithParagraphRequest,
+  IComponentTitle,
+  Language,
+} from '../../shared';
+import { openai } from '../openai/requests';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async generateTitle(data: ITitleRequest) {
-    return await generateTitle(data);
+  async generateTitleee(data: ITitleRequest) {
+    return await openai.generateTitle(data);
   },
 
   async generateParagraphs(data: ITitleRequest) {
-    return await generateParagraphs(data);
+    return await openai.generateParagraphs(data);
   },
 
   async generateParagraph(data: ITitleWithParagraphRequest) {
-    return await generateParagraph(data);
+    return await openai.generateParagraph(data);
   },
 
   async generateExcerpt(data: ITitleRequest) {
-    return await generateExcerpt(data);
+    return await openai.generateExcerpt(data);
   },
 
   async generateSeo(data: IContentRequest) {
-    return await generateArticleSEO(data);
+    return await openai.generateArticleSEO(data);
   },
 
   async generateFaq(data: IContentRequest) {
-    return await generateArticleFaq(data);
+    return await openai.generateArticleFaq(data);
+  },
+
+  async generateArticle(data: IComponentTitle & { language: Language }) {
+    const titleRequest = {
+      title: data.title,
+      language: data.language,
+    };
+
+    const { title } = await openai.generateTitle(titleRequest);
+    const paragraphsTitles = await openai.generateParagraphs(titleRequest);
+
+    const articleContent: string[] = [];
+    await Promise.all(
+      paragraphsTitles.map(async ({ paragraph }, index) => {
+        const content = await openai.generateParagraph({
+          ...titleRequest,
+          paragraph,
+        });
+        articleContent[index] = `<h2>${paragraph}</h2><p>${content.paragraph}</p>`;
+      })
+    );
+
+    const content = articleContent.join('');
+    const { excerpt } = await openai.generateExcerpt(titleRequest);
+
+    const contentRequest = {
+      content,
+      language: data.language,
+    };
+
+    const seo = await openai.generateArticleSEO(contentRequest);
+    const faq = await openai.generateArticleFaq(contentRequest);
+
+    return {
+      article: {
+        title,
+        content,
+        excerpt,
+      },
+      seo,
+      faq,
+    };
   },
 });

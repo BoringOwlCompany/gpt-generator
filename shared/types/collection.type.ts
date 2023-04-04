@@ -18,15 +18,16 @@ export interface IComponentTitle {
   status: IStatus;
   timestamp: number;
   title: string;
+  articleId?: number;
+  log?: any;
 }
 
 export interface IGptCronCollection {
   id: number;
+  createdAt: Date;
   keywords: string;
   language: Language;
   titles: IComponentTitle[];
-  status: IStatus;
-  isDone: boolean;
 }
 
 export type IGptCronResponse = IResponse<IGptCronCollection[]>;

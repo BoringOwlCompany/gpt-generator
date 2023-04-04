@@ -15,9 +15,10 @@ import { Cron } from '../../../../../../shared';
 import { useForm, useStatus } from '../../../../hooks';
 import { FormWrapper } from '../../../Global';
 
-import { cronPossibilities, dateFormatOptions } from './AddJobForm.config';
+import { cronPossibilities } from './AddJobForm.config';
 import { IForm } from '../AddJobModal/AddJobModal';
 import { cronApi } from '../../../../api';
+import { dateFormatOptions } from '../../../../utils';
 
 interface IProps {
   titlesFormState: IForm;

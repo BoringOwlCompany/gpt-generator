@@ -27,9 +27,3 @@ export const cronPossibilities = [
     label: 'Every 12 hours',
   },
 ];
-
-export const dateFormatOptions: Intl.DateTimeFormatOptions = {
-  dateStyle: 'medium',
-  timeStyle: 'short',
-  hourCycle: 'h24',
-};

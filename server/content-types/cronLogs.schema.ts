@@ -1,8 +1,8 @@
 export const GptCronLogs = {
   kind: 'collectionType',
-  collectionName: 'gpt-cron-logs',
+  collectionName: 'gpt-cron-log',
   info: {
-    singularName: 'gpt-cron-logs',
+    singularName: 'gpt-cron-log',
     pluralName: 'gpt-cron-logs',
     displayName: 'GPT CRON logs',
     description: 'A regular content-type',
@@ -16,14 +16,14 @@ export const GptCronLogs = {
     },
     'content-type-builder': {
       visible: true,
-    }
+    },
   },
   attributes: {
-    keywords: {
-      type: 'string',
-    },
     status: {
       type: 'string',
     },
-  }
+    message: {
+      type: 'json',
+    },
+  },
 };

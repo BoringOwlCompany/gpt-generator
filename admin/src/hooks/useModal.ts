@@ -1,12 +1,27 @@
 import { useState } from 'react';
 
-export const useModal = (initialState = false): [boolean, () => void, () => void] => {
-  const [isModalOpened, setIsModalOpened] = useState(initialState);
+interface IOptions {
+  confirmClose?: boolean;
+  isOpen?: boolean;
+}
+
+const defaultOptions: Required<IOptions> = {
+  confirmClose: false,
+  isOpen: false,
+};
+
+export const useModal = (options?: IOptions): [boolean, () => void, () => void] => {
+  const { confirmClose, isOpen } = {
+    ...defaultOptions,
+    ...options,
+  };
+
+  const [isModalOpened, setIsModalOpened] = useState(isOpen);
 
   const handleOpenModal = () => setIsModalOpened(true);
-  const handleCloseModal = (withConfirmation = true) => {
+  const handleCloseModal = (withConfirmation = confirmClose) => {
     if (
-      withConfirmation &&
+      withConfirmation === true &&
       !confirm('Are you sure you want to close this modal? You may lose your data')
     )
       return;

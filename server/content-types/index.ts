@@ -3,5 +3,5 @@ import { GptCronLogs } from './cronLogs.schema';
 
 export default {
   'gpt-cron': { schema: GptCron },
-  'gpt-cron-logs': { schema: GptCronLogs },
+  'gpt-cron-log': { schema: GptCronLogs },
 };
