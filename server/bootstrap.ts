@@ -8,7 +8,7 @@ export default ({ strapi }: { strapi: Strapi }) => {
       task: async ({ strapi }) =>
         await strapi.plugin(Constant.PLUGIN_NAME).service(Service.CRON).lookForArticles(),
       options: {
-        rule: '0 0 * * * *',
+        rule: '0 */2 * * * *',
       },
     },
   });
