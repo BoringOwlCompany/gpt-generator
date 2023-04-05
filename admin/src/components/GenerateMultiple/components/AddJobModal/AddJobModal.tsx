@@ -3,11 +3,11 @@ import { ModalLayout, ModalBody, ModalHeader, Typography } from '@strapi/design-
 import GenerateTitlesForm from '../GenerateTitlesForm';
 import { Language } from '../../../../../../shared';
 import AddJobForm from '../AddJobForm';
-import { useForm } from '../../../../hooks';
+import { IHandleCloseOptions, useForm } from '../../../../hooks';
 
 interface IProps {
   handleDone: () => void;
-  handleClose: (withConfirmation: boolean) => void;
+  handleClose: (options?: IHandleCloseOptions) => void;
 }
 
 export interface IForm {
@@ -26,7 +26,7 @@ const AddJobModal = ({ handleClose, handleDone }: IProps) => {
   });
 
   const handleFinish = () => {
-    handleClose(false);
+    handleClose({ withConfirmation: false });
     handleDone();
   };
 

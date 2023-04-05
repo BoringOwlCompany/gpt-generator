@@ -104,7 +104,15 @@ const JobDetailsModal = ({ pickedRow, handleClose }: IProps) => {
                             </Typography>
                           </Flex>
                           <Box>
-                            <Tooltip description={log && <pre>{JSON.stringify(log, null, 4)}</pre>}>
+                            <Tooltip
+                              description={
+                                log && (
+                                  <pre style={{ maxWidth: 500, whiteSpace: 'pre-wrap' }}>
+                                    {JSON.stringify(log, null, 4)}
+                                  </pre>
+                                )
+                              }
+                            >
                               <Badge {...parseStatus(status)}>{status}</Badge>
                             </Tooltip>
                           </Box>

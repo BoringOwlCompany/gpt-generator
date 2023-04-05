@@ -7,6 +7,14 @@ export interface ICronPossibility {
 
 export const cronPossibilities = [
   {
+    value: Cron.ONE_MINUTE,
+    label: 'Every minute',
+  },
+  {
+    value: Cron.TWO_MINUTES,
+    label: 'Every 2 minutes',
+  },
+  {
     value: Cron.ONE_HOUR,
     label: 'Every hour',
   },

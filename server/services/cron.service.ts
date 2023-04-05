@@ -18,7 +18,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
     for (const job of data) {
       for (const title of job.titles) {
-        if (title.status === 'idle' && title.timestamp <= currentTimestamp + 1000 * 60 * 5) {
+        if (title.status === 'idle' && title.timestamp <= currentTimestamp + 1000 * 60 * 1) {
           await updateJobTitle(job.id, title.timestamp, {
             status: 'loading',
           });

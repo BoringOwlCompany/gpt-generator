@@ -41,8 +41,8 @@ const TableBody = ({ data, isLoading, handlePickRow }: IProps) => {
             <Td>
               <Typography>{date.toLocaleString('en', dateFormatOptions)}</Typography>
             </Td>
-            <Td>
-              <Typography>{keywords}</Typography>
+            <Td maxWidth="300px">
+              <Typography ellipsis>{keywords}</Typography>
             </Td>
             <Td>
               <Typography>{language}</Typography>

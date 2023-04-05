@@ -1,15 +1,19 @@
-import React, { FormEvent } from 'react';
+import React, { FormEvent, useState } from 'react';
 import {
-  Alert,
+  DatePicker,
+  TimePicker,
   Icon,
   Button,
   Divider,
   TextInput,
   Combobox,
   ComboboxOption,
+  Flex,
+  Grid,
+  GridItem,
+  FieldLabel,
 } from '@strapi/design-system';
 import { Cross } from '@strapi/icons';
-import parser from 'cron-parser';
 
 import { Cron } from '../../../../../../shared';
 import { useForm, useStatus } from '../../../../hooks';
@@ -25,24 +29,29 @@ interface IProps {
   handleFinish: () => void;
 }
 
-const addHoursToTime = (hours: number) => 1000 * 60 * 60 * hours;
+const addMinutesToTime = (minutes: number) => 1000 * 60 * minutes;
 
 const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
   const { isError, isLoading, setStatus } = useStatus();
+  const [dateError, setDateError] = useState('');
   const { state, setState, handleChange, handleValueChange } = useForm({
-    cron: Cron.ONE_HOUR,
+    firstArticleGenerationTime: getRoundedHour(),
+    interval: Cron.ONE_HOUR,
     titles: titlesFormState.titles,
   });
 
-  const oneHourInterval = parser.parseExpression('0 * * * *');
-  const oneHourNextRun = oneHourInterval.next().toDate();
-
-  const date = new Date();
+  const now = new Date();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
+    if (state.firstArticleGenerationTime.getTime() < Date.now()) {
+      setDateError('Select date in the future');
+      return;
+    }
+
+    setDateError('');
     setStatus('loading');
 
     try {
@@ -50,7 +59,9 @@ const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
         ...titlesFormState,
         titles: state.titles.map((title, index) => ({
           title,
-          timestamp: oneHourNextRun.getTime() + addHoursToTime(parseInt(state.cron) * index),
+          timestamp:
+            state.firstArticleGenerationTime.getTime() +
+            addMinutesToTime(parseInt(state.interval) * index),
         })),
       });
 
@@ -61,29 +72,75 @@ const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
     }
   };
 
+  const timeValue = state.firstArticleGenerationTime
+    ? `${state.firstArticleGenerationTime.getHours()}:${state.firstArticleGenerationTime.getMinutes()}:${state.firstArticleGenerationTime.getSeconds()}`
+    : undefined;
+
+  const handleTimeChange = (time: string) => {
+    const dateToSet = state.firstArticleGenerationTime
+      ? new Date(state.firstArticleGenerationTime)
+      : new Date();
+    const [hours, minutes] = time.split(':');
+    dateToSet.setHours(parseInt(hours, 10));
+    dateToSet.setMinutes(parseInt(minutes, 10));
+
+    handleValueChange('firstArticleGenerationTime', dateToSet);
+  };
+
   return (
     <FormWrapper onSubmit={handleSubmit}>
-      <Combobox
-        value={state.cron}
-        label="Interval"
-        disabled={isLoading}
-        error={isError && 'Something went wrong, please try again...'}
-        onChange={(value: string) => handleValueChange('cron', value)}
-      >
-        {cronPossibilities.map(({ label, value }) => (
-          <ComboboxOption key={value} value={value}>
-            {label}
-          </ComboboxOption>
-        ))}
-      </Combobox>
+      <Grid gap={4}>
+        <GridItem col={6}>
+          <Flex gap={1} direction="column" alignItems="start">
+            <FieldLabel>First article generation date</FieldLabel>
+            <Flex gap={2} alignItems="start">
+              <DatePicker
+                ariaLabel="First article generation date"
+                name="firstArticleGenerationTime"
+                onChange={(e: Date) => handleValueChange('firstArticleGenerationTime', e)}
+                clearLabel="Clear"
+                selectedDate={state.firstArticleGenerationTime}
+                hint="Select date in the future"
+                error={dateError}
+                selectedDateLabel={() => `Date picker, current is `}
+              />
+              <TimePicker
+                error={dateError && ' '}
+                ariaLabel="time"
+                value={timeValue}
+                step={60}
+                onChange={handleTimeChange}
+              />
+            </Flex>
+          </Flex>
+        </GridItem>
+        <GridItem col={6}>
+          <Combobox
+            value={state.interval}
+            label="Interval"
+            disabled={isLoading}
+            error={isError && 'Something went wrong, please try again...'}
+            onChange={(value: string) => handleValueChange('interval', value)}
+          >
+            {cronPossibilities.map(({ label, value }) => (
+              <ComboboxOption key={value} value={value}>
+                {label}
+              </ComboboxOption>
+            ))}
+          </Combobox>
+        </GridItem>
+      </Grid>
       <Divider />
       {state.titles.map((title, index) => {
-        date.setTime(oneHourNextRun.getTime() + addHoursToTime(parseInt(state.cron) * index));
+        now.setTime(
+          state.firstArticleGenerationTime.getTime() +
+            addMinutesToTime(parseInt(state.interval) * index)
+        );
         return (
           <TextInput
             label={`Title ${index + 1}`}
             name={`titles.${index}`}
-            hint={date.toLocaleString('en', dateFormatOptions)}
+            hint={now.toLocaleString('en', dateFormatOptions)}
             onChange={handleChange}
             value={title}
             disabled={isLoading}
@@ -112,6 +169,13 @@ const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
       </Button>
     </FormWrapper>
   );
+};
+
+const getRoundedHour = () => {
+  const date = new Date();
+  date.setHours(date.getHours() + Math.ceil(date.getMinutes() / 60));
+  date.setMinutes(0, 0, 0);
+  return date;
 };
 
 export default AddJobForm;

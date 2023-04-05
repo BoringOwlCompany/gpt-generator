@@ -1,7 +1,9 @@
 export enum Cron {
-  ONE_HOUR = '1',
-  TWO_HOURS = '2',
-  THREE_HOURS = '3',
-  SIX_HOURS = '6',
-  TWELVE_HOURS = '12',
+  ONE_MINUTE = '1',
+  TWO_MINUTES = '2',
+  ONE_HOUR = '60',
+  TWO_HOURS = '120',
+  THREE_HOURS = '180',
+  SIX_HOURS = '360',
+  TWELVE_HOURS = '720',
 }

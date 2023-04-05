@@ -5,12 +5,18 @@ interface IOptions {
   isOpen?: boolean;
 }
 
+export interface IHandleCloseOptions {
+  withConfirmation?: boolean;
+}
+
 const defaultOptions: Required<IOptions> = {
   confirmClose: false,
   isOpen: false,
 };
 
-export const useModal = (options?: IOptions): [boolean, () => void, () => void] => {
+export const useModal = (
+  options?: IOptions
+): [boolean, (options?: IHandleCloseOptions) => void, () => void] => {
   const { confirmClose, isOpen } = {
     ...defaultOptions,
     ...options,
@@ -19,7 +25,8 @@ export const useModal = (options?: IOptions): [boolean, () => void, () => void] 
   const [isModalOpened, setIsModalOpened] = useState(isOpen);
 
   const handleOpenModal = () => setIsModalOpened(true);
-  const handleCloseModal = (withConfirmation = confirmClose) => {
+  const handleCloseModal = (options?: IHandleCloseOptions) => {
+    const { withConfirmation = confirmClose } = options || {};
     if (
       withConfirmation === true &&
       !confirm('Are you sure you want to close this modal? You may lose your data')

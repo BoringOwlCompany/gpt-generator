@@ -34,12 +34,12 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
 
   async generateArticle(data: IComponentTitle & { language: Language }) {
+    const { title } = await openai.generateTitle({ title: data.title, language: data.language });
     const titleRequest = {
-      title: data.title,
+      title,
       language: data.language,
     };
 
-    const { title } = await openai.generateTitle(titleRequest);
     const paragraphsTitles = await openai.generateParagraphs(titleRequest);
 
     const articleContent: string[] = [];

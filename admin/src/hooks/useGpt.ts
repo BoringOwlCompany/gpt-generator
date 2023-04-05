@@ -19,15 +19,20 @@ export const useGpt = () => {
       const { title } = await generateApi.generateTitle(data);
       setProgress((prev) => prev + 1);
 
+      const titleRequest = {
+        title,
+        language: data.language,
+      };
+
       setStatusMessage('Generating paragraphs...');
-      const paragraphsTitles = await generateApi.generateParagraphs(data);
+      const paragraphsTitles = await generateApi.generateParagraphs(titleRequest);
       setProgress((prev) => prev + 1);
 
       const articleContent: string[] = [];
       await Promise.all(
         paragraphsTitles.map(async ({ paragraph }, index) => {
           const content = await generateApi.generateParagraph({
-            ...data,
+            ...titleRequest,
             paragraph,
           });
           articleContent[index] = `<h2>${paragraph}</h2><p>${content.paragraph}</p>`;
@@ -37,7 +42,7 @@ export const useGpt = () => {
       const content = articleContent.join('');
 
       setStatusMessage('Generating excerpt...');
-      const { excerpt } = await generateApi.generateExcerpt(data);
+      const { excerpt } = await generateApi.generateExcerpt(titleRequest);
       setProgress((prev) => prev + 1);
 
       const contentRequest = {
