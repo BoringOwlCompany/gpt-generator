@@ -1,3 +1,4 @@
+import AbsoluteProgress from './AbsoluteProgress';
 import FormWrapper from './FormWrapper';
 
-export { FormWrapper };
+export { AbsoluteProgress, FormWrapper };

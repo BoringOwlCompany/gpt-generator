@@ -131,39 +131,47 @@ const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
         </GridItem>
       </Grid>
       <Divider />
-      {state.titles.map((title, index) => {
-        now.setTime(
-          state.firstArticleGenerationTime.getTime() +
-            addMinutesToTime(parseInt(state.interval) * index)
-        );
-        return (
-          <TextInput
-            label={`Title ${index + 1}`}
-            name={`titles.${index}`}
-            hint={now.toLocaleString('en', dateFormatOptions)}
-            onChange={handleChange}
-            value={title}
-            disabled={isLoading}
-            endAction={
-              <Icon
-                style={{ cursor: 'pointer' }}
-                onClick={() =>
-                  setState((prev) => {
-                    prev.titles.splice(index, 1);
-                    return { ...prev };
-                  })
-                }
-                as={Cross}
-                colors={(theme: any) => ({
-                  path: {
-                    fill: theme.colors.danger600,
-                  },
-                })}
-              />
-            }
-          />
-        );
-      })}
+      <Flex
+        direction="column"
+        alignItems="stretch"
+        gap={4}
+        padding={4}
+        style={{ maxHeight: '300px', overflow: 'auto' }}
+      >
+        {state.titles.map((title, index) => {
+          now.setTime(
+            state.firstArticleGenerationTime.getTime() +
+              addMinutesToTime(parseInt(state.interval) * index)
+          );
+          return (
+            <TextInput
+              label={`Title ${index + 1}`}
+              name={`titles.${index}`}
+              hint={now.toLocaleString('en', dateFormatOptions)}
+              onChange={handleChange}
+              value={title}
+              disabled={isLoading}
+              endAction={
+                <Icon
+                  style={{ cursor: 'pointer' }}
+                  onClick={() =>
+                    setState((prev) => {
+                      prev.titles.splice(index, 1);
+                      return { ...prev };
+                    })
+                  }
+                  as={Cross}
+                  colors={(theme: any) => ({
+                    path: {
+                      fill: theme.colors.danger600,
+                    },
+                  })}
+                />
+              }
+            />
+          );
+        })}
+      </Flex>
       <Button type="submit" loading={isLoading} disabled={isLoading}>
         Submit
       </Button>

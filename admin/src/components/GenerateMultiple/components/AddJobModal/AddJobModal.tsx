@@ -37,7 +37,7 @@ const AddJobModal = ({ handleClose, handleDone }: IProps) => {
           Add new job
         </Typography>
       </ModalHeader>
-      <ModalBody>
+      <ModalBody style={{ position: 'relative' }}>
         {form.state.titles.length ? (
           <AddJobForm handleFinish={handleFinish} titlesFormState={form.state} />
         ) : (

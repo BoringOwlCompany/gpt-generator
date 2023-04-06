@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { IGeneratedArticleResponse, IImagesRequest, ITitleRequest } from '../../../shared';
+import {
+  Constant,
+  IGeneratedArticleResponse,
+  IImagesRequest,
+  ITitleRequest,
+  ITitleResponse,
+  ITitlesRequest,
+} from '../../../shared';
 import { ImagesResponse } from 'openai';
 import { generateApi } from '../api';
 import { useStatus } from './useStatus';
@@ -91,5 +98,58 @@ export const useGpt = () => {
     }
   };
 
-  return { generateArticle, generateImages, progress, isError, isLoading, statusMessage };
+  const generateTitles = async (data: ITitlesRequest): Promise<ITitleResponse[]> => {
+    setStatus('loading');
+    setStatusMessage('Generating titles...');
+    setProgress(0);
+
+    let toGenerate = data.numberOfTitles;
+    const allTitles: ITitleResponse[] = [];
+    while (toGenerate > 0) {
+      const numberOfTitlesToGenerate =
+        toGenerate > Constant.TITLES_TO_GENERATE_PER_REQUEST
+          ? Constant.TITLES_TO_GENERATE_PER_REQUEST
+          : toGenerate;
+
+      const promises: Promise<ITitleResponse[]>[] = [];
+
+      let iterator = 0;
+      while (toGenerate > 0 && iterator < Constant.NUMBER_OF_MAXIMUM_CUMULATIVE_REQUESTS) {
+        const titlesPromise = generateApi
+          .generateTitles({
+            ...data,
+            numberOfTitles: numberOfTitlesToGenerate,
+          })
+          .then((res) => {
+            setProgress((prev) => prev + 1);
+            return res;
+          });
+
+        promises.push(titlesPromise);
+
+        toGenerate -= numberOfTitlesToGenerate;
+        iterator += 1;
+      }
+
+      try {
+        const generatedTitles = await Promise.all(promises);
+        allTitles.push(...generatedTitles.flat(1));
+      } catch (e) {
+        setStatus('error');
+      }
+    }
+
+    setStatus('success');
+    return allTitles;
+  };
+
+  return {
+    generateArticle,
+    generateTitles,
+    generateImages,
+    progress,
+    isError,
+    isLoading,
+    statusMessage,
+  };
 };
