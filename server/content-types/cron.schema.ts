@@ -20,7 +20,7 @@ export const GptCron = {
   },
   attributes: {
     keywords: {
-      type: 'string',
+      type: 'text',
     },
     language: {
       type: 'string',
