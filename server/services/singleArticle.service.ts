@@ -9,7 +9,7 @@ import {
 import { openai } from '../openai/requests';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async generateTitleee(data: ITitleRequest) {
+  async generateTitle(data: ITitleRequest) {
     return await openai.generateTitle(data);
   },
 
