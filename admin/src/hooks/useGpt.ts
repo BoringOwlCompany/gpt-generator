@@ -10,6 +10,7 @@ import {
 import { ImagesResponse } from 'openai';
 import { generateApi } from '../api';
 import { useStatus } from './useStatus';
+import slugify from 'slugify';
 
 export const useGpt = () => {
   const { isError, isLoading, statusMessage, setStatus, setStatusMessage } = useStatus();
@@ -72,6 +73,7 @@ export const useGpt = () => {
           title,
           content,
           excerpt,
+          slug: slugify(title, { lower: true }),
         },
         seo,
         faq,

@@ -22,18 +22,18 @@ const { ApplicationError } = utils.errors;
 const getContent = (completion: CreateChatCompletionResponse) =>
   completion.choices[0].message?.content || '';
 
-const tryParse = (stringified: string) => {
+const tryParse = (stringified: string, request: any) => {
   try {
     return JSON.parse(stringified);
   } catch (e) {
     throw new ApplicationError('Failed parsing openai response to JSON. Check the prompt', {
-      data: stringified,
+      data: { stringified, request: request },
       message: 'Failed parsing openai response to JSON. Check the prompt',
     });
   }
 };
 
-const tryCatch = async (cb: () => any) => {
+const tryCatch = async <T>(cb: () => T) => {
   try {
     return await cb();
   } catch (e: unknown) {
@@ -52,32 +52,32 @@ const tryCatch = async (cb: () => any) => {
 
 const generateTitle = async (data: ITitleRequest): Promise<ITitleResponse> => {
   const completion = await tryCatch(() => createChatCompletion(messages.title(data)));
-  return tryParse(getContent(completion.data));
+  return tryParse(getContent(completion.data), completion);
 };
 
 const generateParagraphs = async (data: ITitleRequest): Promise<IParagraphsResponse> => {
   const completion = await tryCatch(() => createChatCompletion(messages.paragraphs(data)));
-  return tryParse(getContent(completion.data));
+  return tryParse(getContent(completion.data), completion);
 };
 
 const generateParagraph = async (data: ITitleWithParagraphRequest): Promise<IParagraphResponse> => {
   const completion = await tryCatch(() => createChatCompletion(messages.paragraph(data)));
-  return tryParse(getContent(completion.data));
+  return tryParse(getContent(completion.data), completion);
 };
 
 const generateExcerpt = async (data: ITitleRequest): Promise<IExcerptResponse> => {
   const completion = await tryCatch(() => createChatCompletion(messages.excerpt(data)));
-  return tryParse(getContent(completion.data));
+  return tryParse(getContent(completion.data), completion);
 };
 
 const generateArticleSEO = async (data: IContentRequest): Promise<ISeoResponse> => {
   const completion = await tryCatch(() => createChatCompletion(messages.seo(data)));
-  return tryParse(getContent(completion.data));
+  return tryParse(getContent(completion.data), completion);
 };
 
 const generateArticleFaq = async (data: IContentRequest): Promise<IFaqResponse[]> => {
   const completion = await tryCatch(() => createChatCompletion(messages.faq(data)));
-  return tryParse(getContent(completion.data));
+  return tryParse(getContent(completion.data), completion);
 };
 
 const generateImages = async (data: IImagesRequest) => {
@@ -87,7 +87,7 @@ const generateImages = async (data: IImagesRequest) => {
 
 const generateTitles = async (data: ITitlesRequest) => {
   const completion = await tryCatch(() => createChatCompletion(messages.titles(data)));
-  return tryParse(getContent(completion.data));
+  return tryParse(getContent(completion.data), completion);
 };
 
 export const openai = {

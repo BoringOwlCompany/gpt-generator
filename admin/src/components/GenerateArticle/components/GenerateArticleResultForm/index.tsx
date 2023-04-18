@@ -81,6 +81,8 @@ const GenerateArticleResultForm = ({
     }
 
     onChange({ target: { name: 'content.title', value: article.title } });
+    onChange({ target: { name: 'content.slug', value: article.slug } });
+    onChange({ target: { name: 'content.publishDate', value: new Date().toISOString() } });
     onChange({ target: { name: 'content.introduction', value: article.excerpt } });
     onChange({ target: { name: 'content.content', value: article.content } });
     onChange({ target: { name: 'seo.0.title', value: seo.title } });
@@ -104,6 +106,18 @@ const GenerateArticleResultForm = ({
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             dispatch({
               type: ResultAction.SET_TITLE,
+              payload: e.target.value,
+            })
+          }
+        />
+        <TextInput
+          name="slug"
+          label="slug"
+          value={state.article.slug}
+          disabled={isLoading}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            dispatch({
+              type: ResultAction.SET_SLUG,
               payload: e.target.value,
             })
           }

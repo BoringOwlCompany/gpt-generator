@@ -33,7 +33,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           title: article.title,
           introduction: article.excerpt,
           content: article.content,
-          slug: '',
+          slug: article.slug,
+          publishDate: new Date().toISOString(),
         },
         seo: [
           {

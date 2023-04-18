@@ -50,6 +50,7 @@ export interface ISeoResponse {
 
 export interface IArticleResponse {
   title: string;
+  slug: string;
   content: string;
   excerpt: string;
 }
