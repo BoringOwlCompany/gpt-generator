@@ -1,4 +1,6 @@
 import { Strapi } from '@strapi/strapi';
+import slugify from 'slugify';
+
 import {
   ITitleRequest,
   IContentRequest,
@@ -69,6 +71,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         title,
         content,
         excerpt,
+        slug: slugify(title, { lower: true }),
       },
       seo,
       faq,

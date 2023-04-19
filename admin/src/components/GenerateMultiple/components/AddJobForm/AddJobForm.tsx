@@ -108,7 +108,7 @@ const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
                 error={dateError && ' '}
                 ariaLabel="time"
                 value={timeValue}
-                step={60}
+                step={5}
                 onChange={handleTimeChange}
               />
             </Flex>
