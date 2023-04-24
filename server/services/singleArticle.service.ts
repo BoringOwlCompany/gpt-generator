@@ -9,6 +9,7 @@ import {
   Language,
 } from '../../shared';
 import { openai } from '../openai/requests';
+import { ImagesResponse } from 'openai';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async generateTitle(data: ITitleRequest) {
@@ -66,15 +67,30 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const seo = await openai.generateArticleSEO(contentRequest);
     const faq = await openai.generateArticleFaq(contentRequest);
 
-    return {
-      article: {
+    const article: {
+      title: string;
+      content: string;
+      excerpt: string;
+      slug: string;
+      image?: ImagesResponse;
+    } = {
+      title,
+      content,
+      excerpt,
+      slug: slugify(title, { lower: true }),
+    };
+    if (data?.image?.isActive) {
+      article.image = await openai.generateImages({
         title,
-        content,
-        excerpt,
-        slug: slugify(title, { lower: true }),
-      },
+        prompt: data.image.prompt,
+        language: data.language,
+        numberOfImages: 1,
+      });
+    }
+    return {
       seo,
       faq,
+      article,
     };
   },
 });

@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import {
   DatePicker,
   TimePicker,
@@ -12,6 +12,7 @@ import {
   Grid,
   GridItem,
   FieldLabel,
+  Checkbox,
 } from '@strapi/design-system';
 import { Cross } from '@strapi/icons';
 
@@ -34,11 +35,35 @@ const addMinutesToTime = (minutes: number) => 1000 * 60 * minutes;
 const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
   const { isError, isLoading, setStatus } = useStatus();
   const [dateError, setDateError] = useState('');
+  const [isAllImagesActive, setIsAllImagesActive] = useState(false);
+  const [isAllImageIndeterminate, setIsAllImageIndeterminate] = useState(false);
+
   const { state, setState, handleChange, handleValueChange } = useForm({
     firstArticleGenerationTime: getRoundedHour(),
     interval: Cron.ONE_HOUR,
-    titles: titlesFormState.titles,
+    items: titlesFormState.titles.map((title) => ({
+      title,
+      image: { isActive: false, prompt: '' },
+    })),
   });
+
+  useEffect(() => {
+    setIsAllImageIndeterminate(
+      state.items.some(({ image }) => image.isActive) &&
+        !state.items.every(({ image }) => image.isActive)
+    );
+  }, [state]);
+
+  useEffect(() => {
+    setState((prev) => {
+      const newState = { ...prev };
+      newState.items = newState.items.map((item) => ({
+        ...item,
+        image: { ...item.image, isActive: isAllImagesActive },
+      }));
+      return newState;
+    });
+  }, [isAllImagesActive]);
 
   const now = new Date();
 
@@ -57,8 +82,8 @@ const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
     try {
       await cronApi.createNewJob({
         ...titlesFormState,
-        titles: state.titles.map((title, index) => ({
-          title,
+        items: state.items.map((item, index) => ({
+          ...item,
           timestamp:
             state.firstArticleGenerationTime.getTime() +
             addMinutesToTime(parseInt(state.interval) * index),
@@ -130,6 +155,13 @@ const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
           </Combobox>
         </GridItem>
       </Grid>
+      <Checkbox
+        value={isAllImagesActive}
+        onChange={() => setIsAllImagesActive((prev) => !prev)}
+        indeterminate={isAllImageIndeterminate}
+      >
+        Generate all images
+      </Checkbox>
       <Divider />
       <Flex
         direction="column"
@@ -138,37 +170,62 @@ const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
         padding={4}
         style={{ maxHeight: '300px', overflow: 'auto' }}
       >
-        {state.titles.map((title, index) => {
+        {state.items.map(({ title }, index) => {
           now.setTime(
             state.firstArticleGenerationTime.getTime() +
               addMinutesToTime(parseInt(state.interval) * index)
           );
           return (
-            <TextInput
-              label={`Title ${index + 1}`}
-              name={`titles.${index}`}
-              hint={now.toLocaleString('en', dateFormatOptions)}
-              onChange={handleChange}
-              value={title}
-              disabled={isLoading}
-              endAction={
-                <Icon
-                  style={{ cursor: 'pointer' }}
-                  onClick={() =>
-                    setState((prev) => {
-                      prev.titles.splice(index, 1);
-                      return { ...prev };
-                    })
-                  }
-                  as={Cross}
-                  colors={(theme: any) => ({
-                    path: {
-                      fill: theme.colors.danger600,
-                    },
-                  })}
+            <>
+              <TextInput
+                label={`Title ${index + 1}`}
+                name={`items.${index}.title`}
+                hint={now.toLocaleString('en', dateFormatOptions)}
+                onChange={handleChange}
+                value={title}
+                disabled={isLoading}
+                endAction={
+                  <Icon
+                    style={{ cursor: 'pointer' }}
+                    onClick={() =>
+                      setState((prev) => {
+                        prev.items.splice(index, 1);
+                        return { ...prev };
+                      })
+                    }
+                    as={Cross}
+                    colors={(theme: any) => ({
+                      path: {
+                        fill: theme.colors.danger600,
+                      },
+                    })}
+                  />
+                }
+              />
+              <Checkbox
+                value={state.items[index].image.isActive}
+                onChange={() =>
+                  setState((prev) => {
+                    const newState = { ...prev };
+                    newState.items[index].image.isActive = !newState.items[index].image.isActive;
+                    return newState;
+                  })
+                }
+              >
+                Generate images
+              </Checkbox>
+              {state.items[index].image.isActive && (
+                <TextInput
+                  placeholder="Custom images prompt"
+                  label="Prompt"
+                  name={`items.${index}.image.prompt`}
+                  hint="Provide your own prompt to generate images. If left blank, the topic will be used as a prompt"
+                  disabled={isLoading}
+                  onChange={handleChange}
+                  value={state.items[index].image.prompt}
                 />
-              }
-            />
+              )}
+            </>
           );
         })}
       </Flex>
@@ -181,8 +238,7 @@ const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
 
 const getRoundedHour = () => {
   const date = new Date();
-  date.setHours(date.getHours() + Math.ceil(date.getMinutes() / 60));
-  date.setMinutes(0, 0, 0);
+  date.setMinutes(Math.ceil(date.getMinutes() / 5) * 5);
   return date;
 };
 

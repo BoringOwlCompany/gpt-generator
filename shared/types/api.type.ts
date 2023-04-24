@@ -53,6 +53,7 @@ export interface IArticleResponse {
   slug: string;
   content: string;
   excerpt: string;
+  image?: ImagesResponse;
 }
 
 export interface IFaqResponse {
@@ -72,11 +73,16 @@ export interface IGeneratedArticleResponse {
   images?: ImagesResponse | null;
 }
 
+export interface INewJobItem {
+  title: string;
+  timestamp: number;
+  image: {
+    isActive: boolean;
+    prompt: string;
+  };
+}
 export interface INewJobRequest {
   keywords: string;
   language: Language;
-  titles: {
-    title: string;
-    timestamp: number;
-  }[];
+  items: INewJobItem[];
 }

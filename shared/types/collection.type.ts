@@ -1,4 +1,5 @@
 import { Language } from '../enums';
+import { INewJobItem } from './api.type';
 
 export interface IResponse<T> {
   results: T;
@@ -14,10 +15,8 @@ export interface IPagination {
 
 export type IStatus = 'idle' | 'loading' | 'error' | 'success' | 'warning';
 
-export interface IComponentTitle {
+export interface IComponentTitle extends INewJobItem {
   status: IStatus;
-  timestamp: number;
-  title: string;
   articleId?: number;
   log?: any;
 }

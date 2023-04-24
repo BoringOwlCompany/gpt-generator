@@ -8,9 +8,8 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
 
   async createNewJob(data: INewJobRequest) {
-    const titles: IComponentTitle[] = data.titles.map(({ timestamp, title }) => ({
-      timestamp,
-      title,
+    const titles: IComponentTitle[] = data.items.map((item) => ({
+      ...item,
       status: 'idle',
     }));
 

@@ -2,6 +2,7 @@ import { Strapi } from '@strapi/strapi';
 import { getLanguageCode, IGeneratedArticleResponse, IImagesRequest, Language } from '../../shared';
 import { openai } from '../openai/requests';
 import utils from '@strapi/utils';
+import { uploadToLibrary } from '../utils';
 
 const { NotFoundError } = utils.errors;
 
@@ -26,10 +27,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     language,
   }: IGeneratedArticleResponse & { language: Language }) {
     const languageCode = getLanguageCode(language);
+    let resImage: string | undefined = undefined;
+    const image = article.image;
+
+    if (image) {
+      try {
+        resImage = (await uploadToLibrary(image.data[0].b64_json, article.slug)) as string;
+      } catch (er) {
+        console.error(er);
+      }
+    }
+
     return await strapi.entityService.create(`api::article.article`, {
       data: {
         locale: languageCode,
         content: {
+          image: resImage,
           title: article.title,
           introduction: article.excerpt,
           content: article.content,

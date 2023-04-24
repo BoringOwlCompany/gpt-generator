@@ -83,7 +83,7 @@ const JobDetailsModal = ({ pickedRow, handleClose }: IProps) => {
                   .map(({ status, timestamp, title, log, articleId }) => {
                     const date = new Date(timestamp);
                     return (
-                      <ArticleBox padding={4}>
+                      <ArticleBox padding={4} key={articleId}>
                         <Flex justifyContent="space-between">
                           <Flex direction="row" gap={2}>
                             <Typography variant="pi">
