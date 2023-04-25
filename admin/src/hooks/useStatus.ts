@@ -9,6 +9,16 @@ export const useStatus = (initial: IStatus = 'idle') => {
   const isError = status === 'error';
   const isSuccess = status === 'success';
   const isIdle = status === 'idle';
+  const isRefetching = status === 'refetching';
 
-  return { isIdle, isLoading, isSuccess, isError, setStatus, statusMessage, setStatusMessage };
+  return {
+    isIdle,
+    isLoading,
+    isSuccess,
+    isError,
+    isRefetching,
+    setStatus,
+    statusMessage,
+    setStatusMessage,
+  };
 };

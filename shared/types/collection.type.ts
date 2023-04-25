@@ -13,7 +13,7 @@ export interface IPagination {
   total: number;
 }
 
-export type IStatus = 'idle' | 'loading' | 'error' | 'success' | 'warning';
+export type IStatus = 'idle' | 'loading' | 'error' | 'success' | 'warning' | 'refetching';
 
 export interface IComponentTitle extends INewJobItem {
   status: IStatus;

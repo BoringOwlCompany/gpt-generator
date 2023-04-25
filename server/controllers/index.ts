@@ -1,6 +1,6 @@
-import generalController from "./general.controller";
-import multipleArticlesController from "./multipleArticles.controller";
-import singleArticleController from "./singleArticle.controller";
+import generalController from './general.controller';
+import multipleArticlesController from './multipleArticles.controller';
+import singleArticleController from './singleArticle.controller';
 
 export enum Controller {
   GENERAL = 'generalController',

@@ -1,7 +1,16 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 
 import { Check } from '@strapi/icons';
-import { Tr, Td, Tbody, Typography, Icon, ProgressBar, Badge } from '@strapi/design-system';
+import {
+  Tr,
+  Td,
+  Tbody,
+  Typography,
+  Icon,
+  ProgressBar,
+  Badge,
+  BaseCheckbox,
+} from '@strapi/design-system';
 import { EmptyBodyTable } from '@strapi/helper-plugin';
 import { IGptCronCollection } from '../../../../../shared';
 import styled from 'styled-components';
@@ -17,15 +26,25 @@ interface IProps {
   isLoading: boolean;
   data: IGptCronCollection[] | undefined;
   handlePickRow: (id: number) => void;
+  actions?: (id: number) => React.ReactNode;
+  selectedRows: boolean[];
+  selectRow: (index: number) => void;
 }
 
-const TableBody = ({ data, isLoading, handlePickRow }: IProps) => {
+const TableBody = ({
+  data,
+  actions,
+  isLoading,
+  handlePickRow,
+  selectRow,
+  selectedRows,
+}: IProps) => {
   if (isLoading || !data || !data.length)
     return <EmptyBodyTable colSpan={8} isLoading={isLoading} />;
 
   return (
     <Tbody>
-      {data.map(({ createdAt, id, keywords, language, titles }) => {
+      {data.map(({ createdAt, id, keywords, language, titles }, index) => {
         const date = new Date(createdAt);
         const finishedTitles = titles.filter(
           ({ status }) => status !== 'idle' && status !== 'loading'
@@ -35,6 +54,15 @@ const TableBody = ({ data, isLoading, handlePickRow }: IProps) => {
 
         return (
           <Tr key={id} style={{ cursor: 'pointer' }} onClick={() => handlePickRow(id)}>
+            <Td>
+              <BaseCheckbox
+                value={selectedRows[index]}
+                onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                  e.stopPropagation();
+                  selectRow(index);
+                }}
+              />
+            </Td>
             <Td>
               <Typography>{id}</Typography>
             </Td>
@@ -70,6 +98,7 @@ const TableBody = ({ data, isLoading, handlePickRow }: IProps) => {
                 </Badge>
               </Typography>
             </Td>
+            {actions && <Td>{actions(id)}</Td>}
           </Tr>
         );
       })}

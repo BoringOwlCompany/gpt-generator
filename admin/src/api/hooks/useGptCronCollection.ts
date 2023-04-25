@@ -3,7 +3,11 @@ import { request, useQueryParams } from '@strapi/helper-plugin';
 import { useStatus } from '../../hooks';
 import { Constant, IGptCronCollection, IGptCronResponse, IPagination } from '../../../../shared';
 
-export const useGptCronCollection = () => {
+interface IUseGptCronCollectionProps {
+  onSuccess?: (length: number) => void;
+}
+
+export const useGptCronCollection = ({ onSuccess }: IUseGptCronCollectionProps = {}) => {
   const [{ query }] = useQueryParams();
   const [refetchFlag, setRefetchFlag] = useState(false);
   const { isError, isLoading, isSuccess, setStatus } = useStatus();
@@ -21,7 +25,7 @@ export const useGptCronCollection = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      setStatus('loading');
+      setStatus((prev) => (prev !== 'idle' ? 'refetching' : 'loading'));
 
       try {
         const data: IGptCronResponse = await request(
@@ -33,6 +37,7 @@ export const useGptCronCollection = () => {
         setData(data.results);
         setPagination(data.pagination);
         setStatus('success');
+        onSuccess?.(data.results.length);
       } catch (e) {
         setStatus('error');
       }
