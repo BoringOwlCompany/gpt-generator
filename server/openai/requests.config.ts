@@ -3,6 +3,8 @@ import {
   ITitleRequest,
   ITitlesRequest,
   ITitleWithParagraphRequest,
+  IVideoScriptSceneDetailsRequest,
+  IVideoScriptScenesRequest,
 } from '../../shared';
 import {
   articleContentPrompt,
@@ -16,11 +18,16 @@ import {
   paragraphsPrompt,
   seoJsonPrompt,
   seoPrompt,
-  systemPrompt,
+  developerPrompt,
   titleJsonPrompt,
   titlePrompt,
   titlesJsonPrompt,
   titlesPrompt,
+  videoScriptSceneDetailsJsonPrompt,
+  videoScriptSceneDetailsPrompt,
+  videoScriptScenesJsonPrompt,
+  videoScriptScenesPrompt,
+  directorPrompt,
 } from './prompts';
 import { ChatCompletionRequestMessage } from 'openai';
 
@@ -34,13 +41,17 @@ interface IMessages {
   seo: (props: IContentRequest) => ChatCompletionRequestMessage[];
   faq: (props: IContentRequest) => ChatCompletionRequestMessage[];
   titles: (props: ITitlesRequest) => ChatCompletionRequestMessage[];
+  videoScriptScenes: (props: IVideoScriptScenesRequest) => ChatCompletionRequestMessage[];
+  videoScriptSceneDetails: (
+    props: IVideoScriptSceneDetailsRequest
+  ) => ChatCompletionRequestMessage[];
 }
 
 export const messages: IMessages = {
   title: ({ language, title }) => [
     {
       role: 'system',
-      content: systemPrompt(language),
+      content: developerPrompt(language),
     },
     {
       role: 'user',
@@ -51,7 +62,7 @@ export const messages: IMessages = {
   paragraphs: ({ language, title }) => [
     {
       role: 'system',
-      content: systemPrompt(language),
+      content: developerPrompt(language),
     },
 
     {
@@ -63,7 +74,7 @@ export const messages: IMessages = {
   paragraph: ({ language, title, paragraph }) => [
     {
       role: 'system',
-      content: systemPrompt(language),
+      content: developerPrompt(language),
     },
     {
       role: 'user',
@@ -74,7 +85,7 @@ export const messages: IMessages = {
   excerpt: ({ language, title }) => [
     {
       role: 'system',
-      content: systemPrompt(language),
+      content: developerPrompt(language),
     },
     {
       role: 'user',
@@ -85,7 +96,7 @@ export const messages: IMessages = {
   seo: ({ content, language }) => [
     {
       role: 'system',
-      content: systemPrompt(language),
+      content: developerPrompt(language),
     },
     {
       role: 'assistant',
@@ -100,7 +111,7 @@ export const messages: IMessages = {
   faq: ({ content, language }) => [
     {
       role: 'system',
-      content: systemPrompt(language),
+      content: developerPrompt(language),
     },
     {
       role: 'assistant',
@@ -115,11 +126,41 @@ export const messages: IMessages = {
   titles: ({ keywords, numberOfTitles, language }) => [
     {
       role: 'system',
-      content: systemPrompt(language),
+      content: developerPrompt(language),
     },
     {
       role: 'user',
       content: titlesPrompt(keywords, numberOfTitles) + titlesJsonPrompt,
+    },
+  ],
+
+  videoScriptScenes: ({ articleContent, language, length }) => [
+    {
+      role: 'system',
+      content: directorPrompt(language),
+    },
+    {
+      role: 'assistant',
+      content: articleContentPrompt(articleContent),
+    },
+    {
+      role: 'user',
+      content: videoScriptScenesPrompt(length) + videoScriptScenesJsonPrompt,
+    },
+  ],
+
+  videoScriptSceneDetails: ({ articleContent, language, length, scene }) => [
+    {
+      role: 'system',
+      content: directorPrompt(language),
+    },
+    {
+      role: 'assistant',
+      content: articleContentPrompt(articleContent),
+    },
+    {
+      role: 'user',
+      content: videoScriptSceneDetailsPrompt(scene, length) + videoScriptSceneDetailsJsonPrompt,
     },
   ],
 };

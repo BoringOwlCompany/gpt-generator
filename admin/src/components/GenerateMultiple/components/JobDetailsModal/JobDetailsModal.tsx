@@ -16,28 +16,8 @@ import {
 
 import { getLanguageCode, IGptCronCollection } from '../../../../../../shared';
 import { dateFormatOptions, getStatusFromTitles, parseStatus } from '../../../../utils';
-import styled, { css } from 'styled-components';
 
-const ArticlesBoxesWrapper = styled(Box)`
-  width: 100%;
-`;
-
-const ArticleBox = styled(Box)`
-  ${({ theme }) => css`
-    border: 1px solid ${theme.colors.neutral200};
-    border-bottom-width: 0px;
-    width: 100%;
-
-    &:first-of-type {
-      border-radius: 4px 4px 0 0;
-    }
-
-    &:last-of-type {
-      border-radius: 0 0 4px 4px;
-      border-bottom-width: 1px;
-    }
-  `}
-`;
+import * as S from './JobDetailsModal.styled';
 
 interface IProps {
   pickedRow: IGptCronCollection | undefined;
@@ -77,13 +57,13 @@ const JobDetailsModal = ({ pickedRow, handleClose }: IProps) => {
               <Typography variant="pi" fontWeight="bold">
                 Articles
               </Typography>
-              <ArticlesBoxesWrapper>
+              <S.ArticlesBoxesWrapper>
                 {pickedRow?.titles
                   .sort((a, b) => a.timestamp - b.timestamp)
                   .map(({ status, timestamp, title, log, articleId }) => {
                     const date = new Date(timestamp);
                     return (
-                      <ArticleBox padding={4} key={articleId}>
+                      <S.ArticleBox padding={4} key={articleId}>
                         <Flex justifyContent="space-between">
                           <Flex direction="row" gap={2}>
                             <Typography variant="pi">
@@ -117,10 +97,10 @@ const JobDetailsModal = ({ pickedRow, handleClose }: IProps) => {
                             </Tooltip>
                           </Box>
                         </Flex>
-                      </ArticleBox>
+                      </S.ArticleBox>
                     );
                   })}
-              </ArticlesBoxesWrapper>
+              </S.ArticlesBoxesWrapper>
             </Flex>
           </GridItem>
         </Grid>

@@ -15,6 +15,10 @@ import {
   ITitleResponse,
   ITitlesRequest,
   ITitleWithParagraphRequest,
+  IVideoScriptSceneDetailsRequest,
+  IVideoScriptSceneDetailsResponse,
+  IVideoScriptScenesRequest,
+  IVideoScriptScenesResponse,
   Route,
 } from '../../../shared';
 
@@ -91,5 +95,25 @@ export const generateApi = {
       method: 'POST',
       body: data,
     });
+  },
+
+  generateVideoScriptScenes: async (
+    data: IVideoScriptScenesRequest
+  ): Promise<IVideoScriptScenesResponse> => {
+    return await request(`/${Constant.PLUGIN_NAME}${Route.SINGLE_ARTICLE_VIDEO_SCRIPT_SCENES}`, {
+      method: 'POST',
+      body: data,
+    });
+  },
+  generateVideoScriptSceneDetails: async (
+    data: IVideoScriptSceneDetailsRequest
+  ): Promise<IVideoScriptSceneDetailsResponse> => {
+    return await request(
+      `/${Constant.PLUGIN_NAME}${Route.SINGLE_ARTICLE_VIDEO_SCRIPT_SCENE_DETAILS}`,
+      {
+        method: 'POST',
+        body: data,
+      }
+    );
   },
 };

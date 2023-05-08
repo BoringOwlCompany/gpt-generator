@@ -4,13 +4,13 @@ import { useStatus } from '../../hooks';
 import { Constant, IGptCronCollection, IGptCronResponse, IPagination } from '../../../../shared';
 
 interface IUseGptCronCollectionProps {
-  onSuccess?: (length: number) => void;
+  onSuccess?: (data: IGptCronCollection[]) => void;
 }
 
 export const useGptCronCollection = ({ onSuccess }: IUseGptCronCollectionProps = {}) => {
   const [{ query }] = useQueryParams();
   const [refetchFlag, setRefetchFlag] = useState(false);
-  const { isError, isLoading, isSuccess, setStatus } = useStatus();
+  const { isError, isRefetching, isLoading, isSuccess, setStatus } = useStatus();
 
   const [data, setData] = useState<IGptCronCollection[]>();
   const [pagination, setPagination] = useState<IPagination>({
@@ -37,7 +37,7 @@ export const useGptCronCollection = ({ onSuccess }: IUseGptCronCollectionProps =
         setData(data.results);
         setPagination(data.pagination);
         setStatus('success');
-        onSuccess?.(data.results.length);
+        onSuccess?.(data.results);
       } catch (e) {
         setStatus('error');
       }
@@ -46,5 +46,5 @@ export const useGptCronCollection = ({ onSuccess }: IUseGptCronCollectionProps =
     fetch();
   }, [query?.page, query?.pageSize, query?.sort, refetchFlag]);
 
-  return { data, refetch, pagination, isError, isLoading, isSuccess };
+  return { data, refetch, pagination, isError, isRefetching, isLoading, isSuccess };
 };

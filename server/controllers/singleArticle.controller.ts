@@ -1,6 +1,6 @@
-import { Strapi } from "@strapi/strapi";
-import { Constant } from "../../shared";
-import { Service } from '../services'
+import { Strapi } from '@strapi/strapi';
+import { Constant } from '../../shared';
+import { Service } from '../services';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async generateTitle(ctx) {
@@ -57,5 +57,19 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       .plugin(Constant.PLUGIN_NAME)
       .service(Service.SINGLE_ARTICLE)
       .uploadImage(ctx.request.files);
+  },
+
+  async generateVideoScriptScenes(ctx) {
+    ctx.body = await strapi
+      .plugin(Constant.PLUGIN_NAME)
+      .service(Service.SINGLE_ARTICLE)
+      .generateVideoScriptScenes(ctx.request.body);
+  },
+
+  async generateVideoScriptSceneDetails(ctx) {
+    ctx.body = await strapi
+      .plugin(Constant.PLUGIN_NAME)
+      .service(Service.SINGLE_ARTICLE)
+      .generateVideoScriptSceneDetails(ctx.request.body);
   },
 });

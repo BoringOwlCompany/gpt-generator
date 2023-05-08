@@ -25,14 +25,14 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     faq,
     seo,
     language,
+    videoScript,
   }: IGeneratedArticleResponse & { language: Language }) {
     const languageCode = getLanguageCode(language);
-    let resImage: string | undefined = undefined;
-    const image = article.image;
 
-    if (image) {
+    let resImage: string | undefined = undefined;
+    if (article?.image) {
       try {
-        resImage = (await uploadToLibrary(image.data[0].b64_json, article.slug)) as string;
+        resImage = (await uploadToLibrary(article.image.data[0].b64_json, article.slug)) as string;
       } catch (er) {
         console.error(er);
       }
@@ -49,6 +49,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           slug: article.slug,
           publishDate: new Date().toISOString(),
         },
+        videoScript,
         seo: [
           {
             title: seo.title,

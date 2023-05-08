@@ -6,8 +6,8 @@ import {
   Button,
   Divider,
   TextInput,
-  Combobox,
-  ComboboxOption,
+  Select,
+  Option,
   Flex,
   Grid,
   GridItem,
@@ -16,9 +16,9 @@ import {
 } from '@strapi/design-system';
 import { Cross } from '@strapi/icons';
 
-import { Cron } from '../../../../../../shared';
-import { useForm, useStatus } from '../../../../hooks';
-import { FormWrapper } from '../../../Global';
+import { Cron, VideoLength } from '../../../../../../shared';
+import { useForm, useStatus, useIndeterminateCheckbox } from '../../../../hooks';
+import { FormWrapper, TitleOptions } from '../../../Global';
 
 import { cronPossibilities } from './AddJobForm.config';
 import { IForm } from '../AddJobModal/AddJobModal';
@@ -35,8 +35,6 @@ const addMinutesToTime = (minutes: number) => 1000 * 60 * minutes;
 const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
   const { isError, isLoading, setStatus } = useStatus();
   const [dateError, setDateError] = useState('');
-  const [isAllImagesActive, setIsAllImagesActive] = useState(false);
-  const [isAllImageIndeterminate, setIsAllImageIndeterminate] = useState(false);
 
   const { state, setState, handleChange, handleValueChange } = useForm({
     firstArticleGenerationTime: getRoundedHour(),
@@ -44,26 +42,28 @@ const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
     items: titlesFormState.titles.map((title) => ({
       title,
       image: { isActive: false, prompt: '' },
+      videoScript: { isActive: false, length: VideoLength.ONE_MINUTE },
     })),
   });
 
-  useEffect(() => {
-    setIsAllImageIndeterminate(
-      state.items.some(({ image }) => image.isActive) &&
-        !state.items.every(({ image }) => image.isActive)
-    );
-  }, [state]);
+  const { allImages, allVideoScripts } = useIndeterminateCheckbox({
+    allImages: state.items.map((item) => item.image.isActive),
+    allVideoScripts: state.items.map((item) => item.videoScript.isActive),
+  });
 
-  useEffect(() => {
-    setState((prev) => {
-      const newState = { ...prev };
-      newState.items = newState.items.map((item) => ({
+  const setAllImages = (checked: boolean) =>
+    setState((prev) => ({
+      ...prev,
+      items: prev.items.map((item) => ({ ...item, image: { ...item.image, isActive: checked } })),
+    }));
+  const setAllVideoScripts = (checked: boolean) =>
+    setState((prev) => ({
+      ...prev,
+      items: prev.items.map((item) => ({
         ...item,
-        image: { ...item.image, isActive: isAllImagesActive },
-      }));
-      return newState;
-    });
-  }, [isAllImagesActive]);
+        videoScript: { ...item.videoScript, isActive: checked },
+      })),
+    }));
 
   const now = new Date();
 
@@ -133,14 +133,14 @@ const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
                 error={dateError && ' '}
                 ariaLabel="time"
                 value={timeValue}
-                step={5}
+                step={1}
                 onChange={handleTimeChange}
               />
             </Flex>
           </Flex>
         </GridItem>
         <GridItem col={6}>
-          <Combobox
+          <Select
             value={state.interval}
             label="Interval"
             disabled={isLoading}
@@ -148,20 +148,31 @@ const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
             onChange={(value: string) => handleValueChange('interval', value)}
           >
             {cronPossibilities.map(({ label, value }) => (
-              <ComboboxOption key={value} value={value}>
+              <Option key={value} value={value}>
                 {label}
-              </ComboboxOption>
+              </Option>
             ))}
-          </Combobox>
+          </Select>
         </GridItem>
       </Grid>
-      <Checkbox
-        value={isAllImagesActive}
-        onChange={() => setIsAllImagesActive((prev) => !prev)}
-        indeterminate={isAllImageIndeterminate}
-      >
-        Generate all images
-      </Checkbox>
+      <Flex gap={2}>
+        <Checkbox
+          value={allImages === true}
+          indeterminate={allImages === 'indeterminate'}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAllImages(e.target.checked)}
+        >
+          Generate all images
+        </Checkbox>
+        <Checkbox
+          value={allVideoScripts === true}
+          indeterminate={allVideoScripts === 'indeterminate'}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setAllVideoScripts(e.target.checked)
+          }
+        >
+          Generate all video scripts
+        </Checkbox>
+      </Flex>
       <Divider />
       <Flex
         direction="column"
@@ -202,29 +213,25 @@ const AddJobForm = ({ titlesFormState, handleFinish }: IProps) => {
                   />
                 }
               />
-              <Checkbox
-                value={state.items[index].image.isActive}
-                onChange={() =>
-                  setState((prev) => {
-                    const newState = { ...prev };
-                    newState.items[index].image.isActive = !newState.items[index].image.isActive;
-                    return newState;
-                  })
-                }
-              >
-                Generate images
-              </Checkbox>
-              {state.items[index].image.isActive && (
-                <TextInput
-                  placeholder="Custom images prompt"
-                  label="Prompt"
-                  name={`items.${index}.image.prompt`}
-                  hint="Provide your own prompt to generate images. If left blank, the topic will be used as a prompt"
-                  disabled={isLoading}
-                  onChange={handleChange}
-                  value={state.items[index].image.prompt}
-                />
-              )}
+              <TitleOptions
+                disabled={isLoading}
+                imagesOptions={{
+                  checkboxValue: state.items[index].image.isActive,
+                  checkboxOnChange: (value) =>
+                    handleValueChange('items', value, `${index}.image.isActive`),
+                  prompt: state.items[index].image.prompt,
+                  promptInputName: `items.${index}.image.prompt`,
+                  promptOnChange: handleChange,
+                }}
+                videoScriptOptions={{
+                  checkboxValue: state.items[index].videoScript.isActive,
+                  checkboxOnChange: (value) =>
+                    handleValueChange('items', value, `${index}.videoScript.isActive`),
+                  length: state.items[index].videoScript.length,
+                  lengthOnChange: (value) =>
+                    handleValueChange('items', value, `${index}.videoScript.length`),
+                }}
+              />
             </>
           );
         })}

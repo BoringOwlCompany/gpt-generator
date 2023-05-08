@@ -1,16 +1,20 @@
 import { useState } from 'react';
 import {
   Constant,
+  generateContentHtml,
+  generateVideoScriptHtml,
   IGeneratedArticleResponse,
   IImagesRequest,
   ITitleRequest,
   ITitleResponse,
   ITitlesRequest,
+  IVideoScriptScenesRequest,
 } from '../../../shared';
 import { ImagesResponse } from 'openai';
 import { generateApi } from '../api';
 import { useStatus } from './useStatus';
 import slugify from 'slugify';
+import { cumulativeRequests } from '../utils/cumulativeRequests';
 
 export const useGpt = () => {
   const { isError, isLoading, statusMessage, setStatus, setStatusMessage } = useStatus();
@@ -43,7 +47,7 @@ export const useGpt = () => {
             ...titleRequest,
             paragraph,
           });
-          articleContent[index] = `<h2>${paragraph}</h2><p>${content.paragraph}</p>`;
+          articleContent[index] = generateContentHtml(paragraph, content.paragraph);
         })
       );
 
@@ -100,55 +104,62 @@ export const useGpt = () => {
     }
   };
 
+  const generateVideoScript = async (data: IVideoScriptScenesRequest): Promise<string | null> => {
+    try {
+      setStatus('loading');
+      setStatusMessage('Generating video script scenes...');
+      const scenes = await generateApi.generateVideoScriptScenes(data);
+
+      setStatusMessage('Generating video script scene details...');
+      const videoScript: string[] = [];
+      const scenesDetails = await cumulativeRequests(generateApi.generateVideoScriptSceneDetails, {
+        args: scenes.map(({ scene, length }) => ({
+          ...data,
+          scene,
+          length,
+        })),
+        onError: () => setStatus('error'),
+      });
+
+      scenesDetails.map(({ camera, voiceover }, index) => {
+        const { scene, length } = scenes[index];
+        videoScript.push(generateVideoScriptHtml(scene, length, camera, voiceover));
+      });
+
+      setProgress((prev) => prev + 1);
+      setStatus('success');
+      return videoScript.join('');
+    } catch (e) {
+      setStatus('error');
+      return null;
+    }
+  };
+
   const generateTitles = async (data: ITitlesRequest): Promise<ITitleResponse[]> => {
     setStatus('loading');
     setStatusMessage('Generating titles...');
     setProgress(0);
 
-    let toGenerate = data.numberOfTitles;
-    const allTitles: ITitleResponse[] = [];
-    while (toGenerate > 0) {
-      const numberOfTitlesToGenerate =
-        toGenerate > Constant.TITLES_TO_GENERATE_PER_REQUEST
-          ? Constant.TITLES_TO_GENERATE_PER_REQUEST
-          : toGenerate;
-
-      const promises: Promise<ITitleResponse[]>[] = [];
-
-      let iterator = 0;
-      while (toGenerate > 0 && iterator < Constant.NUMBER_OF_MAXIMUM_CUMULATIVE_REQUESTS) {
-        const titlesPromise = generateApi
-          .generateTitles({
-            ...data,
-            numberOfTitles: numberOfTitlesToGenerate,
-          })
-          .then((res) => {
-            setProgress((prev) => prev + 1);
-            return res;
-          });
-
-        promises.push(titlesPromise);
-
-        toGenerate -= numberOfTitlesToGenerate;
-        iterator += 1;
-      }
-
-      try {
-        const generatedTitles = await Promise.all(promises);
-        allTitles.push(...generatedTitles.flat(1));
-      } catch (e) {
-        setStatus('error');
-      }
-    }
+    const allTitles = await cumulativeRequests(generateApi.generateTitles, {
+      args: Array.from({
+        length: Math.ceil(data.numberOfTitles / Constant.TITLES_TO_GENERATE_PER_REQUEST),
+      }).map(() => ({
+        ...data,
+        numberOfTitles: Constant.TITLES_TO_GENERATE_PER_REQUEST,
+      })),
+      onError: () => setStatus('error'),
+      onSuccess: () => setProgress((prev) => prev + 1),
+    });
 
     setStatus('success');
-    return allTitles;
+    return allTitles.flat(1).slice(0, data.numberOfTitles);
   };
 
   return {
     generateArticle,
     generateTitles,
     generateImages,
+    generateVideoScript,
     progress,
     isError,
     isLoading,

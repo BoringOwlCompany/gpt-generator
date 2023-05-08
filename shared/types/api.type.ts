@@ -29,6 +29,29 @@ export interface IImagesRequest {
   numberOfImages?: number;
 }
 
+export interface IVideoScriptScenesRequest {
+  articleContent: string;
+  length: string;
+  language: string;
+}
+
+export type IVideoScriptScenesResponse = IVideoScriptSceneResponse[];
+
+export interface IVideoScriptSceneResponse {
+  scene: string;
+  length: string;
+}
+
+export interface IVideoScriptSceneDetailsRequest extends Omit<IVideoScriptScenesRequest, 'length'> {
+  scene: string;
+  length: string;
+}
+
+export interface IVideoScriptSceneDetailsResponse {
+  camera: string;
+  voiceover: string;
+}
+
 export interface ITitleResponse {
   title: string;
 }
@@ -71,14 +94,19 @@ export interface IGeneratedArticleResponse {
   seo: ISeoResponse;
   faq: IFaqResponse[];
   images?: ImagesResponse | null;
+  videoScript?: string | null;
 }
 
 export interface INewJobItem {
   title: string;
   timestamp: number;
-  image: {
+  image?: {
     isActive: boolean;
     prompt: string;
+  };
+  videoScript?: {
+    isActive: boolean;
+    length: string;
   };
 }
 export interface INewJobRequest {

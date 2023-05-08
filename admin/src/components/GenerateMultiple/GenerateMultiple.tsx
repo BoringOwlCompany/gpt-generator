@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { CarretDown, CarretUp, Plus } from '@strapi/icons';
+import { CarretDown, CarretUp, Plus, Trash } from '@strapi/icons';
 import {
   BaseHeaderLayout,
   Table,
@@ -21,6 +21,7 @@ import { useModal, useSort } from '../../hooks';
 import { useGptCronCollection, useGptCronCollectionDelete } from '../../api';
 import TableBody from './TableBody';
 import JobDetailsModal from './components/JobDetailsModal';
+import { ConfirmationDialog } from '../Global';
 
 const GenerateMultiple = () => {
   const [isFormModalOpened, handleCloseFormModal, handleOpenFormModal] = useModal({
@@ -28,13 +29,11 @@ const GenerateMultiple = () => {
   });
   const [isDetailsModalOpen, handleCloseDetailsModal, handleOpenDetailsModal] = useModal();
   const [pickedRowId, setPickedRowId] = useState<number | null>(null);
-  const [selectedRows, setSelectedRows] = useState<boolean[]>([]);
-  const { data, refetch, pagination, isLoading } = useGptCronCollection({
-    onSuccess: (length) => setSelectedRows(new Array(length).fill(false)),
-  });
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] = useState(false);
+  const { data, refetch, pagination, isLoading, isRefetching } = useGptCronCollection();
   const {
     isLoading: isDeleteLoading,
-    deleteCron,
     deleteBatchCron,
     deleteItemId,
     isBatchLoading,
@@ -49,18 +48,17 @@ const GenerateMultiple = () => {
   };
 
   const handleSelectAllRows = () => {
-    if (selectedRows.every((row) => row)) {
-      setSelectedRows(new Array(selectedRows.length).fill(false));
+    if (selectedRows.length > 0) {
+      setSelectedRows([]);
     } else {
-      setSelectedRows(new Array(selectedRows.length).fill(true));
+      setSelectedRows(data?.map(({ id }) => id) || []);
     }
   };
 
-  const handleSelectRow = (index: number) => {
+  const handleSelectRow = (id: number) => {
     setSelectedRows((prev) => {
-      const newRows = [...prev];
-      newRows[index] = !newRows[index];
-      return newRows;
+      if (prev.includes(id)) return prev.filter((currentId) => currentId !== id);
+      return [...prev, id];
     });
   };
   const sortProps = (currentField: string) => {
@@ -83,7 +81,6 @@ const GenerateMultiple = () => {
   };
 
   const pickedRow = data?.find(({ id }) => id === pickedRowId);
-
   const numberOfSelectedRows = selectedRows.filter((row) => row).length;
   return (
     <Box>
@@ -98,6 +95,16 @@ const GenerateMultiple = () => {
               Add new job
             </Button>
           }
+          secondaryAction={
+            <Button
+              variant="tertiary"
+              onClick={refetch}
+              disabled={isRefetching}
+              loading={isRefetching}
+            >
+              Refresh
+            </Button>
+          }
           title="Generate multiple articles"
           subtitle={`${pagination.total} entries found`}
           as="h2"
@@ -107,17 +114,9 @@ const GenerateMultiple = () => {
       <Box padding={8}>
         {numberOfSelectedRows > 0 && data && (
           <Button
-            onClick={() =>
-              deleteBatchCron(
-                selectedRows.reduce((prev, cur) => {
-                  if (cur) {
-                    return [...prev, data[selectedRows.indexOf(cur)].id];
-                  }
-                  return prev;
-                }, [] as number[])
-              )
-            }
-            style={{ marginBottom: '8px' }}
+            variant="danger-light"
+            onClick={() => setIsConfirmationDialogVisible(true)}
+            marginBottom={2}
           >
             Delete {numberOfSelectedRows} jobs
           </Button>
@@ -128,10 +127,8 @@ const GenerateMultiple = () => {
               <Th>
                 <BaseCheckbox
                   onChange={handleSelectAllRows}
-                  value={selectedRows.length > 0 && selectedRows.every((row) => row)}
-                  indeterminate={
-                    selectedRows.some((row) => row) && !selectedRows.every((row) => row)
-                  }
+                  value={selectedRows.length > 0}
+                  indeterminate={selectedRows.length > 0 && selectedRows.length !== data?.length}
                 />
               </Th>
               <Th {...sortProps('id')}>
@@ -170,15 +167,16 @@ const GenerateMultiple = () => {
             selectedRows={selectedRows}
             selectRow={handleSelectRow}
             actions={(id) => (
-              <Button
-                loading={id === deleteItemId && isDeleteLoading}
+              <IconButton
+                label="Delete job"
+                icon={<Trash />}
+                disabled={id === deleteItemId && isDeleteLoading}
                 onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation();
-                  deleteCron(id);
+                  setSelectedRows([id]);
+                  setIsConfirmationDialogVisible(true);
                 }}
-              >
-                Delete
-              </Button>
+              />
             )}
           />
         </Table>
@@ -189,6 +187,14 @@ const GenerateMultiple = () => {
           </Flex>
         </Box>
       </Box>
+      <ConfirmationDialog
+        isVisible={isConfirmationDialogVisible}
+        handleClose={() => setIsConfirmationDialogVisible(false)}
+        onConfirm={() => {
+          deleteBatchCron(selectedRows);
+          setSelectedRows([]);
+        }}
+      />
     </Box>
   );
 };

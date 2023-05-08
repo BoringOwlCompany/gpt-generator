@@ -1,5 +1,5 @@
 import React, { FormEvent } from 'react';
-import { Button, NumberInput, TextInput, Combobox, ComboboxOption } from '@strapi/design-system';
+import { Button, NumberInput, TextInput, Select, Option } from '@strapi/design-system';
 
 import { IUseForm, useGpt } from '../../../../hooks';
 import { Constant, Language } from '../../../../../../shared';
@@ -55,18 +55,18 @@ const GenerateTitlesForm = ({ form: { state, handleChange, handleValueChange } }
           min={1}
           max={10}
         />
-        <Combobox
+        <Select
           value={state.language}
           label="Language"
           disabled={isLoading}
           onChange={(value: Language) => handleValueChange('language', value)}
         >
           {Object.values(Language).map((lang) => (
-            <ComboboxOption key={lang} value={lang}>
+            <Option key={lang} value={lang}>
               {lang}
-            </ComboboxOption>
+            </Option>
           ))}
-        </Combobox>
+        </Select>
         <Button loading={isLoading} disabled={!state.keywords || isLoading} type="submit">
           Submit
         </Button>

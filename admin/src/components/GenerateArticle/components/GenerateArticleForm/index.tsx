@@ -1,66 +1,77 @@
-import React, { useState, type ChangeEvent, FormEvent } from 'react';
-import {
-  ModalBody,
-  Button,
-  Checkbox,
-  TextInput,
-  Combobox,
-  ComboboxOption,
-} from '@strapi/design-system';
-import { useGpt } from '../../../../hooks';
-import { IGeneratedArticleResponse, Language } from '../../../../../../shared';
+import React, { FormEvent } from 'react';
+import { ModalBody, Button, TextInput, Select, Option } from '@strapi/design-system';
+import { useForm, useGpt } from '../../../../hooks';
+import { IGeneratedArticleResponse, Language, VideoLength } from '../../../../../../shared';
 
-import { AbsoluteProgress, FormWrapper } from '../../../Global';
+import { AbsoluteProgress, FormWrapper, TitleOptions } from '../../../Global';
 
 interface IProps {
   setResult: (results: IGeneratedArticleResponse) => void;
 }
 
 const GenerateArticleForm = ({ setResult }: IProps) => {
-  const [topic, setTopic] = useState('');
-  const [language, setLanguage] = useState<Language>(Language.PL);
-  const [shouldGenerateImages, setShouldGenerateImages] = useState(false);
-  const [numberOfImages, setNumberOfImages] = useState(4);
-  const [imagesPrompt, setImagesPrompt] = useState('');
+  const { state, handleChange, handleValueChange } = useForm({
+    topic: '',
+    language: Language.PL,
+    shouldGenerateImages: false,
+    numberOfImages: 4,
+    imagesPrompt: '',
 
-  const { generateArticle, generateImages, progress, isError, isLoading, statusMessage } = useGpt();
+    shouldGenerateVideoScript: false,
+    videoScriptLength: VideoLength.ONE_MINUTE,
+  });
 
-  const handleTopicChange = (e: ChangeEvent<HTMLInputElement>) => setTopic(e.target.value);
-  const handleGenerateImagesChange = (e: ChangeEvent<HTMLInputElement>) =>
-    setShouldGenerateImages(e.target.checked);
-  const handleImagesPromptChange = (e: ChangeEvent<HTMLInputElement>) =>
-    setImagesPrompt(e.target.value);
+  const {
+    generateArticle,
+    generateImages,
+    generateVideoScript,
+    progress,
+    isError,
+    isLoading,
+    statusMessage,
+  } = useGpt();
 
   const handleGenerate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!topic) return;
+    if (!state.topic) return;
 
-    const result = await generateArticle({
-      language,
-      title: topic,
+    const article = await generateArticle({
+      language: state.language,
+      title: state.topic,
     });
-    if (!result) return;
+    if (!article) return;
 
-    if (!shouldGenerateImages) {
-      setResult(result);
-      return;
+    let result = { ...article };
+
+    if (state.shouldGenerateImages) {
+      const images = await generateImages({
+        title: state.topic,
+        language: state.language,
+        prompt: state.imagesPrompt,
+        numberOfImages: state.numberOfImages,
+      });
+      if (!images) return;
+
+      result.images = images;
     }
 
-    const images = await generateImages({
-      title: topic,
-      language,
-      prompt: imagesPrompt,
-      numberOfImages,
-    });
+    if (state.shouldGenerateVideoScript) {
+      const videoScript = await generateVideoScript({
+        language: state.language,
+        length: state.videoScriptLength,
+        articleContent: article.article.content,
+      });
+      if (!videoScript) return;
 
-    setResult({
-      ...result,
-      images,
-    });
+      result.videoScript = videoScript;
+    }
+
+    setResult(result);
   };
 
-  const numberOfSteps = shouldGenerateImages ? 6 : 5;
+  const numberOfSteps =
+    5 + Number(state.shouldGenerateImages) + Number(state.shouldGenerateVideoScript);
 
   return (
     <ModalBody style={{ position: 'relative' }}>
@@ -69,49 +80,46 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
         <TextInput
           placeholder="Provide a topic for your article"
           label="Topic"
-          name="text"
+          name="topic"
           disabled={isLoading}
           hint={statusMessage}
           error={isError ? 'Something went wrong, please try again...' : ''}
-          onChange={handleTopicChange}
-          value={topic}
+          onChange={handleChange}
+          value={state.topic}
         />
-        <Combobox value={language} label="Language" onChange={setLanguage} disabled={isLoading}>
+        <Select
+          value={state.language}
+          label="Language"
+          onChange={(value: Language) => handleValueChange('language', value)}
+          disabled={isLoading}
+        >
           {Object.values(Language).map((lang) => (
-            <ComboboxOption key={lang} value={lang}>
+            <Option key={lang} value={lang}>
               {lang}
-            </ComboboxOption>
+            </Option>
           ))}
-        </Combobox>
-        <Checkbox value={shouldGenerateImages} onChange={handleGenerateImagesChange}>
-          Generate images
-        </Checkbox>
-        {shouldGenerateImages && (
-          <>
-            <Combobox
-              value={`${numberOfImages}`}
-              label="Number of images"
-              onChange={setNumberOfImages}
-              disabled={isLoading}
-            >
-              {Array.from({ length: 10 }).map((_, index) => (
-                <ComboboxOption key={index + 1} value={`${index + 1}`}>
-                  {index + 1}
-                </ComboboxOption>
-              ))}
-            </Combobox>
-            <TextInput
-              placeholder="Custom images prompt"
-              label="Prompt"
-              name="text"
-              hint="Provide your own prompt to generate images. If left blank, the topic will be used as a prompt"
-              disabled={isLoading}
-              onChange={handleImagesPromptChange}
-              value={imagesPrompt}
-            />
-          </>
-        )}
-        <Button loading={isLoading} disabled={isLoading || !topic} type="submit">
+        </Select>
+        <TitleOptions
+          disabled={isLoading}
+          imagesOptions={{
+            checkboxValue: state.shouldGenerateImages,
+            checkboxOnChange: (value) => handleValueChange('shouldGenerateImages', value),
+            prompt: state.imagesPrompt,
+            promptInputName: 'imagesPrompt',
+            promptOnChange: handleChange,
+            numberOfImages: state.numberOfImages,
+            numberOfImagesOnChange: (value) => handleValueChange('numberOfImages', value),
+          }}
+          videoScriptOptions={{
+            checkboxValue: state.shouldGenerateVideoScript,
+            checkboxOnChange: (value) => handleValueChange('shouldGenerateVideoScript', value),
+            length: state.videoScriptLength,
+            lengthInputName: 'videoScriptLength',
+            lengthOnChange: (value) => handleValueChange('videoScriptLength', value),
+          }}
+        />
+
+        <Button loading={isLoading} disabled={isLoading || !state.topic} type="submit">
           Submit
         </Button>
       </FormWrapper>

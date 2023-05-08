@@ -1,4 +1,4 @@
-import React, { useState, type ChangeEvent, Dispatch } from "react";
+import React, { useState, type ChangeEvent, Dispatch } from 'react';
 import {
   Textarea,
   AccordionGroup,
@@ -6,23 +6,19 @@ import {
   AccordionContent,
   AccordionToggle,
   Box,
-} from "@strapi/design-system";
+} from '@strapi/design-system';
 
-import type { IFaqResponse } from "../../../../../../shared";
-import {
-  ResultAction,
-  type IAction,
-} from "../GenerateArticleResultForm/GenerateArticleResultForm.reducer";
+import type { IFaqResponse } from '../../../../../../shared';
 
-import * as S from "./GenerateArticleResultFaqForm.styled";
+import * as S from './GenerateArticleResultFaqForm.styled';
 
 interface IProps {
   faq: IFaqResponse[];
   disabled: boolean;
-  dispatch: Dispatch<IAction>;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const GenerateArticleResultFaqForm = ({ faq, disabled, dispatch }: IProps) => {
+const GenerateArticleResultFaqForm = ({ faq, disabled, handleChange }: IProps) => {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const handleToggle = (id: number) => {
@@ -45,34 +41,18 @@ const GenerateArticleResultFaqForm = ({ faq, disabled, dispatch }: IProps) => {
               <Box padding={3}>
                 <S.FaqWrapper>
                   <Textarea
-                    name={`faq_question_${index}`}
+                    name={`faq.${index}.question`}
                     label="question"
                     value={item.question}
                     disabled={disabled}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      dispatch({
-                        type: ResultAction.SET_FAQ_QUESTION,
-                        payload: {
-                          index,
-                          value: e.target.value,
-                        },
-                      })
-                    }
+                    onChange={handleChange}
                   />
                   <Textarea
-                    name={`faq_answer_${index}`}
+                    name={`faq.${index}.answer`}
                     label="answer"
                     value={item.answer}
                     disabled={disabled}
-                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-                      dispatch({
-                        type: ResultAction.SET_FAQ_ANSWER,
-                        payload: {
-                          index,
-                          value: e.target.value,
-                        },
-                      })
-                    }
+                    onChange={handleChange}
                   />
                 </S.FaqWrapper>
               </Box>

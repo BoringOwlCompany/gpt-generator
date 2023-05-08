@@ -1,4 +1,4 @@
-import React, { useReducer, type ChangeEvent, FormEvent, useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import {
   Card,
   CardHeader,
@@ -16,14 +16,13 @@ import {
   Textarea,
   Typography,
 } from '@strapi/design-system';
-import { resultReducer, ResultAction } from './GenerateArticleResultForm.reducer';
 import GenerateArticleResultFaqForm from '../GenerateArticleResultFaqForm';
 import type { IComponentProps } from '../../../../types';
 import { IGeneratedArticleResponse } from '../../../../../../shared';
 
 import * as S from './GenerateArticleResultForm.styled';
 import { generateApi } from '../../../../api';
-import { useStatus } from '../../../../hooks';
+import { useForm, useStatus } from '../../../../hooks';
 
 interface IProps {
   data: IGeneratedArticleResponse;
@@ -37,11 +36,10 @@ const GenerateArticleResultForm = ({
   onClearResult,
   onChange,
 }: IProps & IComponentProps) => {
-  const [state, dispatch] = useReducer(resultReducer, data);
+  const { state, handleChange } = useForm(data);
   const [pickedImage, setPickedImage] = useState<number | null>(null);
   const [seoPickedImage, setSeoPickedImage] = useState<number | null>(null);
   const { setStatus, isError, isLoading } = useStatus();
-  const { article, faq, seo } = state;
 
   const handleImageChange = (index: number) =>
     index === pickedImage ? setPickedImage(null) : setPickedImage(index);
@@ -80,17 +78,18 @@ const GenerateArticleResultForm = ({
       }
     }
 
-    onChange({ target: { name: 'content.title', value: article.title } });
-    onChange({ target: { name: 'content.slug', value: article.slug } });
+    onChange({ target: { name: 'content.title', value: state.article.title } });
+    onChange({ target: { name: 'content.slug', value: state.article.slug } });
     onChange({ target: { name: 'content.publishDate', value: new Date().toISOString() } });
-    onChange({ target: { name: 'content.introduction', value: article.excerpt } });
-    onChange({ target: { name: 'content.content', value: article.content } });
-    onChange({ target: { name: 'seo.0.title', value: seo.title } });
-    onChange({ target: { name: 'seo.0.description', value: seo.description } });
-    faq.forEach(({ answer, question }, index) => {
+    onChange({ target: { name: 'content.introduction', value: state.article.excerpt } });
+    onChange({ target: { name: 'content.content', value: state.article.content } });
+    onChange({ target: { name: 'seo.0.title', value: state.seo.title } });
+    onChange({ target: { name: 'seo.0.description', value: state.seo.description } });
+    state.faq.forEach(({ answer, question }, index) => {
       onChange({ target: { name: `seo.0.faq.${index}.question`, value: question } });
       onChange({ target: { name: `seo.0.faq.${index}.answer`, value: answer } });
     });
+    onChange({ target: { name: 'videoScript', value: state.videoScript } });
 
     onClose();
   };
@@ -99,28 +98,18 @@ const GenerateArticleResultForm = ({
     <S.Container onSubmit={handleApply}>
       <ModalBody>
         <TextInput
-          name="title"
+          name="article.title"
           label="title"
           value={state.article.title}
           disabled={isLoading}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            dispatch({
-              type: ResultAction.SET_TITLE,
-              payload: e.target.value,
-            })
-          }
+          onChange={handleChange}
         />
         <TextInput
-          name="slug"
+          name="article.slug"
           label="slug"
           value={state.article.slug}
           disabled={isLoading}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            dispatch({
-              type: ResultAction.SET_SLUG,
-              payload: e.target.value,
-            })
-          }
+          onChange={handleChange}
         />
         {state.images && (
           <div>
@@ -159,52 +148,32 @@ const GenerateArticleResultForm = ({
           style={{
             minHeight: '250px',
           }}
-          name="content"
+          name="article.content"
           label="content"
           value={state.article.content}
           disabled={isLoading}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            dispatch({
-              type: ResultAction.SET_CONTENT,
-              payload: e.target.value,
-            })
-          }
+          onChange={handleChange}
         />
         <Textarea
-          name="introduction"
+          name="article.excerpt"
           label="introduction"
           value={state.article.excerpt}
           disabled={isLoading}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            dispatch({
-              type: ResultAction.SET_EXCERPT,
-              payload: e.target.value,
-            })
-          }
+          onChange={handleChange}
         />
         <TextInput
-          name="seo_title"
+          name="seo.title"
           label="seo title"
           value={state.seo.title}
           disabled={isLoading}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            dispatch({
-              type: ResultAction.SET_SEO_TITLE,
-              payload: e.target.value,
-            })
-          }
+          onChange={handleChange}
         />
         <Textarea
-          name="seo_description"
+          name="seo.description"
           label="seo description"
           value={state.seo.description}
           disabled={isLoading}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            dispatch({
-              type: ResultAction.SET_SEO_DESCRIPTION,
-              payload: e.target.value,
-            })
-          }
+          onChange={handleChange}
         />
         {state.images && (
           <div>
@@ -240,8 +209,21 @@ const GenerateArticleResultForm = ({
           </div>
         )}
 
-        {faq.length > 0 && (
-          <GenerateArticleResultFaqForm faq={faq} disabled={isLoading} dispatch={dispatch} />
+        {state.faq.length > 0 && (
+          <GenerateArticleResultFaqForm
+            faq={state.faq}
+            disabled={isLoading}
+            handleChange={handleChange}
+          />
+        )}
+        {state.videoScript && (
+          <Textarea
+            name="videoScript"
+            label="videoScript"
+            value={state.videoScript}
+            disabled={isLoading}
+            onChange={handleChange}
+          />
         )}
       </ModalBody>
 

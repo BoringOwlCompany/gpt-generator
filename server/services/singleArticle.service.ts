@@ -7,9 +7,12 @@ import {
   ITitleWithParagraphRequest,
   IComponentTitle,
   Language,
+  IVideoScriptScenesRequest,
+  IVideoScriptSceneDetailsRequest,
+  generateContentHtml,
+  generateVideoScriptHtml,
 } from '../../shared';
 import { openai } from '../openai/requests';
-import { ImagesResponse } from 'openai';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async generateTitle(data: ITitleRequest) {
@@ -36,6 +39,32 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     return await openai.generateArticleFaq(data);
   },
 
+  async generateVideoScriptScenes(data: IVideoScriptScenesRequest) {
+    return await openai.generateVideoScriptScenes(data);
+  },
+
+  async generateVideoScriptSceneDetails(data: IVideoScriptSceneDetailsRequest) {
+    return await openai.generateVideoScriptSceneDetails(data);
+  },
+
+  async generateVideoScript(data: IVideoScriptScenesRequest) {
+    const scenes = await openai.generateVideoScriptScenes(data);
+    const videoScript: string[] = [];
+    await Promise.all(
+      scenes.map(async ({ length, scene }, index) => {
+        const { camera, voiceover } = await openai.generateVideoScriptSceneDetails({
+          articleContent: data.articleContent,
+          language: data.language,
+          length,
+          scene,
+        });
+        videoScript[index] = generateVideoScriptHtml(scene, length, camera, voiceover);
+      })
+    );
+
+    return videoScript.join('');
+  },
+
   async generateArticle(data: IComponentTitle & { language: Language }) {
     const { title } = await openai.generateTitle({ title: data.title, language: data.language });
     const titleRequest = {
@@ -52,7 +81,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
           ...titleRequest,
           paragraph,
         });
-        articleContent[index] = `<h2>${paragraph}</h2><p>${content.paragraph}</p>`;
+        articleContent[index] = generateContentHtml(paragraph, content.paragraph);
       })
     );
 
@@ -67,30 +96,34 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     const seo = await openai.generateArticleSEO(contentRequest);
     const faq = await openai.generateArticleFaq(contentRequest);
 
-    const article: {
-      title: string;
-      content: string;
-      excerpt: string;
-      slug: string;
-      image?: ImagesResponse;
-    } = {
-      title,
-      content,
-      excerpt,
-      slug: slugify(title, { lower: true }),
-    };
-    if (data?.image?.isActive) {
-      article.image = await openai.generateImages({
-        title,
-        prompt: data.image.prompt,
-        language: data.language,
-        numberOfImages: 1,
-      });
-    }
+    const image = data?.image?.isActive
+      ? await openai.generateImages({
+          title,
+          prompt: data.image.prompt,
+          language: data.language,
+          numberOfImages: 1,
+        })
+      : null;
+
+    const videoScript = data?.videoScript?.isActive
+      ? await this.generateVideoScript({
+          articleContent: content,
+          length: data.videoScript.length,
+          language: data.language,
+        })
+      : null;
+
     return {
       seo,
       faq,
-      article,
+      article: {
+        title,
+        content,
+        excerpt,
+        slug: slugify(title, { lower: true }),
+        image,
+      },
+      videoScript,
     };
   },
 });

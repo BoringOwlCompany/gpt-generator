@@ -27,7 +27,7 @@ interface IProps {
   data: IGptCronCollection[] | undefined;
   handlePickRow: (id: number) => void;
   actions?: (id: number) => React.ReactNode;
-  selectedRows: boolean[];
+  selectedRows: number[];
   selectRow: (index: number) => void;
 }
 
@@ -44,7 +44,7 @@ const TableBody = ({
 
   return (
     <Tbody>
-      {data.map(({ createdAt, id, keywords, language, titles }, index) => {
+      {data.map(({ createdAt, id, keywords, language, titles }) => {
         const date = new Date(createdAt);
         const finishedTitles = titles.filter(
           ({ status }) => status !== 'idle' && status !== 'loading'
@@ -56,10 +56,10 @@ const TableBody = ({
           <Tr key={id} style={{ cursor: 'pointer' }} onClick={() => handlePickRow(id)}>
             <Td>
               <BaseCheckbox
-                value={selectedRows[index]}
+                value={selectedRows.includes(id)}
                 onClick={(e: React.MouseEvent<HTMLInputElement>) => {
                   e.stopPropagation();
-                  selectRow(index);
+                  selectRow(id);
                 }}
               />
             </Td>
