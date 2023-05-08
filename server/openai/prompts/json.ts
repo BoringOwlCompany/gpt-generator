@@ -27,7 +27,7 @@ const videoScriptSceneDetailsObject = {
 };
 
 export const jsonPrompt = <T extends object>(structure: T) =>
-  `Zwróć w postaci ${Array.isArray(structure) ? 'tablicy' : ''} JSON: ${JSON.stringify(
+  `Zwróć w postaci JSON: ${JSON.stringify(
     structure
   )}. Nie dopisuj nic więcej, tak żeby odpowiedź można było sparsować funkcją JSON.parse. Nie używaj cudzysłowów w tekście. Nie dodawaj nigdzie znaków kończących linie.`;
 
