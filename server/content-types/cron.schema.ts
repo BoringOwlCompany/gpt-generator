@@ -28,5 +28,8 @@ export const GptCron = {
     titles: {
       type: 'json',
     },
+    details: {
+      type: 'json',
+    },
   },
 };
