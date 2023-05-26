@@ -1,14 +1,15 @@
-import { IComponentTitle, IStatus } from '../../../shared';
+import { IJobDetails, IStatus } from '../../../shared';
 
-export const getStatusFromTitles = (titles: IComponentTitle[] | undefined): IStatus => {
-  if (!titles) return 'idle';
+export const getStatusFromJobDetails = (details: IJobDetails | undefined): IStatus => {
+  if (!details) return 'idle';
 
-  if (titles.every(({ status }) => status === 'success')) return 'success';
-  if (titles.every(({ status }) => status === 'warning')) return 'warning';
-  if (titles.every(({ status }) => status === 'error')) return 'error';
-  if (titles.every(({ status }) => status === 'idle')) return 'idle';
+  if (details.items.every(({ status }) => status === 'success')) return 'success';
+  if (details.items.every(({ status }) => status === 'warning')) return 'warning';
+  if (details.items.every(({ status }) => status === 'error')) return 'error';
+  if (details.items.every(({ status }) => status === 'idle')) return 'idle';
 
-  if (titles.some(({ status }) => status === 'warning' || status === 'error')) return 'warning';
+  if (details.items.some(({ status }) => status === 'warning' || status === 'error'))
+    return 'warning';
 
   return 'idle';
 };

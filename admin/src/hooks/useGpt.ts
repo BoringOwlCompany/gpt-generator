@@ -7,8 +7,9 @@ import {
   IImagesRequest,
   ITitleRequest,
   ITitleResponse,
-  ITitlesRequest,
+  IJobDetailsRequest,
   IVideoScriptScenesRequest,
+  ECollection,
 } from '../../../shared';
 import { ImagesResponse } from 'openai';
 import { generateApi } from '../api';
@@ -135,14 +136,33 @@ export const useGpt = () => {
     }
   };
 
-  const generateTitles = async (data: ITitlesRequest): Promise<ITitleResponse[]> => {
+  const generateDetailsForMultipleGenerator = async (
+    data: IJobDetailsRequest,
+    collection: ECollection
+  ) => {
+    if (collection === ECollection.ARTICLE) return generateTitles(data);
+    if (collection === ECollection.FLASHCARD) return generateQuestions(data);
+  };
+
+  const generateQuestions = async (data: IJobDetailsRequest): Promise<ITitleResponse[]> => {
+    setStatus('loading');
+    setStatusMessage('Generating questions...');
+    setProgress(0);
+
+    const allTitles = [{ title: 'Test1' }, { title: 'Test2' }];
+
+    setStatus('success');
+    return allTitles.flat(1).slice(0, data.numberOfItems);
+  };
+
+  const generateTitles = async (data: IJobDetailsRequest): Promise<ITitleResponse[]> => {
     setStatus('loading');
     setStatusMessage('Generating titles...');
     setProgress(0);
 
     const allTitles = await cumulativeRequests(generateApi.generateTitles, {
       args: Array.from({
-        length: Math.ceil(data.numberOfTitles / Constant.TITLES_TO_GENERATE_PER_REQUEST),
+        length: Math.ceil(data.numberOfItems / Constant.TITLES_TO_GENERATE_PER_REQUEST),
       }).map(() => ({
         ...data,
         numberOfTitles: Constant.TITLES_TO_GENERATE_PER_REQUEST,
@@ -152,14 +172,14 @@ export const useGpt = () => {
     });
 
     setStatus('success');
-    return allTitles.flat(1).slice(0, data.numberOfTitles);
+    return allTitles.flat(1).slice(0, data.numberOfItems);
   };
 
   return {
     generateArticle,
-    generateTitles,
     generateImages,
     generateVideoScript,
+    generateDetailsForMultipleGenerator,
     progress,
     isError,
     isLoading,

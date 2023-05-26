@@ -105,7 +105,7 @@ const GenerateMultiple = () => {
               Refresh
             </Button>
           }
-          title="Generate multiple articles"
+          title="Generate multiple"
           subtitle={`${pagination.total} entries found`}
           as="h2"
         />
@@ -121,7 +121,7 @@ const GenerateMultiple = () => {
             Delete {numberOfSelectedRows} jobs
           </Button>
         )}
-        <Table colCount={8}>
+        <Table colCount={8} rowCount={data?.length || 0}>
           <Thead>
             <Tr>
               <Th>
@@ -137,17 +137,14 @@ const GenerateMultiple = () => {
               <Th {...sortProps('createdAt')}>
                 <Typography variant="sigma">Created at</Typography>
               </Th>
-              <Th {...sortProps('keywords')}>
-                <Typography variant="sigma">Keywords</Typography>
+              <Th>
+                <Typography variant="sigma">Items details</Typography>
               </Th>
               <Th {...sortProps('language')}>
                 <Typography variant="sigma">Language</Typography>
               </Th>
               <Th>
                 <Typography variant="sigma">Progress</Typography>
-              </Th>
-              <Th>
-                <Typography variant="sigma">Titles</Typography>
               </Th>
               <Th>
                 <Typography variant="sigma">Is done</Typography>

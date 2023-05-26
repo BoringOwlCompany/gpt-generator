@@ -19,14 +19,14 @@ export const GptCron = {
     },
   },
   attributes: {
+    collection: {
+      type: 'string',
+    },
     keywords: {
       type: 'text',
     },
     language: {
       type: 'string',
-    },
-    titles: {
-      type: 'json',
     },
     details: {
       type: 'json',

@@ -4,9 +4,9 @@ import { Service } from './services';
 
 export default ({ strapi }: { strapi: Strapi }) => {
   strapi.cron.add({
-    lookForArticlesToGenerate: {
+    lookForItemsToGenerate: {
       task: async ({ strapi }) =>
-        await strapi.plugin(Constant.PLUGIN_NAME).service(Service.CRON).lookForArticles(),
+        await strapi.plugin(Constant.PLUGIN_NAME).service(Service.CRON).lookForItemsToGenerate(),
       options: {
         rule: '0 */2 * * * *',
       },

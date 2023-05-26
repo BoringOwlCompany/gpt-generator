@@ -19,7 +19,7 @@ export const videoScriptScenesPrompt = (length: string) =>
   `Potrzebuje scenariusz do filmu na media społecznościowe na podstawie danego artykułu. Daj mi propozycje na sceny do tego filmu i podaj czas ich trwania. Łącznie cały film ma trwać ${length} sekund. Jeśli łącznie sceny nie będą miały ${length} sekund, wymyśl kolejne. Pierwsza scena powinna być wstępem do filmu, a ostatnia podsumowaniem. `;
 
 export const videoScriptSceneDetailsPrompt = (scene: string, length: string) =>
-  `Napisz szczegóły do sceny do filmu na podstawie danego artykułu. Tytuł sceny to ${scene}. Potrzebuje informacje odnośnie tego co ma pokazywać kamera (krótki opis) oraz treść do przeczytania. Teskt ma mieć około ${Math.round(
+  `Napisz szczegóły do sceny do filmu na podstawie danego artykułu. Tytuł sceny to ${scene}. Potrzebuje informacje odnośnie tego co ma pokazywać kamera (krótki opis) oraz treść do przeczytania. Tekst ma mieć około ${Math.round(
     (parseInt(length) * 183) / 60
   )} słów. W treści napisz tylko informacje stricte powiązane z tytułem sceny: ${scene}, nie pisz żadnych wprowadzeń.`;
 

@@ -13,7 +13,7 @@ import {
   ISeoResponse,
   ITitleRequest,
   ITitleResponse,
-  ITitlesRequest,
+  IJobDetailsRequest,
   ITitleWithParagraphRequest,
   IVideoScriptSceneDetailsRequest,
   IVideoScriptSceneDetailsResponse,
@@ -90,8 +90,15 @@ export const generateApi = {
     return response[0];
   },
 
-  generateTitles: async (data: ITitlesRequest): Promise<ITitleResponse[]> => {
+  generateTitles: async (data: IJobDetailsRequest): Promise<ITitleResponse[]> => {
     return await request(`/${Constant.PLUGIN_NAME}${Route.MULTIPLE_ARTICLES_TITLES}`, {
+      method: 'POST',
+      body: data,
+    });
+  },
+
+  generateQuestions: async (data: IJobDetailsRequest): Promise<ITitleResponse[]> => {
+    return await request(`/${Constant.PLUGIN_NAME}${Route.MULTIPLE_FLASHCARDS_QUESTIONS}`, {
       method: 'POST',
       body: data,
     });

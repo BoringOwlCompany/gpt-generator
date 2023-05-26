@@ -8,18 +8,23 @@ import {
   ImagesOptions,
   VideoScriptOptions,
 } from './components';
+import { FieldValues } from 'react-hook-form';
 
-interface IProps {
-  imagesOptions: ITitleOptionsImagesProps;
-  videoScriptOptions: ITitleOptionsVideoScriptProps;
+interface IProps<T extends FieldValues> {
+  imagesOptions: ITitleOptionsImagesProps<T>;
+  videoScriptOptions: ITitleOptionsVideoScriptProps<T>;
   disabled?: boolean;
 }
 
-const TitleOptions = ({ disabled, imagesOptions, videoScriptOptions }: IProps) => {
+const TitleOptions = <T extends FieldValues>({
+  disabled,
+  imagesOptions,
+  videoScriptOptions,
+}: IProps<T>) => {
   return (
     <Flex direction="column" alignItems="start" gap={2}>
-      <ImagesOptions {...imagesOptions} disabled={disabled} />
-      <VideoScriptOptions {...videoScriptOptions} disabled={disabled} />
+      <ImagesOptions<T> {...imagesOptions} disabled={disabled} />
+      <VideoScriptOptions<T> {...videoScriptOptions} disabled={disabled} />
     </Flex>
   );
 };

@@ -11,6 +11,8 @@ export enum Route {
   SINGLE_ARTICLE_VIDEO_SCRIPT_SCENES = '/single-article/video-script-scenes',
   SINGLE_ARTICLE_VIDEO_SCRIPT_SCENE_DETAILS = '/single-article/video-script-scene-details',
 
+  MULTIPLE_NEW_JOB = '/multiple/new-job',
+
   MULTIPLE_ARTICLES_TITLES = '/multiple-articles/titles',
-  MULTIPLE_ARTICLES_NEW_JOB = '/multiple-articles/new-job',
+  MULTIPLE_FLASHCARDS_QUESTIONS = '/multiple-flashcards/questions',
 }

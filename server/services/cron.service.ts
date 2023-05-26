@@ -2,54 +2,53 @@ import { Strapi } from '@strapi/strapi';
 import { Service } from '.';
 import {
   Constant,
-  IComponentTitle,
   IGeneratedArticleResponse,
   IGptCronCollection,
   IStatus,
+  IJobDetailsItem,
 } from '../../shared';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async lookForArticles() {
+  async lookForItemsToGenerate() {
     const data: IGptCronCollection[] = await strapi.entityService.findMany(
       `plugin::${Constant.PLUGIN_NAME}.gpt-cron`
     );
-    const titlesToGenerate: (IComponentTitle & { job: IGptCronCollection })[] = [];
+    const itemsToGenerate: (IJobDetailsItem & { job: IGptCronCollection })[] = [];
     const currentTimestamp = Date.now();
 
     for (const job of data) {
-      for (const title of job.titles) {
-        if (title.status === 'idle' && title.timestamp <= currentTimestamp + 1000 * 60 * 1) {
-          await updateJobTitle(job.id, title.timestamp, {
+      for (const item of job.details.items) {
+        if (item.status === 'idle' && item.timestamp <= currentTimestamp + 1000 * 60 * 1) {
+          await updateJobDetailsItem(job.id, item.timestamp, {
             status: 'loading',
           });
-          titlesToGenerate.push({ ...title, job });
+          itemsToGenerate.push({ ...item, job });
         }
       }
     }
 
-    for (const currentTitle of titlesToGenerate) {
+    for (const currentItem of itemsToGenerate) {
       try {
         const data: IGeneratedArticleResponse = await strapi
           .plugin(Constant.PLUGIN_NAME)
           .service(Service.SINGLE_ARTICLE)
-          .generateArticle({ ...currentTitle, language: currentTitle.job.language });
+          .generateArticle({ ...currentItem, language: currentItem.job.language });
 
         const savedArticle = await strapi
           .plugin(Constant.PLUGIN_NAME)
           .service(Service.GENERAL)
-          .saveArticle({ ...data, language: currentTitle.job.language });
+          .saveArticle({ ...data, language: currentItem.job.language });
 
-        await updateJobTitle(currentTitle.job.id, currentTitle.timestamp, {
+        await updateJobDetailsItem(currentItem.job.id, currentItem.timestamp, {
           status: 'success',
           articleId: savedArticle.id,
         });
       } catch (e) {
         const log = await logError('error', {
-          jobId: currentTitle.job.id,
-          title: currentTitle.title,
+          jobId: currentItem.job.id,
           error: e?.details?.data?.response?.data || e?.details,
         });
-        updateJobTitle(currentTitle.job.id, currentTitle.timestamp, {
+        updateJobDetailsItem(currentItem.job.id, currentItem.timestamp, {
           status: 'error',
           log: log.message.error,
         });
@@ -58,17 +57,20 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
 });
 
-const updateJobTitle = async (
+const updateJobDetailsItem = async (
   jobId: number,
-  titleTimestamp: number,
-  data: Partial<IComponentTitle>
+  itemTimestamp: number,
+  data: Partial<IJobDetailsItem>
 ) => {
-  const job = await strapi.entityService.findOne(`plugin::${Constant.PLUGIN_NAME}.gpt-cron`, jobId);
-  const updatedTitles = job.titles.map((title) => {
-    if (title.timestamp !== titleTimestamp) return title;
+  const job: IGptCronCollection = await strapi.entityService.findOne(
+    `plugin::${Constant.PLUGIN_NAME}.gpt-cron`,
+    jobId
+  );
+  const updatedItems = job.details.items.map((item) => {
+    if (item.timestamp !== itemTimestamp) return item;
 
     return {
-      ...title,
+      ...item,
       ...data,
     };
   });
@@ -76,7 +78,10 @@ const updateJobTitle = async (
   await strapi.entityService.update(`plugin::${Constant.PLUGIN_NAME}.gpt-cron`, job.id, {
     data: {
       ...job,
-      titles: updatedTitles,
+      details: {
+        ...job.details,
+        items: updatedItems,
+      },
     },
   });
 };

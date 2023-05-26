@@ -12,7 +12,7 @@ export const useIndeterminateCheckbox = <T>(initialValues: Initials<T>) => {
 
   useEffect(() => {
     setState(parseObjectWithArrayToCheckboxState(initialValues));
-  }, [...Object.values(initialValues).flat(1)]);
+  }, [JSON.stringify(initialValues)]);
 
   return state;
 };

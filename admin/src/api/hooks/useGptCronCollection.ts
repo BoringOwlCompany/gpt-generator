@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { request, useQueryParams } from '@strapi/helper-plugin';
 import { useStatus } from '../../hooks';
 import { Constant, IGptCronCollection, IGptCronResponse, IPagination } from '../../../../shared';
+import { useCollectionContext } from '../../context';
 
 interface IUseGptCronCollectionProps {
   onSuccess?: (data: IGptCronCollection[]) => void;
@@ -11,6 +12,7 @@ export const useGptCronCollection = ({ onSuccess }: IUseGptCronCollectionProps =
   const [{ query }] = useQueryParams();
   const [refetchFlag, setRefetchFlag] = useState(false);
   const { isError, isRefetching, isLoading, isSuccess, setStatus } = useStatus();
+  const { collection } = useCollectionContext();
 
   const [data, setData] = useState<IGptCronCollection[]>();
   const [pagination, setPagination] = useState<IPagination>({
@@ -29,9 +31,15 @@ export const useGptCronCollection = ({ onSuccess }: IUseGptCronCollectionProps =
 
       try {
         const data: IGptCronResponse = await request(
-          `/content-manager/collection-types/plugin::${Constant.PLUGIN_NAME}.gpt-cron?page=${
-            query?.page || 1
-          }&pageSize=${query?.pageSize || 10}&sort=${query?.sort || 'id:DESC'}`
+          `/content-manager/collection-types/plugin::${Constant.PLUGIN_NAME}.gpt-cron`,
+          {
+            params: {
+              page: query?.page || 1,
+              pageSize: query?.pageSize || 10,
+              sort: query?.sort || 'id:DESC',
+              'filters[collection][$eq]': collection,
+            },
+          }
         );
 
         setData(data.results);

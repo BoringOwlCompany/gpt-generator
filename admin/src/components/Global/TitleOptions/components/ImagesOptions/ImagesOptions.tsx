@@ -1,67 +1,49 @@
 import React from 'react';
 
-import { Checkbox, Select, Option, TextInput } from '@strapi/design-system';
+import { Checkbox, Select, TextInput } from '../../../Form';
+import { FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 
-export interface ITitleOptionsImagesProps {
-  checkboxValue: boolean;
-  checkboxInputName?: string;
-  checkboxOnChange: (value: boolean) => void;
-  prompt: string;
-  promptInputName?: string;
-  promptOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  numberOfImages?: number;
-  numberOfImagesOnChange?: (value: number) => void;
+export interface ITitleOptionsImagesProps<T extends FieldValues> {
+  checkboxName: FieldPath<T>;
+  promptName: FieldPath<T>;
 
+  numberOfImagesName?: FieldPath<T>;
   disabled?: boolean;
 }
 
-const ImagesOptions = ({
-  checkboxOnChange,
-  checkboxInputName,
-  checkboxValue,
-  prompt,
-  promptInputName,
-  promptOnChange,
-  numberOfImages,
-  numberOfImagesOnChange,
+const ImagesOptions = <T extends FieldValues>({
+  checkboxName,
+  promptName,
+  numberOfImagesName,
   disabled,
-}: ITitleOptionsImagesProps) => {
+}: ITitleOptionsImagesProps<T>) => {
+  const { watch } = useFormContext();
+  const checkboxValue = watch(checkboxName);
+
   return (
     <>
-      <Checkbox
-        name={checkboxInputName}
-        value={checkboxValue}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-          checkboxOnChange(event.target.checked)
-        }
-        disabled={disabled}
-      >
+      <Checkbox<T> name={checkboxName} disabled={disabled}>
         Generate images
       </Checkbox>
       {checkboxValue && (
         <>
-          {numberOfImages && (
-            <Select
-              value={`${numberOfImages}`}
+          {numberOfImagesName && (
+            <Select<T>
+              name={numberOfImagesName}
               label="Number of images"
-              onChange={numberOfImagesOnChange}
+              options={Array.from({ length: 10 }).map((_, index) => ({
+                label: String(index + 1),
+                value: index + 1,
+              }))}
               disabled={disabled}
-            >
-              {Array.from({ length: 10 }).map((_, index) => (
-                <Option key={index + 1} value={`${index + 1}`}>
-                  {index + 1}
-                </Option>
-              ))}
-            </Select>
+            />
           )}
-          <TextInput
+          <TextInput<T>
             placeholder="Custom images prompt"
             label="Prompt"
-            name={promptInputName}
+            name={promptName}
             hint="Provide your own prompt to generate images. If left blank, the topic will be used as a prompt"
             disabled={disabled}
-            onChange={promptOnChange}
-            value={prompt}
           />
         </>
       )}

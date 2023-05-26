@@ -5,12 +5,12 @@ import {
   ITitleRequest,
   IContentRequest,
   ITitleWithParagraphRequest,
-  IComponentTitle,
   Language,
   IVideoScriptScenesRequest,
   IVideoScriptSceneDetailsRequest,
   generateContentHtml,
   generateVideoScriptHtml,
+  IJobDetailsItemsArticlesCollectionFields,
 } from '../../shared';
 import { openai } from '../openai/requests';
 
@@ -65,8 +65,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     return videoScript.join('');
   },
 
-  async generateArticle(data: IComponentTitle & { language: Language }) {
-    const { title } = await openai.generateTitle({ title: data.title, language: data.language });
+  async generateArticle(data: IJobDetailsItemsArticlesCollectionFields & { language: Language }) {
+    const { title } = await openai.generateTitle({
+      title: data.title || '',
+      language: data.language,
+    });
     const titleRequest = {
       title,
       language: data.language,

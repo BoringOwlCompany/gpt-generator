@@ -1,37 +1,40 @@
 import { prefixPluginTranslations } from '@strapi/helper-plugin';
+import { Calendar, Component } from '@strapi/icons';
 
 import pluginId from './pluginId';
 import Initializer from './components/Initializer';
-import PluginIcon from './components/PluginIcon';
 import { Constant } from '../../shared';
+import { GenerateSingle } from './components';
+
+const menuItems = [
+  {
+    slug: '/articles',
+    icon: Calendar,
+    label: 'Generate multiple articles',
+    Component: async () => import('./pages/GenerateMultipleArticles'),
+  },
+  {
+    slug: '/flashcards',
+    icon: Component,
+    label: 'Generate multiple flashcards',
+    Component: async () => import('./pages/GenerateMultipleFlashcards'),
+  },
+];
 
 export default {
   register(app: any) {
-    app.addMenuLink({
-      to: `/plugins/${Constant.PLUGIN_NAME}`,
-      icon: PluginIcon,
-      intlLabel: {
-        id: `${Constant.PLUGIN_NAME}.label`,
-        defaultMessage: 'Generate multiple articles',
-      },
-      Component: async () => import('./pages/MainTab'),
+    menuItems.map(({ Component, icon, label, slug }) => {
+      app.addMenuLink({
+        to: `/plugins/${Constant.PLUGIN_NAME}${slug}`,
+        icon,
+        intlLabel: {
+          id: `${Constant.PLUGIN_NAME}.label`,
+          defaultMessage: label,
+        },
+        Component,
+      });
     });
-    app.customFields.register({
-      name: `${Constant.PLUGIN_NAME}`,
-      pluginId: `${Constant.PLUGIN_NAME}`,
-      type: 'string',
-      intlLabel: {
-        id: `${Constant.PLUGIN_NAME}.label`,
-        defaultMessage: `${Constant.PLUGIN_NAME}`,
-      },
-      intlDescription: {
-        id: `${Constant.PLUGIN_NAME}.description`,
-        defaultMessage: `${Constant.PLUGIN_NAME}`,
-      },
-      components: {
-        Input: async () => import('./pages/ArticleContent'),
-      },
-    });
+
     const plugin = {
       id: pluginId,
       initializer: Initializer,
@@ -42,7 +45,12 @@ export default {
     app.registerPlugin(plugin);
   },
 
-  bootstrap(app: any) {},
+  bootstrap(app: any) {
+    app.injectContentManagerComponent('editView', 'right-links', {
+      name: 'generate-with-ai',
+      Component: GenerateSingle,
+    });
+  },
 
   async registerTrads(app: any) {
     const { locales } = app;

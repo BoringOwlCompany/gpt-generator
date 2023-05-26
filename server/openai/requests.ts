@@ -13,7 +13,7 @@ import {
   ISeoResponse,
   ITitleRequest,
   ITitleResponse,
-  ITitlesRequest,
+  IJobDetailsRequest,
   ITitleWithParagraphRequest,
   IVideoScriptSceneDetailsRequest,
   IVideoScriptSceneDetailsResponse,
@@ -63,7 +63,6 @@ const generateTitle = async (data: ITitleRequest): Promise<ITitleResponse> => {
 };
 
 const generateParagraphs = async (data: ITitleRequest): Promise<IParagraphsResponse> => {
-  console.log(messages.paragraphs(data));
   const completion = await tryCatch(() => createChatCompletion(messages.paragraphs(data)));
   return tryParse(completion);
 };
@@ -93,7 +92,7 @@ const generateImages = async (data: IImagesRequest) => {
   return images.data;
 };
 
-const generateTitles = async (data: ITitlesRequest) => {
+const generateTitles = async (data: IJobDetailsRequest) => {
   const completion = await tryCatch(() => createChatCompletion(messages.titles(data)));
   return tryParse(completion);
 };

@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ModalLayout, ModalBody, ModalHeader, Typography } from '@strapi/design-system';
-import GenerateTitlesForm from '../GenerateTitlesForm';
-import { Language } from '../../../../../../shared';
-import AddJobForm from '../AddJobForm';
-import { IHandleCloseOptions, useForm } from '../../../../hooks';
+import { Cron, IRelationalCollectionResponse, Language } from '../../../../../../shared';
+import { IHandleCloseOptions } from '../../../../hooks';
+import FirstStep from './components/FirstStep';
+import LastStep from './components/LastStep';
+import { FormProvider, useForm } from 'react-hook-form';
+import { IFinalForm } from './components/LastStep/LastStep.types';
+import { getCollectionSpecificFields, getRoundedHour } from './components/LastStep/LastStep.utils';
+import { useCollectionContext } from '../../../../context';
 
 interface IProps {
   handleDone: () => void;
@@ -12,18 +16,36 @@ interface IProps {
 
 export interface IForm {
   keywords: string;
-  numberOfTitles: number;
+  numberOfItems: number;
   language: Language;
-  titles: string[];
+  details: string[];
+  tags: IRelationalCollectionResponse[];
 }
 
 const AddJobModal = ({ handleClose, handleDone }: IProps) => {
-  const form = useForm<IForm>({
-    keywords: '',
-    numberOfTitles: 5,
-    language: Language.PL,
-    titles: [],
+  const [firstStepResult, setFirstStepResult] = useState<IForm | null>(null);
+  const { collection } = useCollectionContext();
+  const methods = useForm<IFinalForm>({
+    defaultValues: {
+      firstItemGenerationTime: getRoundedHour(),
+      interval: Cron.ONE_HOUR,
+      items: [],
+    },
   });
+
+  const setResult = (state: IForm) => {
+    setFirstStepResult(state);
+    methods.setValue(
+      'items',
+      state?.details.map((title) => ({
+        title,
+        collection,
+        ...getCollectionSpecificFields(collection),
+      }))
+    );
+  };
+
+  const items = methods.watch('items');
 
   const handleFinish = () => {
     handleClose({ withConfirmation: false });
@@ -38,10 +60,12 @@ const AddJobModal = ({ handleClose, handleDone }: IProps) => {
         </Typography>
       </ModalHeader>
       <ModalBody style={{ position: 'relative' }}>
-        {form.state.titles.length ? (
-          <AddJobForm handleFinish={handleFinish} titlesFormState={form.state} />
+        {Boolean(items.length) && firstStepResult ? (
+          <FormProvider {...methods}>
+            <LastStep initialValues={firstStepResult} handleFinish={handleFinish} />
+          </FormProvider>
         ) : (
-          <GenerateTitlesForm form={form} />
+          <FirstStep setResult={setResult} />
         )}
       </ModalBody>
     </ModalLayout>

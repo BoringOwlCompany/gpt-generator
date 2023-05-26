@@ -1,7 +1,7 @@
 import {
   IContentRequest,
   ITitleRequest,
-  ITitlesRequest,
+  IJobDetailsRequest,
   ITitleWithParagraphRequest,
   IVideoScriptSceneDetailsRequest,
   IVideoScriptScenesRequest,
@@ -40,7 +40,7 @@ interface IMessages {
   excerpt: (props: ITitleRequest) => ChatCompletionRequestMessage[];
   seo: (props: IContentRequest) => ChatCompletionRequestMessage[];
   faq: (props: IContentRequest) => ChatCompletionRequestMessage[];
-  titles: (props: ITitlesRequest) => ChatCompletionRequestMessage[];
+  titles: (props: IJobDetailsRequest) => ChatCompletionRequestMessage[];
   videoScriptScenes: (props: IVideoScriptScenesRequest) => ChatCompletionRequestMessage[];
   videoScriptSceneDetails: (
     props: IVideoScriptSceneDetailsRequest
@@ -123,7 +123,7 @@ export const messages: IMessages = {
     },
   ],
 
-  titles: ({ keywords, numberOfTitles, language }) => [
+  titles: ({ keywords, numberOfItems: numberOfTitles, language }) => [
     {
       role: 'system',
       content: developerPrompt(language),

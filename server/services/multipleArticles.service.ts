@@ -1,23 +1,9 @@
 import { Strapi } from '@strapi/strapi';
-import { Constant, IComponentTitle, INewJobRequest, ITitlesRequest } from '../../shared';
+import { IJobDetailsRequest } from '../../shared';
 import { openai } from '../openai/requests';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
-  async generateTitles(data: ITitlesRequest) {
+  async generateTitles(data: IJobDetailsRequest) {
     return await openai.generateTitles(data);
-  },
-
-  async createNewJob(data: INewJobRequest) {
-    const titles: IComponentTitle[] = data.items.map((item) => ({
-      ...item,
-      status: 'idle',
-    }));
-
-    return await strapi.entityService.create(`plugin::${Constant.PLUGIN_NAME}.gpt-cron`, {
-      data: {
-        ...data,
-        titles,
-      },
-    });
   },
 });

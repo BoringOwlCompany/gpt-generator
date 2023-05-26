@@ -1,32 +1,58 @@
 import { Language } from '../enums';
-import { INewJobItem } from './api.type';
+import { IResponse, IStatus } from './api.type';
+import {
+  IJobDetailsArticlesCollectionFields,
+  IJobDetailsFlashcardsCollectionFields,
+  IJobDetailsItemsArticlesCollectionFields,
+  IJobDetailsItemsFlashcardsCollectionFields,
+} from './collections';
 
-export interface IResponse<T> {
-  results: T;
-  pagination: IPagination;
-}
+export type IJobDetailsItemCollectionFields =
+  | IJobDetailsItemsArticlesCollectionFields
+  | IJobDetailsItemsFlashcardsCollectionFields;
 
-export interface IPagination {
-  page: number;
-  pageSize: number;
-  pageCount: number;
-  total: number;
-}
+export type IJobDetailsCollectionFields =
+  | IJobDetailsArticlesCollectionFields
+  | IJobDetailsFlashcardsCollectionFields;
 
-export type IStatus = 'idle' | 'loading' | 'error' | 'success' | 'warning' | 'refetching';
-
-export interface IComponentTitle extends INewJobItem {
-  status: IStatus;
-  articleId?: number;
+export type IJobDetailsItem = {
+  timestamp: number;
+  status?: IStatus;
   log?: any;
+} & IJobDetailsItemCollectionFields;
+
+export interface INewJobRequest {
+  language: Language;
+  details: IJobDetails;
+  collection?: ECollection;
 }
+
+export enum ECollection {
+  ARTICLE = 'api::article.article',
+  FLASHCARD = 'api::flashcard.flashcard',
+}
+
+export enum ERelationalCollection {
+  TAG = 'api::tag.tag',
+  CATEGORY = 'api::category.category',
+}
+
+export interface IRelationalCollectionResponse {
+  id: number;
+  slug: string;
+  publishedAt: Date | null;
+}
+
+export type IJobDetails = {
+  items: IJobDetailsItem[];
+} & IJobDetailsCollectionFields;
 
 export interface IGptCronCollection {
   id: number;
   createdAt: Date;
-  keywords: string;
   language: Language;
-  titles: IComponentTitle[];
+  collection: ECollection;
+  details: IJobDetails;
 }
 
 export type IGptCronResponse = IResponse<IGptCronCollection[]>;

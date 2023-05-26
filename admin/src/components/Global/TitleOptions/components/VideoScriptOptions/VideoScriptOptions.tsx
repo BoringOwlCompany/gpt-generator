@@ -1,53 +1,38 @@
 import React from 'react';
+import { FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 
-import { Checkbox, Select, Option } from '@strapi/design-system';
-import { VideoLength } from '../../../../../../../shared';
+import { Checkbox, Select } from '../../../Form';
 import { videoLengthPossibilities } from './VideoScriptOptions.config';
 
-export interface ITitleOptionsVideoScriptProps {
-  checkboxValue: boolean;
-  checkboxOnChange: (value: boolean) => void;
-
-  length: VideoLength;
-  lengthInputName?: string;
-  lengthOnChange: (value: VideoLength) => void;
+export interface ITitleOptionsVideoScriptProps<T extends FieldValues> {
+  checkboxName: FieldPath<T>;
+  lengthName: FieldPath<T>;
 
   disabled?: boolean;
 }
 
-const VideoScriptOptions = ({
+const VideoScriptOptions = <T extends FieldValues>({
   disabled,
-  checkboxValue,
-  checkboxOnChange,
-  length,
-  lengthInputName,
-  lengthOnChange,
-}: ITitleOptionsVideoScriptProps) => {
+  checkboxName,
+  lengthName,
+}: ITitleOptionsVideoScriptProps<T>) => {
+  const { watch } = useFormContext();
+  const checkboxValue = watch(checkboxName);
   return (
     <>
-      <Checkbox
-        value={checkboxValue}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-          checkboxOnChange(event.target.checked)
-        }
-        disabled={disabled}
-      >
+      <Checkbox name={checkboxName} disabled={disabled}>
         Generate video script
       </Checkbox>
       {checkboxValue && (
         <Select
-          name={lengthInputName}
-          value={`${length}`}
+          name={lengthName}
           label="Length of the video"
-          onChange={lengthOnChange}
+          options={videoLengthPossibilities.map(({ label, value }) => ({
+            label,
+            value,
+          }))}
           disabled={disabled}
-        >
-          {videoLengthPossibilities.map(({ label, value }) => (
-            <Option key={value} value={value}>
-              {label}
-            </Option>
-          ))}
-        </Select>
+        />
       )}
     </>
   );

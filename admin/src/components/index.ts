@@ -1,6 +1,6 @@
-import GenerateArticle from './GenerateArticle';
+import GenerateSingle from './GenerateSingle';
 import GenerateMultiple from './GenerateMultiple';
 
-export { GenerateArticle, GenerateMultiple };
+export { GenerateSingle, GenerateMultiple };
 
 export * from './Global';

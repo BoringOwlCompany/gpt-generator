@@ -15,9 +15,10 @@ import {
 } from '@strapi/design-system';
 
 import { getLanguageCode, IGptCronCollection } from '../../../../../../shared';
-import { dateFormatOptions, getStatusFromTitles, parseStatus } from '../../../../utils';
+import { dateFormatOptions, getStatusFromJobDetails, parseStatus } from '../../../../utils';
 
 import * as S from './JobDetailsModal.styled';
+import { mapJobDetailsData } from './mappers';
 
 interface IProps {
   pickedRow: IGptCronCollection | undefined;
@@ -25,7 +26,7 @@ interface IProps {
 }
 
 const JobDetailsModal = ({ pickedRow, handleClose }: IProps) => {
-  const status = getStatusFromTitles(pickedRow?.titles);
+  const { items, status, keywords } = mapJobDetailsData(pickedRow) || {};
 
   return (
     <ModalLayout onClose={handleClose} labelledBy="title">
@@ -37,12 +38,7 @@ const JobDetailsModal = ({ pickedRow, handleClose }: IProps) => {
       <ModalBody style={{ color: 'white' }}>
         <Grid gap={4} gridCols={12}>
           <GridItem col={6}>
-            <TextInput
-              label="Keywords"
-              name="keywords"
-              disabled={true}
-              value={pickedRow?.keywords}
-            />
+            <TextInput label="Keywords" name="keywords" disabled={true} value={keywords} />
           </GridItem>
           <GridItem col={6}>
             <Flex direction="column" alignItems="start" gap={1}>
@@ -58,26 +54,20 @@ const JobDetailsModal = ({ pickedRow, handleClose }: IProps) => {
                 Articles
               </Typography>
               <S.ArticlesBoxesWrapper>
-                {pickedRow?.titles
-                  .sort((a, b) => a.timestamp - b.timestamp)
-                  .map(({ status, timestamp, title, log, articleId }) => {
+                {items
+                  ?.sort((a, b) => a.timestamp - b.timestamp)
+                  .map(({ status, timestamp, title, log, link }) => {
                     const date = new Date(timestamp);
                     return (
-                      <S.ArticleBox padding={4} key={articleId}>
+                      <S.ArticleBox padding={4} key={timestamp}>
                         <Flex justifyContent="space-between">
                           <Flex direction="row" gap={2}>
                             <Typography variant="pi">
                               ({date.toLocaleString('en', dateFormatOptions)})
                             </Typography>
                             <Typography>
-                              {status === 'success' && articleId ? (
-                                <Link
-                                  to={`/content-manager/collectionType/api::article.article/${articleId}?plugins[i18n][locale]=${getLanguageCode(
-                                    pickedRow.language
-                                  )}`}
-                                >
-                                  {title}
-                                </Link>
+                              {status === 'success' && link ? (
+                                <Link to={link}>{title}</Link>
                               ) : (
                                 title
                               )}
