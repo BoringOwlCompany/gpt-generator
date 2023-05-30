@@ -12,47 +12,47 @@ import {
   generateVideoScriptHtml,
   IJobDetailsItemsArticlesCollectionFields,
 } from '../../shared';
-import { openai } from '../openai/requests';
+import { openaiArticles } from '../openai/requests';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async generateTitle(data: ITitleRequest) {
-    return await openai.generateTitle(data);
+    return await openaiArticles.generateTitle(data);
   },
 
   async generateParagraphs(data: ITitleRequest) {
-    return await openai.generateParagraphs(data);
+    return await openaiArticles.generateParagraphs(data);
   },
 
   async generateParagraph(data: ITitleWithParagraphRequest) {
-    return await openai.generateParagraph(data);
+    return await openaiArticles.generateParagraph(data);
   },
 
   async generateExcerpt(data: ITitleRequest) {
-    return await openai.generateExcerpt(data);
+    return await openaiArticles.generateExcerpt(data);
   },
 
   async generateSeo(data: IContentRequest) {
-    return await openai.generateArticleSEO(data);
+    return await openaiArticles.generateArticleSEO(data);
   },
 
   async generateFaq(data: IContentRequest) {
-    return await openai.generateArticleFaq(data);
+    return await openaiArticles.generateArticleFaq(data);
   },
 
   async generateVideoScriptScenes(data: IVideoScriptScenesRequest) {
-    return await openai.generateVideoScriptScenes(data);
+    return await openaiArticles.generateVideoScriptScenes(data);
   },
 
   async generateVideoScriptSceneDetails(data: IVideoScriptSceneDetailsRequest) {
-    return await openai.generateVideoScriptSceneDetails(data);
+    return await openaiArticles.generateVideoScriptSceneDetails(data);
   },
 
   async generateVideoScript(data: IVideoScriptScenesRequest) {
-    const scenes = await openai.generateVideoScriptScenes(data);
+    const scenes = await openaiArticles.generateVideoScriptScenes(data);
     const videoScript: string[] = [];
     await Promise.all(
       scenes.map(async ({ length, scene }, index) => {
-        const { camera, voiceover } = await openai.generateVideoScriptSceneDetails({
+        const { camera, voiceover } = await openaiArticles.generateVideoScriptSceneDetails({
           articleContent: data.articleContent,
           language: data.language,
           length,
@@ -66,21 +66,22 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
 
   async generateArticle(data: IJobDetailsItemsArticlesCollectionFields & { language: Language }) {
-    const { title } = await openai.generateTitle({
+    const { title } = await openaiArticles.generateTitle({
       title: data.title || '',
       language: data.language,
     });
+
     const titleRequest = {
       title,
       language: data.language,
     };
 
-    const paragraphsTitles = await openai.generateParagraphs(titleRequest);
+    const paragraphsTitles = await openaiArticles.generateParagraphs(titleRequest);
 
     const articleContent: string[] = [];
     await Promise.all(
       paragraphsTitles.map(async ({ paragraph }, index) => {
-        const content = await openai.generateParagraph({
+        const content = await openaiArticles.generateParagraph({
           ...titleRequest,
           paragraph,
         });
@@ -89,18 +90,18 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     );
 
     const content = articleContent.join('');
-    const { excerpt } = await openai.generateExcerpt(titleRequest);
+    const { excerpt } = await openaiArticles.generateExcerpt(titleRequest);
 
     const contentRequest = {
       content,
       language: data.language,
     };
 
-    const seo = await openai.generateArticleSEO(contentRequest);
-    const faq = await openai.generateArticleFaq(contentRequest);
+    const seo = await openaiArticles.generateArticleSEO(contentRequest);
+    const faq = await openaiArticles.generateArticleFaq(contentRequest);
 
     const image = data?.image?.isActive
-      ? await openai.generateImages({
+      ? await openaiArticles.generateImages({
           title,
           prompt: data.image.prompt,
           language: data.language,

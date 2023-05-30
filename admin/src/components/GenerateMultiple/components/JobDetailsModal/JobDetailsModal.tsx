@@ -14,8 +14,8 @@ import {
   Tooltip,
 } from '@strapi/design-system';
 
-import { getLanguageCode, IGptCronCollection } from '../../../../../../shared';
-import { dateFormatOptions, getStatusFromJobDetails, parseStatus } from '../../../../utils';
+import { IGptCronCollection } from '../../../../../../shared';
+import { dateFormatOptions, parseStatus } from '../../../../utils';
 
 import * as S from './JobDetailsModal.styled';
 import { mapJobDetailsData } from './mappers';
@@ -51,15 +51,15 @@ const JobDetailsModal = ({ pickedRow, handleClose }: IProps) => {
           <GridItem col={12}>
             <Flex direction="column" alignItems="start" gap={1}>
               <Typography variant="pi" fontWeight="bold">
-                Articles
+                Items
               </Typography>
-              <S.ArticlesBoxesWrapper>
+              <S.ItemsBoxesWrapper>
                 {items
                   ?.sort((a, b) => a.timestamp - b.timestamp)
                   .map(({ status, timestamp, title, log, link }) => {
                     const date = new Date(timestamp);
                     return (
-                      <S.ArticleBox padding={4} key={timestamp}>
+                      <S.ItemBox padding={4} key={timestamp}>
                         <Flex justifyContent="space-between">
                           <Flex direction="row" gap={2}>
                             <Typography variant="pi">
@@ -87,10 +87,10 @@ const JobDetailsModal = ({ pickedRow, handleClose }: IProps) => {
                             </Tooltip>
                           </Box>
                         </Flex>
-                      </S.ArticleBox>
+                      </S.ItemBox>
                     );
                   })}
-              </S.ArticlesBoxesWrapper>
+              </S.ItemsBoxesWrapper>
             </Flex>
           </GridItem>
         </Grid>

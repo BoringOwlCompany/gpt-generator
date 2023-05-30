@@ -10,7 +10,7 @@ const faqObject = [
   { question: 'Tutaj pytanie pierwsze', answer: 'Tutaj odpowiedź do pytania pierwszego' },
   { question: 'Tutaj pytanie drugie', answer: 'Tutaj odpowiedź do pytania drugiego' },
 ];
-const titlesObject = [{ title: 'Tutaj tytuł pierwszy' }, { title: 'Tytuł tytuł drugi' }];
+const titlesObject = [{ title: 'Tutaj tytuł pierwszy' }, { title: 'Tutaj tytuł drugi' }];
 const videoScriptScenesObject = [
   {
     scene: 'Tutaj tytuł 1 sceny.',
@@ -24,6 +24,11 @@ const videoScriptScenesObject = [
 const videoScriptSceneDetailsObject = {
   camera: 'Tutaj co przedstawia kamera',
   voiceover: 'Tutaj treść do powiedzenia',
+};
+const questionsObject = [{ title: 'Tutaj pytanie pierwsze' }, { title: 'Tutaj pytanie drugie' }];
+const answersObject = {
+  correctAnswer: 'Tutaj poprawna odpowiedź',
+  falseAnswers: ['Pierwsza błędna odpowiedź', 'Druga błędna odpowiedź', 'Trzecia błędna odpowiedź'],
 };
 
 export const jsonPrompt = <T extends object>(structure: T) =>
@@ -40,3 +45,5 @@ export const faqJsonPrompt = jsonPrompt(faqObject);
 export const titlesJsonPrompt = jsonPrompt(titlesObject);
 export const videoScriptScenesJsonPrompt = jsonPrompt(videoScriptScenesObject);
 export const videoScriptSceneDetailsJsonPrompt = jsonPrompt(videoScriptSceneDetailsObject);
+export const questionsJsonPrompt = jsonPrompt(questionsObject);
+export const answersJsonPrompt = jsonPrompt(answersObject);

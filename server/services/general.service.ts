@@ -1,6 +1,13 @@
 import { Strapi } from '@strapi/strapi';
-import { getLanguageCode, IGeneratedArticleResponse, IImagesRequest, Language } from '../../shared';
-import { openai } from '../openai/requests';
+import {
+  getLanguageCode,
+  IGeneratedArticleResponse,
+  IGeneratedFlashcardResponse,
+  IGptCronCollection,
+  IImagesRequest,
+  Language,
+} from '../../shared';
+import { openaiArticles } from '../openai/requests';
 import utils from '@strapi/utils';
 import { uploadToLibrary } from '../utils';
 
@@ -8,7 +15,7 @@ const { NotFoundError } = utils.errors;
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async generateImages(data: IImagesRequest) {
-    return await openai.generateImages(data);
+    return await openaiArticles.generateImages(data);
   },
 
   async uploadImage(data: any) {
@@ -57,6 +64,32 @@ export default ({ strapi }: { strapi: Strapi }) => ({
             faq,
           },
         ],
+      },
+    });
+  },
+
+  async saveFlashcard({
+    correctAnswer,
+    falseAnswers,
+    language,
+    question,
+    tagsIds,
+  }: IGeneratedFlashcardResponse & { tagsIds: number[]; language: Language }) {
+    const languageCode = getLanguageCode(language);
+
+    const answers = [
+      { answer: correctAnswer, isCorrect: true },
+      ...falseAnswers.map((answer) => ({ answer, isCorrect: false })),
+    ];
+
+    return await strapi.entityService.create(`api::flashcard.flashcard`, {
+      data: {
+        locale: languageCode,
+        tag: tagsIds,
+        question,
+        answer: correctAnswer,
+        testQuestion: question,
+        testAnswers: answers.sort(() => Math.random() - 0.5),
       },
     });
   },

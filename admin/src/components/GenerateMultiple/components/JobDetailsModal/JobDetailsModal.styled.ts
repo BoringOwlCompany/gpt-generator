@@ -1,11 +1,11 @@
 import styled, { css } from 'styled-components';
 import { Box } from '@strapi/design-system';
 
-export const ArticlesBoxesWrapper = styled(Box)`
+export const ItemsBoxesWrapper = styled(Box)`
   width: 100%;
 `;
 
-export const ArticleBox = styled(Box)`
+export const ItemBox = styled(Box)`
   ${({ theme }) => css`
     border: 1px solid ${theme.colors.neutral200};
     border-bottom-width: 0px;

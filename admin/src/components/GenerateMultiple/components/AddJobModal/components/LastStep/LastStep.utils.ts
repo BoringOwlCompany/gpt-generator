@@ -1,10 +1,16 @@
 import { ECollection, VideoLength } from '../../../../../../../../shared';
 
-export const getCollectionSpecificFields = (collection: ECollection) => {
+export const getCollectionSpecificFields = (collection: ECollection, details: string) => {
   if (collection === ECollection.ARTICLE)
     return {
+      title: details,
       image: { isActive: false, prompt: '' },
       videoScript: { isActive: false, length: VideoLength.ONE_MINUTE },
+    };
+
+  if (collection === ECollection.FLASHCARD)
+    return {
+      question: details,
     };
 
   return {};

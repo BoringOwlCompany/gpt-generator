@@ -1,5 +1,5 @@
-import { IForm } from '../../../../AddJobModal';
+import { IFirstStepForm } from '../../../../AddJobModal';
 
-export const useArticleNewJobFields = ({ keywords }: IForm) => ({
+export const useArticleNewJobFields = ({ keywords }: IFirstStepForm) => ({
   keywords,
 });

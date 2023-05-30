@@ -2,7 +2,6 @@ import React, { FormEvent, Fragment, useState } from 'react';
 import {
   DatePicker,
   TimePicker,
-  Icon,
   Button,
   Divider,
   Flex,
@@ -10,15 +9,13 @@ import {
   GridItem,
   FieldLabel,
 } from '@strapi/design-system';
-import { Cross } from '@strapi/icons';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { useStatus } from '../../../../../../hooks';
-import { FormWrapper, Select, TextInput } from '../../../../../Global';
+import { FormWrapper, Select } from '../../../../../Global';
 
 import { cronPossibilities } from './LastStep.config';
 import { cronApi } from '../../../../../../api';
-import { dateFormatOptions } from '../../../../../../utils';
 import { useCollectionContext } from '../../../../../../context';
 import { addMinutesToTime } from './LastStep.utils';
 import { IFinalForm, IProps } from './LastStep.types';
@@ -37,7 +34,6 @@ const LastStep = ({ initialValues, handleFinish }: IProps) => {
   });
 
   const { firstItemGenerationTime, interval, items } = watch();
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -84,8 +80,6 @@ const LastStep = ({ initialValues, handleFinish }: IProps) => {
 
     setValue('firstItemGenerationTime', dateToSet);
   };
-
-  console.log(items);
 
   return (
     <FormWrapper onSubmit={handleSubmit}>
@@ -135,9 +129,9 @@ const LastStep = ({ initialValues, handleFinish }: IProps) => {
         padding={4}
         style={{ maxHeight: '300px', overflow: 'auto' }}
       >
-        {items.map(({ title }, index) => {
+        {fields.map(({ id }, index) => {
           return (
-            <Fragment key={title}>
+            <Fragment key={id}>
               {ItemOptions && <ItemOptions disabled={isLoading} index={index} remove={remove} />}
             </Fragment>
           );

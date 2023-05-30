@@ -1,4 +1,4 @@
-import { IStatus, Language } from '../../../../../../shared';
+import { IStatus } from '../../../../../../shared';
 
 export interface IJobDetailsItemData {
   timestamp: number;

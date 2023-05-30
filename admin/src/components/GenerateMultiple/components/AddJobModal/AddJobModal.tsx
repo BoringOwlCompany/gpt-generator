@@ -14,16 +14,16 @@ interface IProps {
   handleClose: (options?: IHandleCloseOptions) => void;
 }
 
-export interface IForm {
+export interface IFirstStepForm {
   keywords: string;
   numberOfItems: number;
   language: Language;
-  details: string[];
+  items: string[];
   tags: IRelationalCollectionResponse[];
 }
 
 const AddJobModal = ({ handleClose, handleDone }: IProps) => {
-  const [firstStepResult, setFirstStepResult] = useState<IForm | null>(null);
+  const [firstStepResult, setFirstStepResult] = useState<IFirstStepForm | null>(null);
   const { collection } = useCollectionContext();
   const methods = useForm<IFinalForm>({
     defaultValues: {
@@ -33,15 +33,11 @@ const AddJobModal = ({ handleClose, handleDone }: IProps) => {
     },
   });
 
-  const setResult = (state: IForm) => {
+  const setResult = (state: IFirstStepForm) => {
     setFirstStepResult(state);
     methods.setValue(
       'items',
-      state?.details.map((title) => ({
-        title,
-        collection,
-        ...getCollectionSpecificFields(collection),
-      }))
+      state?.items.map((item) => getCollectionSpecificFields(collection, item))
     );
   };
 

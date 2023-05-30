@@ -1,5 +1,5 @@
-import { IForm } from '../../../../AddJobModal';
+import { IFirstStepForm } from '../../../../AddJobModal';
 
-export const useFlashcardsNewJobFields = ({ tags }: IForm) => ({
+export const useFlashcardsNewJobFields = ({ tags }: IFirstStepForm) => ({
   tags: tags.map(({ id, slug }) => ({ id, slug })),
 });

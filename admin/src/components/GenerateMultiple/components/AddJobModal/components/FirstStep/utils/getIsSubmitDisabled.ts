@@ -1,8 +1,8 @@
 import { ECollection } from '../../../../../../../../../shared';
 import { useCollectionContext } from '../../../../../../../context';
-import { IForm } from '../../../AddJobModal';
+import { IFirstStepForm } from '../../../AddJobModal';
 
-export const getIsSubmitDisabled = (formValues: IForm) => {
+export const getIsSubmitDisabled = (formValues: IFirstStepForm) => {
   const { collection } = useCollectionContext();
 
   if (!Boolean(formValues.numberOfItems) || formValues.numberOfItems < 1) return true;

@@ -2,7 +2,7 @@ import React from 'react';
 import { Status, IconButton, Flex, Typography } from '@strapi/design-system';
 import { Cross } from '@strapi/icons';
 import { useCollectionContext } from '../../../../../../context';
-import { IForm } from '../../AddJobModal';
+import { IFirstStepForm } from '../../AddJobModal';
 import { NumberInput, TextInput } from '../../../../../Global';
 import RelationalInput from '../../../../../Global/Form/RelationalInput';
 import { useFieldArray, useFormContext } from 'react-hook-form';
@@ -18,7 +18,7 @@ interface IProps {
 
 const CollectionFields = ({ isLoading }: IProps) => {
   const { collection } = useCollectionContext();
-  const { control, watch } = useFormContext<IForm>();
+  const { control, watch } = useFormContext<IFirstStepForm>();
   const arrayMethods = useFieldArray({
     name: 'tags',
     keyName: 'fieldId',
@@ -30,13 +30,13 @@ const CollectionFields = ({ isLoading }: IProps) => {
   if (collection === ECollection.ARTICLE)
     return (
       <>
-        <TextInput<IForm>
+        <TextInput<IFirstStepForm>
           placeholder="Provide keywords to generate content"
           label="Keywords"
           name="keywords"
           disabled={isLoading}
         />
-        <NumberInput<IForm>
+        <NumberInput<IFirstStepForm>
           placeholder="Number of titles"
           label="Number of titles"
           name="numberOfItems"
@@ -81,7 +81,7 @@ const CollectionFields = ({ isLoading }: IProps) => {
   if (collection === ECollection.FLASHCARD)
     return (
       <>
-        <RelationalInput<IForm>
+        <RelationalInput<IFirstStepForm>
           label="Tag"
           collection={ERelationalCollection.TAG}
           language={language}
@@ -91,7 +91,7 @@ const CollectionFields = ({ isLoading }: IProps) => {
           renderItem={(props, index) => <RelationalInputField {...props} index={index} />}
           pickedIds={arrayMethods.fields.map(({ id }) => id)}
         />
-        <NumberInput<IForm>
+        <NumberInput<IFirstStepForm>
           placeholder="Number of questions"
           label="Number of questions"
           name="numberOfItems"

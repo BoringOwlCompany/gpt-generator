@@ -1,15 +1,13 @@
-import { Cron, IJobDetailsItemCollectionFields, VideoLength } from '../../../../../../../../shared';
-import { IForm } from '../../AddJobModal';
+import { Cron, IJobDetailsItemCollectionFields } from '../../../../../../../../shared';
+import { IFirstStepForm } from '../../AddJobModal';
 
 export interface IProps {
-  initialValues: IForm;
+  initialValues: IFirstStepForm;
   handleFinish: () => void;
 }
 
 export interface IFinalForm {
   firstItemGenerationTime: Date;
   interval: Cron;
-  items: ({
-    title: string;
-  } & IJobDetailsItemCollectionFields)[];
+  items: IJobDetailsItemCollectionFields[];
 }

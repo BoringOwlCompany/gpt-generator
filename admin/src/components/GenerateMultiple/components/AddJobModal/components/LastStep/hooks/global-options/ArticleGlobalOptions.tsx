@@ -12,7 +12,7 @@ interface IProps {
 export const ArticleGlobalOptions = ({ disabled }: IProps) => {
   const { watch, setValue } = useFormContext<IFinalForm>();
 
-  const items: IJobDetailsItemsArticlesCollectionFields[] = watch('items');
+  const items = watch('items') as IJobDetailsItemsArticlesCollectionFields[];
 
   const { allImages, allVideoScripts } = useIndeterminateCheckbox({
     allImages: items.map((item) => item.image?.isActive || false),

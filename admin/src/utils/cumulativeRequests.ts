@@ -13,6 +13,8 @@ export const cumulativeRequests = async <T extends (...args: D[]) => Promise<any
   const requestsChunks = chunkArray(args);
   const result: Awaited<ReturnType<T>>[] = [];
 
+  let isError = false;
+
   for (const requestChunk of requestsChunks) {
     try {
       const promises = requestChunk.map((arg) =>
@@ -24,11 +26,12 @@ export const cumulativeRequests = async <T extends (...args: D[]) => Promise<any
       const chunkResults = await Promise.all(promises);
       result.push(...chunkResults);
     } catch (e) {
+      isError = true;
       onError?.();
     }
   }
 
-  return result;
+  return { result, isError };
 };
 
 const chunkArray = <T>(

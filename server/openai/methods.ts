@@ -4,10 +4,6 @@ import { MODEL } from './requests.config';
 import { IImagesRequest } from '../../shared';
 
 export const createChatCompletion = async (messages: ChatCompletionRequestMessage[]) => {
-  console.log({
-    model: MODEL,
-    messages,
-  });
   return openai.createChatCompletion({
     model: MODEL,
     messages,

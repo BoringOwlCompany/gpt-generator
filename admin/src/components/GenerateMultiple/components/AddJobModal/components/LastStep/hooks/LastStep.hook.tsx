@@ -1,10 +1,10 @@
-import { IForm } from '../../../AddJobModal';
+import { IFirstStepForm } from '../../../AddJobModal';
 import { useGlobalOptions } from './useGlobalOptions';
 import { useItemOptions } from './useItemOptions';
 import { useNewJobFields } from './useNewJobFields';
 
 interface IOptions {
-  initialValues: IForm;
+  initialValues: IFirstStepForm;
 }
 
 export const useLastStep = ({ initialValues }: IOptions) => {

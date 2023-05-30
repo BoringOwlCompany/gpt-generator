@@ -1,12 +1,13 @@
 import { Strapi } from '@strapi/strapi';
-import { Service } from '.';
+import { Service } from '..';
 import {
   Constant,
   IGeneratedArticleResponse,
   IGptCronCollection,
   IStatus,
   IJobDetailsItem,
-} from '../../shared';
+} from '../../../shared';
+import { generateItem } from './collectionsGenerators';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async lookForItemsToGenerate() {
@@ -29,19 +30,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
     for (const currentItem of itemsToGenerate) {
       try {
-        const data: IGeneratedArticleResponse = await strapi
-          .plugin(Constant.PLUGIN_NAME)
-          .service(Service.SINGLE_ARTICLE)
-          .generateArticle({ ...currentItem, language: currentItem.job.language });
-
-        const savedArticle = await strapi
-          .plugin(Constant.PLUGIN_NAME)
-          .service(Service.GENERAL)
-          .saveArticle({ ...data, language: currentItem.job.language });
+        const data = await generateItem(currentItem);
 
         await updateJobDetailsItem(currentItem.job.id, currentItem.timestamp, {
           status: 'success',
-          articleId: savedArticle.id,
+          ...data,
         });
       } catch (e) {
         const log = await logError('error', {
