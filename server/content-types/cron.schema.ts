@@ -22,9 +22,6 @@ export const GptCron = {
     collection: {
       type: 'string',
     },
-    keywords: {
-      type: 'text',
-    },
     language: {
       type: 'string',
     },
