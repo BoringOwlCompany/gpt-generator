@@ -1,8 +1,8 @@
 import React from 'react';
 import { FieldPath, FieldValues, useFormContext } from 'react-hook-form';
+import { ELength, filteredLengthPossibilitiesUp } from '../../../../../../../shared';
 
 import { Checkbox, Select } from '../../../Form';
-import { videoLengthPossibilities } from './VideoScriptOptions.config';
 
 export interface ITitleOptionsVideoScriptProps<T extends FieldValues> {
   checkboxName: FieldPath<T>;
@@ -20,17 +20,12 @@ const VideoScriptOptions = <T extends FieldValues>({
   const checkboxValue = watch(checkboxName);
   return (
     <>
-      <Checkbox name={checkboxName} disabled={disabled}>
-        Generate video script
-      </Checkbox>
+      <Checkbox<T> name={checkboxName} disabled={disabled} label="Generate video script" />
       {checkboxValue && (
-        <Select
+        <Select<T>
           name={lengthName}
           label="Length of the video"
-          options={videoLengthPossibilities.map(({ label, value }) => ({
-            label,
-            value,
-          }))}
+          options={filteredLengthPossibilitiesUp(ELength.HALF_MINUTE)}
           disabled={disabled}
         />
       )}

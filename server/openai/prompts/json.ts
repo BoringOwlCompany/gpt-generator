@@ -30,11 +30,12 @@ const answersObject = {
   correctAnswer: 'Tutaj poprawna odpowiedź',
   falseAnswers: ['Pierwsza błędna odpowiedź', 'Druga błędna odpowiedź', 'Trzecia błędna odpowiedź'],
 };
+const postObject = {
+  post: 'Tutaj wpis',
+};
 
 export const jsonPrompt = <T extends object>(structure: T) =>
-  `Zwróć w postaci JSON: ${JSON.stringify(
-    structure
-  )}. Nie dopisuj nic więcej, tak żeby odpowiedź można było sparsować funkcją JSON.parse. Nie używaj cudzysłowów w tekście. Nie dodawaj nigdzie znaków kończących linie.`;
+  `[no prose] [Output only JSON] schemat: ${JSON.stringify(structure)}`;
 
 export const titleJsonPrompt = jsonPrompt(titleObject);
 export const paragraphJsonPrompt = jsonPrompt(paragraphObject);
@@ -47,3 +48,4 @@ export const videoScriptScenesJsonPrompt = jsonPrompt(videoScriptScenesObject);
 export const videoScriptSceneDetailsJsonPrompt = jsonPrompt(videoScriptSceneDetailsObject);
 export const questionsJsonPrompt = jsonPrompt(questionsObject);
 export const answersJsonPrompt = jsonPrompt(answersObject);
+export const postJsonPrompt = jsonPrompt(postObject);

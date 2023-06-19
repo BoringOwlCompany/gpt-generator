@@ -28,8 +28,6 @@ import {
   videoScriptScenesJsonPrompt,
   videoScriptScenesPrompt,
   directorPrompt,
-  questionsPrompt,
-  questionsJsonPrompt,
 } from '../../prompts';
 import { ChatCompletionRequestMessage } from 'openai';
 

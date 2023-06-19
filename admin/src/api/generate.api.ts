@@ -20,6 +20,8 @@ import {
   IVideoScriptScenesRequest,
   IVideoScriptScenesResponse,
   Route,
+  IGeneratePostContentRequest,
+  IGeneratePostContentResponse,
 } from '../../../shared';
 
 export const generateApi = {
@@ -112,6 +114,7 @@ export const generateApi = {
       body: data,
     });
   },
+
   generateVideoScriptSceneDetails: async (
     data: IVideoScriptSceneDetailsRequest
   ): Promise<IVideoScriptSceneDetailsResponse> => {
@@ -122,5 +125,14 @@ export const generateApi = {
         body: data,
       }
     );
+  },
+
+  generateSocialMediaPost: async (
+    data: IGeneratePostContentRequest
+  ): Promise<IGeneratePostContentResponse> => {
+    return await request(`/${Constant.PLUGIN_NAME}${Route.SOCIAL_MEDIA_POST}`, {
+      method: 'POST',
+      body: data,
+    });
   },
 };

@@ -15,4 +15,7 @@ export enum Route {
 
   MULTIPLE_ARTICLES_TITLES = '/multiple-articles/titles',
   MULTIPLE_FLASHCARDS_QUESTIONS = '/multiple-flashcards/questions',
+
+  SOCIAL_MEDIA_POST = '/social-media/post',
+  SOCIAL_MEDIA_PUBLISH_POST = '/social-media/publish-post',
 }

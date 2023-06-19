@@ -1,6 +1,6 @@
 import { ImagesResponse } from 'openai';
 import { DeepPartial } from 'react-hook-form';
-import { VideoLength } from '../../enums';
+import { ELength } from '../../enums';
 
 export interface ITitleRequest {
   title: string;
@@ -111,6 +111,6 @@ export type IJobDetailsItemsArticlesCollectionFields = DeepPartial<{
   };
   videoScript: {
     isActive: boolean;
-    length: VideoLength;
+    length: ELength;
   };
 }>;

@@ -1,11 +1,11 @@
-import { ECollection, VideoLength } from '../../../../../../../../shared';
+import { ECollection, ELength } from '../../../../../../../../shared';
 
 export const getCollectionSpecificFields = (collection: ECollection, details: string) => {
   if (collection === ECollection.ARTICLE)
     return {
       title: details,
       image: { isActive: false, prompt: '' },
-      videoScript: { isActive: false, length: VideoLength.ONE_MINUTE },
+      videoScript: { isActive: false, length: ELength.ONE_MINUTE },
     };
 
   if (collection === ECollection.FLASHCARD)

@@ -4,7 +4,7 @@ import { Calendar, Component } from '@strapi/icons';
 import pluginId from './pluginId';
 import Initializer from './components/Initializer';
 import { Constant } from '../../shared';
-import { GenerateSingle } from './components';
+import { GenerateSingle, PubishOnSocialMedia } from './components';
 
 const menuItems = [
   {
@@ -49,6 +49,11 @@ export default {
     app.injectContentManagerComponent('editView', 'right-links', {
       name: 'generate-with-ai',
       Component: GenerateSingle,
+    });
+
+    app.injectContentManagerComponent('editView', 'right-links', {
+      name: 'publish-on-social-media',
+      Component: PubishOnSocialMedia,
     });
   },
 

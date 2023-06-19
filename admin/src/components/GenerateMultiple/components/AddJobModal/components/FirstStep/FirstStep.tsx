@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@strapi/design-system';
 
 import { useGpt } from '../../../../../../hooks';
-import { Constant, Language } from '../../../../../../../../shared';
+import { Constant, Language, languagesOptions } from '../../../../../../../../shared';
 import { AbsoluteProgress, FormWrapper, Select } from '../../../../../Global';
 import { useCollectionContext } from '../../../../../../context';
 import CollectionFields from './CollectionFields';
@@ -54,7 +54,7 @@ const FirstStep = ({ setResult }: IProps) => {
             hint={statusMessage}
             disabled={isLoading}
             isError={isError}
-            options={Object.values(Language).map((lang) => ({ label: lang, value: lang }))}
+            options={languagesOptions}
           />
           <CollectionFields isLoading={isLoading} />
 

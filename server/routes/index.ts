@@ -3,6 +3,7 @@ import multipleRoutes from './multiple.routes';
 import multipleArticlesRoutes from './multipleArticles.routes';
 import multipleFlashcardsRoutes from './multipleFlashcards.routes';
 import singleArticleRoutes from './singleArticle.routes';
+import socialMediaRoutes from './socialMedia.routes';
 
 export default [
   ...generalRoutes,
@@ -10,4 +11,5 @@ export default [
   ...multipleArticlesRoutes,
   ...multipleFlashcardsRoutes,
   ...singleArticleRoutes,
+  ...socialMediaRoutes,
 ];

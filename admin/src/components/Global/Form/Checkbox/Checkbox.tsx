@@ -3,7 +3,12 @@ import { Checkbox as StrapiCheckbox } from '@strapi/design-system';
 import { Controller, useFormContext, FieldValues } from 'react-hook-form';
 import { ControlledProps } from '../types';
 
-const Checkbox = <T extends FieldValues>({ name, isError, ...props }: ControlledProps<T>) => {
+const Checkbox = <T extends FieldValues>({
+  name,
+  label,
+  isError,
+  ...props
+}: ControlledProps<T>) => {
   const { control } = useFormContext();
 
   return (
@@ -15,7 +20,9 @@ const Checkbox = <T extends FieldValues>({ name, isError, ...props }: Controlled
           {...field}
           {...props}
           error={isError && 'Something went wrong, please try again...'}
-        />
+        >
+          {label}
+        </StrapiCheckbox>
       )}
     />
   );

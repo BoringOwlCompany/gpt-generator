@@ -22,9 +22,8 @@ const ImagesOptions = <T extends FieldValues>({
 
   return (
     <>
-      <Checkbox<T> name={checkboxName} disabled={disabled}>
-        Generate images
-      </Checkbox>
+      <Checkbox<T> name={checkboxName} disabled={disabled} label="Generate images" />
+
       {checkboxValue && (
         <>
           {numberOfImagesName && (

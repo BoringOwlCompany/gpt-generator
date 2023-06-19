@@ -2,7 +2,12 @@ import React from 'react';
 import { ModalBody, Button } from '@strapi/design-system';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useGpt } from '../../../../../../hooks';
-import { IGeneratedArticleResponse, Language, VideoLength } from '../../../../../../../../shared';
+import {
+  IGeneratedArticleResponse,
+  Language,
+  ELength,
+  languagesOptions,
+} from '../../../../../../../../shared';
 
 import {
   AbsoluteProgress,
@@ -24,7 +29,7 @@ interface IForm {
   imagesPrompt: string;
 
   shouldGenerateVideoScript: boolean;
-  videoScriptLength: VideoLength;
+  videoScriptLength: ELength;
 }
 
 const GenerateArticleForm = ({ setResult }: IProps) => {
@@ -37,7 +42,7 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
       imagesPrompt: '',
 
       shouldGenerateVideoScript: false,
-      videoScriptLength: VideoLength.ONE_MINUTE,
+      videoScriptLength: ELength.ONE_MINUTE,
     },
   });
 
@@ -113,10 +118,7 @@ const GenerateArticleForm = ({ setResult }: IProps) => {
             name="language"
             label="Language"
             disabled={isLoading}
-            options={Object.values(Language).map((lang) => ({
-              label: lang,
-              value: lang,
-            }))}
+            options={languagesOptions}
           />
 
           <TitleOptions<IForm>
