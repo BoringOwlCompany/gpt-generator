@@ -7,9 +7,12 @@ export const useAdditionalDataToPost = (): IAdditionalData => {
   const { collection } = useCollectionContext();
   const { modifiedData } = useCMEditViewDataManager();
 
-  let additionalData = {};
+  const additionalData = (() => {
+    if (collection === ECollection.ARTICLE)
+      return getArticleAdditionalData({ collectionData: modifiedData });
 
-  if (collection === ECollection.ARTICLE) additionalData = getArticleAdditionalData(modifiedData);
+    return {};
+  })();
 
   return {
     collection,

@@ -1,10 +1,18 @@
-import { IAdditionalData } from '../../../../../../../../../../shared';
+import { getLanguageCode, IAdditionalData, Language } from '../../../../../../../../../../shared';
 
-export const getArticleAdditionalData = (
-  modifiedData: any
-): Omit<IAdditionalData, 'collection' | 'collectionId'> => ({
-  url: `${process.env.STRAPI_ADMIN_FRONTEND_URL}/blog/${modifiedData.content.slug}`,
-  imageUrl: modifiedData.content.image?.url,
-  title: modifiedData.content.title,
-  description: modifiedData.content.introduction,
-});
+interface IProps {
+  collectionData: any;
+}
+
+export const getArticleAdditionalData = ({
+  collectionData,
+}: IProps): Omit<IAdditionalData, 'collection' | 'collectionId'> => {
+  const urlLang = collectionData.locale === 'pl' ? '' : `/${collectionData.locale}`;
+
+  return {
+    url: `${process.env.STRAPI_ADMIN_FRONTEND_URL}${urlLang}/blog/${collectionData.content.slug}`,
+    imageUrl: collectionData.content.image?.url,
+    title: collectionData.content.title,
+    description: collectionData.content.introduction,
+  };
+};
