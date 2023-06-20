@@ -37,5 +37,8 @@ export const GptSocialMediaTokens = {
       relation: 'oneToOne',
       target: 'admin::user',
     },
+    details: {
+      type: 'json',
+    },
   },
 };

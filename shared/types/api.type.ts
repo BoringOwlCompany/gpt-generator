@@ -11,3 +11,11 @@ export interface IPagination {
 }
 
 export type IStatus = 'idle' | 'loading' | 'error' | 'success' | 'warning' | 'refetching';
+export enum EStatus {
+  IDLE = 'idle',
+  LOADING = 'loading',
+  ERROR = 'error',
+  SUCCESS = 'success',
+  WARNING = 'warning',
+  REFETCHING = 'refetching',
+}

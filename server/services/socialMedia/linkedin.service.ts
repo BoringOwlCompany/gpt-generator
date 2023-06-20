@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Constant, ESocialMediaProvider, ETokenType, IAdditionalData } from '../../../shared';
 import {
   LINKEDIN_BASE_URL,
+  LINKEDIN_REFRESH_TOKEN_URL,
   LINKEDIN_ROUTES,
   LINKEDIN_VALIDATE_TOKEN_URL,
 } from './socialMedia.config';
@@ -28,9 +29,56 @@ export default ({ strapi }: { strapi: Strapi }) => ({
     return accessTokenRecord.token;
   },
 
+  async refreshAccessToken(user: number) {
+    try {
+      const refreshTokenRecord = await strapi
+        .plugin(Constant.PLUGIN_NAME)
+        .service(Service.SOCIAL_MEDIA)
+        .getToken(ESocialMediaProvider.LINKEDIN, ETokenType.REFRESH, user);
+
+      if (!refreshTokenRecord) throw new Error('Refresh token not found');
+
+      const searchParams = new URLSearchParams({
+        client_id: `${process.env.LINKEDIN_CLIENT_ID}`,
+        client_secret: `${process.env.LINKEDIN_CLIENT_SECRET}`,
+        grant_type: 'refresh_token',
+        refresh_token: refreshTokenRecord.token,
+      });
+
+      const {
+        data: { access_token },
+      } = await axiosInstance.post(LINKEDIN_REFRESH_TOKEN_URL, searchParams, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+
+      await strapi
+        .plugin(Constant.PLUGIN_NAME)
+        .service(Service.SOCIAL_MEDIA)
+        .updateToken(access_token, ESocialMediaProvider.LINKEDIN, ETokenType.ACCESS, user);
+
+      return access_token;
+    } catch (e) {
+      if (e.response) {
+        const { error, error_description } = e.response.data;
+        console.error(e.response.data);
+        throw new Error(`Refreshing token error: ${error} - ${error_description}`);
+      }
+
+      console.error(e.message);
+      throw new Error(`Refreshing token error: ${e.message}`);
+    }
+  },
+
   async validateToken(user: number) {
     try {
-      const accessToken = await this.getAccessToken(user);
+      let accessToken = await this.getAccessToken(user);
+
+      if (!accessToken) {
+        accessToken = await this.refreshAccessToken(user);
+      }
+
       const searchParams = new URLSearchParams({
         client_id: `${process.env.LINKEDIN_CLIENT_ID}`,
         client_secret: `${process.env.LINKEDIN_CLIENT_SECRET}`,
@@ -47,7 +95,7 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       if (active) return accessToken;
 
-      throw new Error('Token expired');
+      return await this.refreshAccessToken(user);
     } catch (e) {
       if (e.response) {
         const { error, error_description } = e.response.data;
@@ -100,25 +148,23 @@ export default ({ strapi }: { strapi: Strapi }) => ({
   },
 
   async getAuthor(user: number) {
-    try {
-      const accessToken = await this.getAccessToken(user);
-
-      const {
-        data: { id },
-      } = await axiosInstance.get(LINKEDIN_ROUTES.ME, {
-        headers: authHeader(accessToken),
-      });
-
-      return `urn:li:person:${id}`;
-    } catch (e) {
-      if (e.response) {
-        console.error(e.response.data);
-        throw new Error(`Cannot get author: ${e.response.data.message}`);
+    const tokens = await strapi.entityService.findMany(
+      `plugin::${Constant.PLUGIN_NAME}.gpt-social-media-token`,
+      {
+        filters: {
+          provider: ESocialMediaProvider.LINKEDIN,
+          tokenType: ETokenType.ACCESS,
+          user: {
+            id: user,
+          },
+        },
       }
+    );
 
-      console.error(e.message);
-      throw new Error(`Cannot get author: ${e.message}`);
-    }
+    if (!tokens.length) throw new Error('Token not found');
+    if (!tokens[0].details?.author) throw new Error('Author not provided');
+
+    return tokens[0].details.author;
   },
 
   async publishPost(

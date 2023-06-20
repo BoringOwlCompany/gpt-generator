@@ -1,4 +1,4 @@
-import { Strapi } from '@strapi/strapi';
+import { factories, Strapi } from '@strapi/strapi';
 import { Service } from '..';
 
 import {
@@ -7,102 +7,112 @@ import {
   ETokenType,
   IPublishPostsRequest,
   IGeneratePostContentRequest,
+  IGeneratedPosts,
+  IAdditionalData,
 } from '../../../shared';
 import { openaiSocialMedia } from '../../openai/requests';
 
-export default ({ strapi }: { strapi: Strapi }) => ({
-  async generatePost(data: IGeneratePostContentRequest) {
-    return await openaiSocialMedia.generatePost(data);
-  },
+export default factories.createCoreService(
+  `plugin::${Constant.PLUGIN_NAME}.gpt-social-media-post`,
+  ({ strapi }: { strapi: Strapi }) => ({
+    async generatePost(data: IGeneratePostContentRequest) {
+      return await openaiSocialMedia.generatePost(data);
+    },
 
-  async publishPost(data: IPublishPostsRequest, user: number) {
-    const result: any[] = [];
-    if (data.publishOn[ESocialMediaProvider.TWITTER]) {
-      const postToPublish = data.posts[ESocialMediaProvider.TWITTER];
+    async publishPost(data: IPublishPostsRequest, user: number) {
+      const result: any[] = [];
 
-      if (postToPublish) {
+      for (const [provider, shouldPublish] of Object.entries(data.publishOn)) {
+        if (!shouldPublish) continue;
+
+        const postToPublish = data.posts[provider];
+        if (!postToPublish) continue;
+
         const { post, additionalData } = postToPublish;
-        const response = await strapi
-          .plugin(Constant.PLUGIN_NAME)
-          .service(Service.TWITTER)
-          .publishPost(post, additionalData, user);
+        const service = this.findSpecificService(provider);
+        const response = await service.publishPost(post, additionalData, user);
 
         result.push({
-          provider: ESocialMediaProvider.TWITTER,
+          provider,
           response,
         });
-      }
-    }
 
-    if (data.publishOn[ESocialMediaProvider.LINKEDIN]) {
-      const postToPublish = data.posts[ESocialMediaProvider.LINKEDIN];
+        const isError = response?.status === 'error';
 
-      if (postToPublish) {
-        const { post, additionalData } = postToPublish;
-        const response = await strapi
-          .plugin(Constant.PLUGIN_NAME)
-          .service(Service.LINKEDIN)
-          .publishPost(post, additionalData, user);
-
-        result.push({
-          provider: ESocialMediaProvider.LINKEDIN,
-          response,
+        await strapi.entityService.create(`plugin::${Constant.PLUGIN_NAME}.gpt-social-media-post`, {
+          data: {
+            post,
+            collection: additionalData.collection,
+            collectionId: additionalData.collectionId.toString(),
+            status: isError ? 'error' : 'success',
+            publishDate: new Date(),
+            provider,
+            log: response,
+          },
         });
       }
-    }
 
-    return result;
-  },
+      return result;
+    },
 
-  async updateToken(
-    token: string,
-    provider: ESocialMediaProvider,
-    tokenType: ETokenType,
-    user: number
-  ) {
-    const foundToken = await this.getToken(provider, tokenType, user);
+    findSpecificService(provider: ESocialMediaProvider) {
+      let service: Service | null = null;
+      if (provider === ESocialMediaProvider.LINKEDIN) service = Service.LINKEDIN;
+      if (provider === ESocialMediaProvider.TWITTER) service = Service.TWITTER;
 
-    if (foundToken) {
-      return await strapi.entityService.update(
+      return strapi.plugin(Constant.PLUGIN_NAME).service(service);
+    },
+
+    async updateToken(
+      token: string,
+      provider: ESocialMediaProvider,
+      tokenType: ETokenType,
+      user: number
+    ) {
+      const foundToken = await this.getToken(provider, tokenType, user);
+
+      if (foundToken) {
+        return await strapi.entityService.update(
+          `plugin::${Constant.PLUGIN_NAME}.gpt-social-media-token`,
+          foundToken.id,
+          {
+            data: {
+              token,
+            },
+          }
+        );
+      }
+
+      return await strapi.entityService.create(
         `plugin::${Constant.PLUGIN_NAME}.gpt-social-media-token`,
-        foundToken.id,
         {
           data: {
             token,
+            provider,
+            tokenType,
+            user,
           },
         }
       );
-    }
+    },
 
-    return await strapi.entityService.create(
-      `plugin::${Constant.PLUGIN_NAME}.gpt-social-media-token`,
-      {
-        data: {
-          token,
-          provider,
-          tokenType,
-          user,
-        },
-      }
-    );
-  },
-
-  async getToken(provider: ESocialMediaProvider, tokenType: ETokenType, user: number) {
-    const tokens = await strapi.entityService.findMany(
-      `plugin::${Constant.PLUGIN_NAME}.gpt-social-media-token`,
-      {
-        filters: {
-          provider,
-          tokenType,
-          user: {
-            id: user,
+    async getToken(provider: ESocialMediaProvider, tokenType: ETokenType, user: number) {
+      const tokens = await strapi.entityService.findMany(
+        `plugin::${Constant.PLUGIN_NAME}.gpt-social-media-token`,
+        {
+          filters: {
+            provider,
+            tokenType,
+            user: {
+              id: user,
+            },
           },
-        },
-      }
-    );
+        }
+      );
 
-    if (tokens.length) return tokens[0];
+      if (tokens.length) return tokens[0];
 
-    return null;
-  },
-});
+      return null;
+    },
+  })
+);

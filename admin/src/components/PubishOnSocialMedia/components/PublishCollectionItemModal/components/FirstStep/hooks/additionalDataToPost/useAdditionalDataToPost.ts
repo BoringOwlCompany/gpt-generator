@@ -1,13 +1,19 @@
 import { ECollection, IAdditionalData } from '../../../../../../../../../../shared';
 import { useCollectionContext } from '../../../../../../../../context';
-import { useArticleAdditionalData } from './useArticleAdditionalData';
+import { useCMEditViewDataManager } from '@strapi/helper-plugin';
+import { getArticleAdditionalData } from './getArticleAdditionalData';
 
 export const useAdditionalDataToPost = (): IAdditionalData => {
   const { collection } = useCollectionContext();
+  const { modifiedData } = useCMEditViewDataManager();
 
-  const articleAdditionalData = useArticleAdditionalData();
+  let additionalData = {};
 
-  if (collection === ECollection.ARTICLE) return articleAdditionalData;
+  if (collection === ECollection.ARTICLE) additionalData = getArticleAdditionalData(modifiedData);
 
-  return {};
+  return {
+    collection,
+    collectionId: modifiedData.id,
+    ...additionalData,
+  };
 };

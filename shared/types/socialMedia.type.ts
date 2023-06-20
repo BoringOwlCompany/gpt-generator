@@ -39,6 +39,8 @@ export interface IGeneratePostContentResponse {
 }
 
 export interface IAdditionalData {
+  collection: string;
+  collectionId: string;
   url?: string;
   imageUrl?: string;
   title?: string;
