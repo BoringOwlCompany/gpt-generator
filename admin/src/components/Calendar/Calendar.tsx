@@ -56,7 +56,6 @@ const Calendar = () => {
       />
       <Box padding={8}>
         <CalendarComponent
-          allDayMaxRows={4}
           localizer={localizer}
           defaultView={'month'}
           style={{ height: 600 }}
