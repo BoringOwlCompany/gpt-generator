@@ -5,6 +5,8 @@ import multipleArticlesService from './multipleArticles.service';
 import multipleFlashcardsService from './multipleFlashcards.service';
 import singleArticleService from './singleArticle.service';
 import singleFlashcardService from './singleFlashcard.service';
+import calendarService from './calendar.service';
+
 import socialMediaService from './socialMedia/socialMedia.service';
 import twitterService from './socialMedia/twitter.service';
 import linkedinService from './socialMedia/linkedin.service';
@@ -17,6 +19,7 @@ export enum Service {
   MULTIPLE_FLASHCARDS = 'multipleFlashcardsService',
   SINGLE_ARTICLE = 'singleArticleService',
   SINGLE_FLASHCARD = 'singleFlashcardService',
+  CALENDAR = 'calendarService',
   SOCIAL_MEDIA = 'socialMediaService',
   TWITTER = 'twitterService',
   LINKEDIN = 'linkedinService',
@@ -30,6 +33,7 @@ export default {
   multipleFlashcardsService,
   singleArticleService,
   singleFlashcardService,
+  calendarService,
   socialMediaService,
   twitterService,
   linkedinService,

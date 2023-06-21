@@ -18,4 +18,6 @@ export enum Route {
 
   SOCIAL_MEDIA_POST = '/social-media/post',
   SOCIAL_MEDIA_PUBLISH_POST = '/social-media/publish-post',
+
+  CALENDAR_ITEMS = '/calendar/items',
 }

@@ -4,6 +4,7 @@ import multipleArticlesController from './multipleArticles.controller';
 import multipleFlashcardsController from './multipleFlashcards.controller';
 import singleArticleController from './singleArticle.controller';
 import socialMediaController from './socialMedia.controller';
+import calendarController from './calendar.controller';
 
 export enum Controller {
   GENERAL = 'generalController',
@@ -12,6 +13,7 @@ export enum Controller {
   MULTIPLE_FLASHCARDS = 'multipleFlashcardsController',
   SINGLE_ARTICLE = 'singleArticleController',
   SOCIAL_MEDIA = 'socialMediaController',
+  CALENDAR = 'calendarController',
 }
 
 export default {
@@ -21,4 +23,5 @@ export default {
   multipleFlashcardsController,
   singleArticleController,
   socialMediaController,
+  calendarController,
 };

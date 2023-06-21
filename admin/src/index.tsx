@@ -1,5 +1,5 @@
 import { prefixPluginTranslations } from '@strapi/helper-plugin';
-import { Calendar, Component } from '@strapi/icons';
+import { Calendar, NumberList } from '@strapi/icons';
 
 import pluginId from './pluginId';
 import Initializer from './components/Initializer';
@@ -8,14 +8,20 @@ import { GenerateSingle, PubishOnSocialMedia } from './components';
 
 const menuItems = [
   {
-    slug: '/articles',
+    slug: '/calendar',
     icon: Calendar,
+    label: 'Calendar',
+    Component: async () => import('./pages/CalendarPage'),
+  },
+  {
+    slug: '/articles',
+    icon: NumberList,
     label: 'Generate multiple articles',
     Component: async () => import('./pages/GenerateMultipleArticles'),
   },
   {
     slug: '/flashcards',
-    icon: Component,
+    icon: NumberList,
     label: 'Generate multiple flashcards',
     Component: async () => import('./pages/GenerateMultipleFlashcards'),
   },

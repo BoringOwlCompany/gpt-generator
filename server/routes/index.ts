@@ -1,3 +1,4 @@
+import calendarRoutes from './calendar.routes';
 import generalRoutes from './general.routes';
 import multipleRoutes from './multiple.routes';
 import multipleArticlesRoutes from './multipleArticles.routes';
@@ -12,4 +13,5 @@ export default [
   ...multipleFlashcardsRoutes,
   ...singleArticleRoutes,
   ...socialMediaRoutes,
+  ...calendarRoutes,
 ];
