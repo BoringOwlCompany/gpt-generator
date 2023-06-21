@@ -609,7 +609,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/react-big-calendar@ 1.6.4":
+"@types/react-big-calendar@1.6.4":
   version "1.6.4"
   resolved "https://registry.yarnpkg.com/@types/react-big-calendar/-/react-big-calendar-1.6.4.tgz#a143ac92e07e32374f235e9f097478b95b44332b"
   integrity sha512-xAbdQ2cQhx71dsnacJ1knSGqTi6cD8odGi28AzCjA+N4bgpJjSyYo/fN1bG4ScfBAEQomSl/UoXYrSgUoJ0MGA==
@@ -1326,7 +1326,7 @@ qs@6.11.0:
   dependencies:
     side-channel "^1.0.4"
 
-"react-big-calendar@ 1.8.1":
+react-big-calendar@1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/react-big-calendar/-/react-big-calendar-1.8.1.tgz#07886a66086fcae16934572c5ace8c4c433dbbed"
   integrity sha512-yEiScxReMrRCc0qFdZIKY/L6+argK4ZiYzLk5bck8CRYVbHjCCb/6Ictv42kPs/g3Q4RIb8+GUjDzk/uFtu76Q==

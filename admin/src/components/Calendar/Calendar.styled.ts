@@ -1,6 +1,6 @@
 import { createGlobalStyle, css } from 'styled-components';
 
-export const GlobalCalendarStyles = createGlobalStyle`
+export const GlobalCalendarStyles = createGlobalStyle<{ theme: any }>`
   ${({ theme }) => css`
     .rbc-calendar {
       color: ${theme.colors.neutral700};

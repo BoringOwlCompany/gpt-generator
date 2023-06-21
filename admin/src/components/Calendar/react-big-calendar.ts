@@ -5,10 +5,3 @@ declare module 'react-big-calendar' {
     allDayMaxRows?: number;
   }
 }
-
-declare module 'styled-components' {
-  export interface DefaultTheme {
-    colors: any;
-    spaces: any;
-  }
-}
