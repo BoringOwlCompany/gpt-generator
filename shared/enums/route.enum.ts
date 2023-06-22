@@ -1,4 +1,6 @@
 export enum Route {
+  CONFIG = '/config',
+
   IMAGES = '/images',
   UPLOAD_IMAGE = '/upload-image',
 

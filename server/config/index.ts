@@ -1,6 +1,34 @@
+import { IConfig } from '../../shared';
+
 export default {
   default: {
-    test: 'halo',
+    multiple: {
+      flashcards: true,
+      articles: true,
+    },
+    single: true,
+    calendar: true,
+    socialMediaPublisher: true,
   },
-  validator() {},
+  validator(config: IConfig) {
+    if (typeof config.multiple !== 'object') {
+      throw new Error('"multiple" has to be an object');
+    }
+    if (typeof config.multiple.articles !== 'boolean') {
+      throw new Error('"multiple.articles" has to be a boolean');
+    }
+    if (typeof config.multiple.flashcards !== 'boolean') {
+      throw new Error('"multiple.flashcards" has to be a boolean');
+    }
+
+    if (typeof config.single !== 'boolean') {
+      throw new Error('"single" has to be a boolean');
+    }
+    if (typeof config.calendar !== 'boolean') {
+      throw new Error('"calendar" has to be a boolean');
+    }
+    if (typeof config.socialMediaPublisher !== 'boolean') {
+      throw new Error('"socialMediaPublisher" has to be a boolean');
+    }
+  },
 };

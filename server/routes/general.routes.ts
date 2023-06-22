@@ -3,13 +3,21 @@ import { Controller } from '../controllers';
 
 export default [
   {
-    method: "POST",
+    method: 'GET',
+    path: Route.CONFIG,
+    handler: `${Controller.GENERAL}.getConfig`,
+    config: {
+      auth: false,
+    },
+  },
+  {
+    method: 'POST',
     path: Route.IMAGES,
     handler: `${Controller.GENERAL}.generateImages`,
   },
   {
-    method: "POST",
+    method: 'POST',
     path: Route.UPLOAD_IMAGE,
     handler: `${Controller.GENERAL}.uploadImage`,
   },
-]
+];

@@ -45,8 +45,6 @@ const Calendar = () => {
     []
   );
 
-  console.log('range', range);
-
   return (
     <Box>
       <S.GlobalCalendarStyles />
@@ -54,7 +52,7 @@ const Calendar = () => {
         title="Calendar"
         primaryAction={(isLoading || isFetching) && <Loader small />}
       />
-      <Box padding={8}>
+      <Box padding={8} maxWidth={'1300px'}>
         <CalendarComponent
           localizer={localizer}
           defaultView={'month'}

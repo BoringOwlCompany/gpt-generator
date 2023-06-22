@@ -1,3 +1,17 @@
+# Plugin config
+
+```
+config: {
+  multiple: {
+    articles: boolean,
+    flashcards: boolean,
+  },
+  single: boolean,
+  calendar: boolean,
+  socialMediaPublisher: boolean,
+},
+```
+
 # Required envs
 
 GPT_API_KEY = Api key for your openai account

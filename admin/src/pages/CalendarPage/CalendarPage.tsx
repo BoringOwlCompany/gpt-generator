@@ -6,9 +6,11 @@ const queryClient = new QueryClient();
 
 const CalendarPage = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Calendar />
-    </QueryClientProvider>
+    <div id="halo">
+      <QueryClientProvider client={queryClient}>
+        <Calendar />
+      </QueryClientProvider>
+    </div>
   );
 };
 
