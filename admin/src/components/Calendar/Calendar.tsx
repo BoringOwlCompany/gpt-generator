@@ -1,15 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import { Box, BaseHeaderLayout, Loader } from '@strapi/design-system';
-import { Calendar as CalendarComponent, momentLocalizer } from 'react-big-calendar';
+import { Calendar as CalendarComponent } from 'react-big-calendar';
 import { useHistory } from 'react-router-dom';
-import moment from 'moment';
 import * as S from './Calendar.styled';
 import { useCalendarItems } from '../../api/queries/calendar/calendar';
 import { getVisibleMonth, ICalendarItem, IRange } from '../../../../shared';
+import { calendarProps } from './Calendar.config';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-
-const localizer = momentLocalizer(moment);
 
 const Calendar = () => {
   const history = useHistory();
@@ -54,15 +52,7 @@ const Calendar = () => {
       />
       <Box padding={8} maxWidth={'1300px'}>
         <CalendarComponent
-          localizer={localizer}
-          defaultView={'month'}
-          style={{ height: 600 }}
-          popup={true}
-          formats={{
-            timeGutterFormat: 'HH:mm',
-            agendaHeaderFormat: (range) =>
-              `${range.start.toLocaleDateString()} - ${range.end.toLocaleDateString()}`,
-          }}
+          {...calendarProps}
           onSelectEvent={handleEventClick}
           onRangeChange={handleRangeChange}
           eventPropGetter={handleEventPropGetter}
