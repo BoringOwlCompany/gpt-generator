@@ -7,3 +7,10 @@ export enum LINKEDIN_ROUTES {
   ME = '/v2/me',
   FILE_UPLOAD = '/rest/images?action=initializeUpload',
 }
+
+export const FACEBOOK_BASE_URL = 'https://graph.facebook.com';
+
+export const FACEBOOK_ROUTES = {
+  ME: '/me',
+  POSTS: (pageId: number) => `/${pageId}/feed`,
+};

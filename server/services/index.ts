@@ -10,6 +10,7 @@ import calendarService from './calendar.service';
 import socialMediaService from './socialMedia/socialMedia.service';
 import twitterService from './socialMedia/twitter.service';
 import linkedinService from './socialMedia/linkedin.service';
+import facebookService from './socialMedia/facebook.service';
 
 export enum Service {
   GENERAL = 'generalService',
@@ -23,6 +24,7 @@ export enum Service {
   SOCIAL_MEDIA = 'socialMediaService',
   TWITTER = 'twitterService',
   LINKEDIN = 'linkedinService',
+  FACEBOOK = 'facebookService',
 }
 
 export default {
@@ -37,4 +39,5 @@ export default {
   socialMediaService,
   twitterService,
   linkedinService,
+  facebookService,
 };

@@ -7,8 +7,6 @@ import {
   ETokenType,
   IPublishPostsRequest,
   IGeneratePostContentRequest,
-  IGeneratedPosts,
-  IAdditionalData,
 } from '../../../shared';
 import { openaiSocialMedia } from '../../openai/requests';
 
@@ -59,6 +57,7 @@ export default factories.createCoreService(
       let service: Service | null = null;
       if (provider === ESocialMediaProvider.LINKEDIN) service = Service.LINKEDIN;
       if (provider === ESocialMediaProvider.TWITTER) service = Service.TWITTER;
+      if (provider === ESocialMediaProvider.FACEBOOK) service = Service.FACEBOOK;
 
       return strapi.plugin(Constant.PLUGIN_NAME).service(service);
     },
@@ -67,7 +66,8 @@ export default factories.createCoreService(
       token: string,
       provider: ESocialMediaProvider,
       tokenType: ETokenType,
-      user: number
+      user: number,
+      details?: any
     ) {
       const foundToken = await this.getToken(provider, tokenType, user);
 
@@ -78,6 +78,7 @@ export default factories.createCoreService(
           {
             data: {
               token,
+              details,
             },
           }
         );
@@ -91,6 +92,7 @@ export default factories.createCoreService(
             provider,
             tokenType,
             user,
+            details,
           },
         }
       );

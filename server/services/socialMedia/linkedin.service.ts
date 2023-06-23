@@ -9,8 +9,20 @@ import {
   LINKEDIN_ROUTES,
   LINKEDIN_VALIDATE_TOKEN_URL,
 } from './socialMedia.config';
+import { ISocialMediaService } from '../../types/general.types';
+import { authHeader } from '../../utils';
 
-export default ({ strapi }: { strapi: Strapi }) => ({
+export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
+  getKeys() {
+    const {
+      socialMedia: {
+        linkedin: { clientId, clientSecret },
+      },
+    } = strapi.config.get(`plugin.${Constant.PLUGIN_NAME}`);
+
+    return { clientId, clientSecret };
+  },
+
   async getAccessToken(user: number) {
     const accessTokenRecord = await strapi
       .plugin(Constant.PLUGIN_NAME)
@@ -38,9 +50,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
 
       if (!refreshTokenRecord) throw new Error('Refresh token not found');
 
+      const { clientId, clientSecret } = this.getKeys();
       const searchParams = new URLSearchParams({
-        client_id: `${process.env.LINKEDIN_CLIENT_ID}`,
-        client_secret: `${process.env.LINKEDIN_CLIENT_SECRET}`,
+        client_id: clientId,
+        client_secret: clientSecret,
         grant_type: 'refresh_token',
         refresh_token: refreshTokenRecord.token,
       });
@@ -79,9 +92,10 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         accessToken = await this.refreshAccessToken(user);
       }
 
+      const { clientId, clientSecret } = this.getKeys();
       const searchParams = new URLSearchParams({
-        client_id: `${process.env.LINKEDIN_CLIENT_ID}`,
-        client_secret: `${process.env.LINKEDIN_CLIENT_SECRET}`,
+        client_id: clientId,
+        client_secret: clientSecret,
         token: accessToken,
       });
 
@@ -226,8 +240,4 @@ const axiosInstance = axios.create({
     'LinkedIn-Version': '202306',
     'X-Restli-Protocol-Version': '2.0.0',
   },
-});
-
-const authHeader = (token: string) => ({
-  Authorization: `Bearer ${token}`,
 });

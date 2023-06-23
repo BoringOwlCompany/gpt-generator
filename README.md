@@ -2,19 +2,27 @@
 
 ```
 config: {
-  multiple: {
-    articles: boolean,
-    flashcards: boolean,
+  gptApiKey: string; //REQUIRED
+
+  socialMedia?: {
+    linkedin?: {
+      clientId?: string
+      clientSecret?: string
+    },
+    twitter?: {
+      clientId?: string
+      clientSecret?: string
+    }
+  }
+  multiple?: {
+    articles?: boolean,
+    flashcards?: boolean,
   },
-  single: boolean,
-  calendar: boolean,
-  socialMediaPublisher: boolean,
+  single?: boolean,
+  calendar?: boolean,
+  socialMediaPublisher?: boolean,
 },
 ```
-
-# Required envs
-
-GPT_API_KEY = Api key for your openai account
 
 # Social Media Publisher
 
@@ -35,10 +43,25 @@ Website URL: Your website url
 
 4. Note your Client ID and Client Secret
 
-### Required envs
+### Required config
 
-TWITTER_CLIENT_ID = Client ID <br />
-TWITTER_CLIENT_SECRET = Client Secret <br />
+```
+{
+  config: {
+    ...
+    socialMedia: {
+      ...
+      twitter: {
+        clientId: string
+        clientSecret: string
+      }
+      ...
+    }
+    ...
+  }
+}
+
+```
 
 ### How to get refresh token
 
@@ -66,10 +89,24 @@ TWITTER_CLIENT_SECRET = Client Secret <br />
 3. On "Auth" tab fill up authorized redirect URLs with http://localhost:3000
 4. Note your Client ID and Client Secret
 
-### Required envs
+### Required config
 
-LINKEDIN_CLIENT_ID = Client ID <br />
-LINKEDIN_CLIENT_SECRET = Client Secret <br />
+```
+{
+  config: {
+    ...
+    socialMedia: {
+      ...
+      linkedin: {
+        clientId: string
+        clientSecret: string
+      }
+      ...
+    }
+    ...
+  }
+}
+```
 
 ### How to get access token
 

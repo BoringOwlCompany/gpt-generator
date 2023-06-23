@@ -4,8 +4,19 @@ import { Service } from '..';
 
 import { Constant, ESocialMediaProvider, ETokenType, IAdditionalData } from '../../../shared';
 import { twitterClient } from '../../socialMedia/twitter';
+import { ISocialMediaService } from '../../types/general.types';
 
-export default ({ strapi }: { strapi: Strapi }) => ({
+export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
+  getKeys() {
+    const {
+      socialMedia: {
+        twitter: { clientId, clientSecret },
+      },
+    } = strapi.config.get(`plugin.${Constant.PLUGIN_NAME}`);
+
+    return { clientId, clientSecret };
+  },
+
   async getAccessToken(user: number) {
     try {
       const refreshToken = await strapi
@@ -13,9 +24,11 @@ export default ({ strapi }: { strapi: Strapi }) => ({
         .service(Service.SOCIAL_MEDIA)
         .getToken(ESocialMediaProvider.TWITTER, ETokenType.REFRESH, user);
 
-      const { refreshToken: newRefreshToken, accessToken } = await twitterClient.refreshOAuth2Token(
-        refreshToken?.token
-      );
+      const { clientId, clientSecret } = this.getKeys();
+      const { refreshToken: newRefreshToken, accessToken } = await twitterClient(
+        clientId,
+        clientSecret
+      ).refreshOAuth2Token(refreshToken?.token);
 
       await strapi
         .plugin(Constant.PLUGIN_NAME)

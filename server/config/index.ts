@@ -11,6 +11,10 @@ export default {
     socialMediaPublisher: true,
   },
   validator(config: IConfig) {
+    if (!config.gptApiKey) {
+      throw new Error('"gptApiKey" config has to be set');
+    }
+
     if (typeof config.multiple !== 'object') {
       throw new Error('"multiple" has to be an object');
     }

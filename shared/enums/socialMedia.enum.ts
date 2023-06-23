@@ -6,6 +6,7 @@ export enum ETokenType {
 export enum ESocialMediaProvider {
   LINKEDIN = 'Linkedin',
   TWITTER = 'Twitter',
+  FACEBOOK = 'Facebook',
 }
 
 export const socialMediaLengthRestrictions: { [key in ESocialMediaProvider]?: number } = {

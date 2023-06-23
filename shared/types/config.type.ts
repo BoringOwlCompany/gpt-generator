@@ -1,4 +1,5 @@
 export interface IConfig {
+  gptApiKey: string;
   multiple: {
     articles: boolean;
     flashcards: boolean;

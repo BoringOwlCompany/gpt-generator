@@ -37,7 +37,7 @@ const contentManagerComponents = [
     view: 'editView',
     injectionZone: 'right-links',
     name: 'generate-with-ai',
-    configKey: 'single.articles',
+    configKey: 'single',
     Component: GenerateSingle,
   },
   {
@@ -77,7 +77,6 @@ export default {
 
   async bootstrap(app: any) {
     const config = await generalApi.fetchConfig();
-    console.log(config);
 
     contentManagerComponents.forEach(({ Component, injectionZone, name, view, configKey }) => {
       if (!get(config, configKey)) return;

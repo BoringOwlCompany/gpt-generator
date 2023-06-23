@@ -3,7 +3,6 @@ import {
   getLanguageCode,
   IGeneratedArticleResponse,
   IGeneratedFlashcardResponse,
-  IGptCronCollection,
   IImagesRequest,
   Language,
 } from '../../shared';

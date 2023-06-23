@@ -1,8 +1,8 @@
-import { Configuration, OpenAIApi } from "openai";
+import { Configuration, OpenAIApi } from 'openai';
 
-const config = new Configuration({
-    apiKey: process.env.GPT_API_KEY,
-});
-const openai = new OpenAIApi(config);
+const openai = (apiKey: string) => {
+  const config = new Configuration({ apiKey });
+  return new OpenAIApi(config);
+};
 
 export default openai;

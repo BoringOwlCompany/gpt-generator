@@ -1,4 +1,4 @@
-import { getLanguageCode, IAdditionalData, Language } from '../../../../../../../../../../shared';
+import { IAdditionalData } from '../../../../../../../../../../shared';
 
 interface IProps {
   collectionData: any;
