@@ -1,10 +1,13 @@
 import { Route } from '../../shared/enums';
-import { Controller } from '../controllers';
+import { getRoute } from '../utils';
 
 export default [
-  {
+  getRoute({
     method: 'POST',
     path: Route.CALENDAR_ITEMS,
-    handler: `${Controller.CALENDAR}.getCalendarItems`,
-  },
+    handler: {
+      controller: 'calendarController',
+      controllerMethod: 'getCalendarItems',
+    },
+  }),
 ];

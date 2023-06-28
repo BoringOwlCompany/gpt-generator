@@ -1,10 +1,13 @@
 import { Route } from '../../shared/enums';
-import { Controller } from '../controllers';
+import { getRoute } from '../utils';
 
 export default [
-  {
+  getRoute({
     method: 'POST',
     path: Route.MULTIPLE_FLASHCARDS_QUESTIONS,
-    handler: `${Controller.MULTIPLE_FLASHCARDS}.generateQuestions`,
-  },
+    handler: {
+      controller: 'multipleFlashcardsController',
+      controllerMethod: 'generateQuestions',
+    },
+  }),
 ];

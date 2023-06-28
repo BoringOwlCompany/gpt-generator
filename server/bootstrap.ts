@@ -1,12 +1,10 @@
 import { Strapi } from '@strapi/strapi';
-import { Constant } from '../shared';
-import { Service } from './services';
+import { getService } from './utils';
 
 export default ({ strapi }: { strapi: Strapi }) => {
   strapi.cron.add({
     lookForItemsToGenerate: {
-      task: async ({ strapi }) =>
-        await strapi.plugin(Constant.PLUGIN_NAME).service(Service.CRON).lookForItemsToGenerate(),
+      task: async () => await getService('cronService').lookForItemsToGenerate(),
       options: {
         rule: '0 */2 * * * *',
       },

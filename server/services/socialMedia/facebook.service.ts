@@ -1,11 +1,10 @@
 import { Strapi } from '@strapi/strapi';
-import { Service } from '..';
 import axios from 'axios';
 
 import { Constant, ESocialMediaProvider, ETokenType, IAdditionalData } from '../../../shared';
 import { ISocialMediaService } from '../../types/general.types';
 import { FACEBOOK_BASE_URL, FACEBOOK_ROUTES } from './socialMedia.config';
-import { authHeader } from '../../utils';
+import { authHeader, getService } from '../../utils';
 
 export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
   getKeys() {
@@ -20,10 +19,11 @@ export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
 
   async getAccessToken(user: number) {
     try {
-      const accessTokenRecord = await strapi
-        .plugin(Constant.PLUGIN_NAME)
-        .service(Service.SOCIAL_MEDIA)
-        .getToken(ESocialMediaProvider.FACEBOOK, ETokenType.ACCESS, user);
+      const accessTokenRecord = await getService('socialMediaService').getToken(
+        ESocialMediaProvider.FACEBOOK,
+        ETokenType.ACCESS,
+        user
+      );
 
       if (!accessTokenRecord) throw new Error('Access token not found');
 
@@ -35,10 +35,11 @@ export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
 
   async getPageId(user: number) {
     try {
-      const accessTokenRecord = await strapi
-        .plugin(Constant.PLUGIN_NAME)
-        .service(Service.SOCIAL_MEDIA)
-        .getToken(ESocialMediaProvider.FACEBOOK, ETokenType.ACCESS, user);
+      const accessTokenRecord = await getService('socialMediaService').getToken(
+        ESocialMediaProvider.FACEBOOK,
+        ETokenType.ACCESS,
+        user
+      );
 
       if (!accessTokenRecord) throw new Error('Access token not found');
       if (accessTokenRecord.details?.pageId) accessTokenRecord.details.pageId;
@@ -51,16 +52,13 @@ export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
 
       if (!id) throw new Error('Cannot fetch page ID from facebook api');
 
-      await strapi
-        .plugin(Constant.PLUGIN_NAME)
-        .service(Service.SOCIAL_MEDIA)
-        .updateToken(
-          accessTokenRecord.token,
-          ESocialMediaProvider.FACEBOOK,
-          ETokenType.ACCESS,
-          user,
-          { pageId: id }
-        );
+      await getService('socialMediaService').updateToken(
+        accessTokenRecord.token,
+        ESocialMediaProvider.FACEBOOK,
+        ETokenType.ACCESS,
+        user,
+        { pageId: id }
+      );
 
       return id;
     } catch (e) {

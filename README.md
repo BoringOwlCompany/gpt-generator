@@ -113,3 +113,12 @@ Website URL: Your website url
 1. Go to https://www.linkedin.com/developers/tools/oauth/token-generator?clientId=CLIENT_ID
 2. Select w_member_social r_emailaddress r_liteprofile scopes, request access token and log in to your account
 3. Copy access token
+
+## Facebook
+
+### How to get page access token & page id
+
+1. Go to https://www.facebook.com/v15.0/dialog/oauth?response_type=token&scope=public_profile,email,pages_manage_posts,pages_read_engagement,pages_show_list&client_id=CLIENT_ID&redirect_uri=REDIRECT_URI
+2. Get long_lived_token from params on redirected url.
+3. Send GET request with Bearer auth header to https://graph.facebook.com/me/accounts.
+4. Get access_token and id from a list of pages.

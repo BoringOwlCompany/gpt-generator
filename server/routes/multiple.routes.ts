@@ -1,10 +1,13 @@
 import { Route } from '../../shared/enums';
-import { Controller } from '../controllers';
+import { getRoute } from '../utils';
 
 export default [
-  {
+  getRoute({
     method: 'POST',
     path: Route.MULTIPLE_NEW_JOB,
-    handler: `${Controller.MULTIPLE}.createNewJob`,
-  },
+    handler: {
+      controller: 'multipleController',
+      controllerMethod: 'createNewJob',
+    },
+  }),
 ];

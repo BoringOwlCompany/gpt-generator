@@ -77,7 +77,7 @@ export interface IArticleResponse {
   slug: string;
   content: string;
   excerpt: string;
-  image?: ImagesResponse;
+  image?: ImagesResponse | null;
 }
 
 export interface IFaqResponse {

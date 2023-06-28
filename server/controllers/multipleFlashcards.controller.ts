@@ -1,12 +1,8 @@
 import { Strapi } from '@strapi/strapi';
-import { Constant } from '../../shared';
-import { Service } from '../services';
+import { getService } from '../utils';
 
 export default ({ strapi }: { strapi: Strapi }) => ({
   async generateQuestions(ctx) {
-    ctx.body = await strapi
-      .plugin(Constant.PLUGIN_NAME)
-      .service(Service.MULTIPLE_FLASHCARDS)
-      .generateQuestions(ctx.request.body);
+    ctx.body = await getService('multipleFlashcardsService').generateQuestions(ctx.request.body);
   },
 });

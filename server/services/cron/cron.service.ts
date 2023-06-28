@@ -1,12 +1,5 @@
 import { Strapi } from '@strapi/strapi';
-import { Service } from '..';
-import {
-  Constant,
-  IGeneratedArticleResponse,
-  IGptCronCollection,
-  IStatus,
-  IJobDetailsItem,
-} from '../../../shared';
+import { Constant, IGptCronCollection, IStatus, IJobDetailsItem } from '../../../shared';
 import { generateItem } from './collectionsGenerators';
 
 export default ({ strapi }: { strapi: Strapi }) => ({

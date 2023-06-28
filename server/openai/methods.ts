@@ -1,19 +1,20 @@
 import openai from './openai';
 import { ChatCompletionRequestMessage } from 'openai';
 import { MODEL } from './requests.config';
-import { Constant, IImagesRequest } from '../../shared';
+import { IImagesRequest } from '../../shared';
+import { getService } from '../utils';
 
 export const createChatCompletion = async (messages: ChatCompletionRequestMessage[]) => {
-  const apiKey = strapi.plugin(Constant.PLUGIN_NAME).config('gptApiKey');
-  return openai(apiKey).createChatCompletion({
+  const { gptApiKey } = getService('generalService').getConfig();
+  return openai(gptApiKey).createChatCompletion({
     model: MODEL,
     messages,
   });
 };
 
 export const createImages = async (data: IImagesRequest) => {
-  const apiKey = strapi.plugin(Constant.PLUGIN_NAME).config('gptApiKey');
-  return openai(apiKey).createImage({
+  const { gptApiKey } = getService('generalService').getConfig();
+  return openai(gptApiKey).createImage({
     prompt: data?.prompt || data.title,
     size: '1024x1024',
     response_format: 'b64_json',

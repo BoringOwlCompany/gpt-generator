@@ -1,23 +1,30 @@
 import { Route } from '../../shared/enums';
-import { Controller } from '../controllers';
+import { getRoute } from '../utils';
 
 export default [
-  {
+  getRoute({
     method: 'GET',
     path: Route.CONFIG,
-    handler: `${Controller.GENERAL}.getConfig`,
-    config: {
-      auth: false,
+    handler: {
+      controller: 'generalController',
+      controllerMethod: 'getConfig',
     },
-  },
-  {
+    auth: false,
+  }),
+  getRoute({
     method: 'POST',
     path: Route.IMAGES,
-    handler: `${Controller.GENERAL}.generateImages`,
-  },
-  {
+    handler: {
+      controller: 'generalController',
+      controllerMethod: 'generateImages',
+    },
+  }),
+  getRoute({
     method: 'POST',
     path: Route.UPLOAD_IMAGE,
-    handler: `${Controller.GENERAL}.uploadImage`,
-  },
+    handler: {
+      controller: 'generalController',
+      controllerMethod: 'uploadImage',
+    },
+  }),
 ];

@@ -1,10 +1,13 @@
 import { Route } from '../../shared/enums';
-import { Controller } from '../controllers';
+import { getRoute } from '../utils';
 
 export default [
-  {
+  getRoute({
     method: 'POST',
     path: Route.MULTIPLE_ARTICLES_TITLES,
-    handler: `${Controller.MULTIPLE_ARTICLES}.generateTitles`,
-  },
+    handler: {
+      controller: 'multipleArticlesController',
+      controllerMethod: 'generateTitles',
+    },
+  }),
 ];

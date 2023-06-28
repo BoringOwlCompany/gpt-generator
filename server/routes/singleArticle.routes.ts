@@ -1,45 +1,69 @@
 import { Route } from '../../shared/enums';
-import { Controller } from '../controllers';
+import { getRoute } from '../utils';
 
 export default [
-  {
+  getRoute({
     method: 'POST',
     path: Route.SINGLE_ARTICLE_TITLE,
-    handler: `${Controller.SINGLE_ARTICLE}.generateTitle`,
-  },
-  {
+    handler: {
+      controller: 'singleArticleController',
+      controllerMethod: 'generateTitle',
+    },
+  }),
+  getRoute({
     method: 'POST',
     path: Route.SINGLE_ARTICLE_PARAGRAPHS,
-    handler: `${Controller.SINGLE_ARTICLE}.generateParagraphs`,
-  },
-  {
+    handler: {
+      controller: 'singleArticleController',
+      controllerMethod: 'generateParagraphs',
+    },
+  }),
+  getRoute({
     method: 'POST',
     path: Route.SINGLE_ARTICLE_PARAGRAPH,
-    handler: `${Controller.SINGLE_ARTICLE}.generateParagraph`,
-  },
-  {
+    handler: {
+      controller: 'singleArticleController',
+      controllerMethod: 'generateParagraph',
+    },
+  }),
+  getRoute({
     method: 'POST',
     path: Route.SINGLE_ARTICLE_EXCERPT,
-    handler: `${Controller.SINGLE_ARTICLE}.generateExcerpt`,
-  },
-  {
+    handler: {
+      controller: 'singleArticleController',
+      controllerMethod: 'generateExcerpt',
+    },
+  }),
+  getRoute({
     method: 'POST',
     path: Route.SINGLE_ARTICLE_SEO,
-    handler: `${Controller.SINGLE_ARTICLE}.generateSeo`,
-  },
-  {
+    handler: {
+      controller: 'singleArticleController',
+      controllerMethod: 'generateSeo',
+    },
+  }),
+  getRoute({
     method: 'POST',
     path: Route.SINGLE_ARTICLE_FAQ,
-    handler: `${Controller.SINGLE_ARTICLE}.generateFaq`,
-  },
-  {
+    handler: {
+      controller: 'singleArticleController',
+      controllerMethod: 'generateFaq',
+    },
+  }),
+  getRoute({
     method: 'POST',
     path: Route.SINGLE_ARTICLE_VIDEO_SCRIPT_SCENES,
-    handler: `${Controller.SINGLE_ARTICLE}.generateVideoScriptScenes`,
-  },
-  {
+    handler: {
+      controller: 'singleArticleController',
+      controllerMethod: 'generateVideoScriptScenes',
+    },
+  }),
+  getRoute({
     method: 'POST',
     path: Route.SINGLE_ARTICLE_VIDEO_SCRIPT_SCENE_DETAILS,
-    handler: `${Controller.SINGLE_ARTICLE}.generateVideoScriptSceneDetails`,
-  },
+    handler: {
+      controller: 'singleArticleController',
+      controllerMethod: 'generateVideoScriptSceneDetails',
+    },
+  }),
 ];

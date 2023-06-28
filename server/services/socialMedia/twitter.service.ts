@@ -1,10 +1,10 @@
 import { Strapi } from '@strapi/strapi';
 import { TwitterApi } from 'twitter-api-v2';
-import { Service } from '..';
 
 import { Constant, ESocialMediaProvider, ETokenType, IAdditionalData } from '../../../shared';
 import { twitterClient } from '../../socialMedia/twitter';
 import { ISocialMediaService } from '../../types/general.types';
+import { getService } from '../../utils';
 
 export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
   getKeys() {
@@ -19,10 +19,11 @@ export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
 
   async getAccessToken(user: number) {
     try {
-      const refreshToken = await strapi
-        .plugin(Constant.PLUGIN_NAME)
-        .service(Service.SOCIAL_MEDIA)
-        .getToken(ESocialMediaProvider.TWITTER, ETokenType.REFRESH, user);
+      const refreshToken = await getService('socialMediaService').getToken(
+        ESocialMediaProvider.TWITTER,
+        ETokenType.REFRESH,
+        user
+      );
 
       const { clientId, clientSecret } = this.getKeys();
       const { refreshToken: newRefreshToken, accessToken } = await twitterClient(
@@ -30,10 +31,12 @@ export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
         clientSecret
       ).refreshOAuth2Token(refreshToken?.token);
 
-      await strapi
-        .plugin(Constant.PLUGIN_NAME)
-        .service(Service.SOCIAL_MEDIA)
-        .updateToken(newRefreshToken, ESocialMediaProvider.TWITTER, ETokenType.REFRESH, user);
+      await getService('socialMediaService').updateToken(
+        newRefreshToken || '',
+        ESocialMediaProvider.TWITTER,
+        ETokenType.REFRESH,
+        user
+      );
 
       return accessToken;
     } catch (e) {

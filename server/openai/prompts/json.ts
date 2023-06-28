@@ -35,7 +35,7 @@ const postObject = {
 };
 
 export const jsonPrompt = <T extends object>(structure: T) =>
-  `[no prose] [Output only JSON] schemat: ${JSON.stringify(structure)}`;
+  ` [no prose] Odpowiedź zwróć w postaci JSON: ${JSON.stringify(structure)}`;
 
 export const titleJsonPrompt = jsonPrompt(titleObject);
 export const paragraphJsonPrompt = jsonPrompt(paragraphObject);

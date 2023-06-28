@@ -1,5 +1,4 @@
 import { Strapi } from '@strapi/strapi';
-import { Service } from '..';
 import axios from 'axios';
 
 import { Constant, ESocialMediaProvider, ETokenType, IAdditionalData } from '../../../shared';
@@ -10,7 +9,7 @@ import {
   LINKEDIN_VALIDATE_TOKEN_URL,
 } from './socialMedia.config';
 import { ISocialMediaService } from '../../types/general.types';
-import { authHeader } from '../../utils';
+import { authHeader, getService } from '../../utils';
 
 export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
   getKeys() {
@@ -24,16 +23,19 @@ export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
   },
 
   async getAccessToken(user: number) {
-    const accessTokenRecord = await strapi
-      .plugin(Constant.PLUGIN_NAME)
-      .service(Service.SOCIAL_MEDIA)
-      .getToken(ESocialMediaProvider.LINKEDIN, ETokenType.ACCESS, user);
+    const accessTokenRecord = await getService('socialMediaService').getToken(
+      ESocialMediaProvider.LINKEDIN,
+      ETokenType.ACCESS,
+      user
+    );
 
     if (!accessTokenRecord) {
-      await strapi
-        .plugin(Constant.PLUGIN_NAME)
-        .service(Service.SOCIAL_MEDIA)
-        .updateToken('', ESocialMediaProvider.LINKEDIN, ETokenType.ACCESS, user);
+      await getService('socialMediaService').updateToken(
+        '',
+        ESocialMediaProvider.LINKEDIN,
+        ETokenType.ACCESS,
+        user
+      );
 
       return '';
     }
@@ -43,10 +45,11 @@ export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
 
   async refreshAccessToken(user: number) {
     try {
-      const refreshTokenRecord = await strapi
-        .plugin(Constant.PLUGIN_NAME)
-        .service(Service.SOCIAL_MEDIA)
-        .getToken(ESocialMediaProvider.LINKEDIN, ETokenType.REFRESH, user);
+      const refreshTokenRecord = await getService('socialMediaService').getToken(
+        ESocialMediaProvider.LINKEDIN,
+        ETokenType.REFRESH,
+        user
+      );
 
       if (!refreshTokenRecord) throw new Error('Refresh token not found');
 
@@ -66,10 +69,12 @@ export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
         },
       });
 
-      await strapi
-        .plugin(Constant.PLUGIN_NAME)
-        .service(Service.SOCIAL_MEDIA)
-        .updateToken(access_token, ESocialMediaProvider.LINKEDIN, ETokenType.ACCESS, user);
+      await getService('socialMediaService').updateToken(
+        access_token,
+        ESocialMediaProvider.LINKEDIN,
+        ETokenType.ACCESS,
+        user
+      );
 
       return access_token;
     } catch (e) {
@@ -162,23 +167,16 @@ export default ({ strapi }: { strapi: Strapi }): ISocialMediaService => ({
   },
 
   async getAuthor(user: number) {
-    const tokens = await strapi.entityService.findMany(
-      `plugin::${Constant.PLUGIN_NAME}.gpt-social-media-token`,
-      {
-        filters: {
-          provider: ESocialMediaProvider.LINKEDIN,
-          tokenType: ETokenType.ACCESS,
-          user: {
-            id: user,
-          },
-        },
-      }
+    const tokenRecord = await getService('socialMediaService').getToken(
+      ESocialMediaProvider.LINKEDIN,
+      ETokenType.ACCESS,
+      user
     );
 
-    if (!tokens.length) throw new Error('Token not found');
-    if (!tokens[0].details?.author) throw new Error('Author not provided');
+    if (!tokenRecord) throw new Error('Token not found');
+    if (!tokenRecord.details?.author) throw new Error('Author not provided');
 
-    return tokens[0].details.author;
+    return tokenRecord.details.author;
   },
 
   async publishPost(

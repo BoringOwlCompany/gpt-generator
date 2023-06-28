@@ -12,21 +12,6 @@ import twitterService from './socialMedia/twitter.service';
 import linkedinService from './socialMedia/linkedin.service';
 import facebookService from './socialMedia/facebook.service';
 
-export enum Service {
-  GENERAL = 'generalService',
-  CRON = 'cronService',
-  MULTIPLE = 'multipleService',
-  MULTIPLE_ARTICLES = 'multipleArticlesService',
-  MULTIPLE_FLASHCARDS = 'multipleFlashcardsService',
-  SINGLE_ARTICLE = 'singleArticleService',
-  SINGLE_FLASHCARD = 'singleFlashcardService',
-  CALENDAR = 'calendarService',
-  SOCIAL_MEDIA = 'socialMediaService',
-  TWITTER = 'twitterService',
-  LINKEDIN = 'linkedinService',
-  FACEBOOK = 'facebookService',
-}
-
 export default {
   generalService,
   cronService,

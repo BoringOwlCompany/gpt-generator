@@ -1,15 +1,21 @@
 import { Route } from '../../shared/enums';
-import { Controller } from '../controllers';
+import { getRoute } from '../utils';
 
 export default [
-  {
+  getRoute({
     method: 'POST',
     path: Route.SOCIAL_MEDIA_POST,
-    handler: `${Controller.SOCIAL_MEDIA}.generatePost`,
-  },
-  {
+    handler: {
+      controller: 'socialMediaController',
+      controllerMethod: 'generatePost',
+    },
+  }),
+  getRoute({
     method: 'POST',
     path: Route.SOCIAL_MEDIA_PUBLISH_POST,
-    handler: `${Controller.SOCIAL_MEDIA}.publishPost`,
-  },
+    handler: {
+      controller: 'socialMediaController',
+      controllerMethod: 'publishPost',
+    },
+  }),
 ];

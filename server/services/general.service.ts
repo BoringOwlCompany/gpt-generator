@@ -1,6 +1,8 @@
 import { Strapi } from '@strapi/strapi';
 import {
+  Constant,
   getLanguageCode,
+  IConfig,
   IGeneratedArticleResponse,
   IGeneratedFlashcardResponse,
   IImagesRequest,
@@ -13,6 +15,10 @@ import { uploadToLibrary } from '../utils';
 const { NotFoundError } = utils.errors;
 
 export default ({ strapi }: { strapi: Strapi }) => ({
+  getConfig() {
+    return strapi.config.get(`plugin.${Constant.PLUGIN_NAME}`) as IConfig;
+  },
+
   async generateImages(data: IImagesRequest) {
     return await openaiArticles.generateImages(data);
   },
