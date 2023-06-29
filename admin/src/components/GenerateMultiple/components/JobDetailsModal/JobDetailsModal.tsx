@@ -75,6 +75,7 @@ const JobDetailsModal = ({ pickedRow, handleClose }: IProps) => {
                           </Flex>
                           <Box>
                             <Tooltip
+                              style={{ zIndex: 5 }}
                               description={
                                 log && (
                                   <pre style={{ maxWidth: 500, whiteSpace: 'pre-wrap' }}>

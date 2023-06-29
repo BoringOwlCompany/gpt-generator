@@ -1,7 +1,7 @@
 import React, { FormEvent, Fragment, useState } from 'react';
 import {
   DatePicker,
-  TimePicker,
+  DateTimePicker,
   Button,
   Divider,
   Flex,
@@ -23,11 +23,10 @@ import { useLastStep } from './hooks';
 
 const LastStep = ({ initialValues, handleFinish }: IProps) => {
   const { isError, isLoading, setStatus } = useStatus();
-  const [dateError, setDateError] = useState('');
+  const [dateError, setDateError] = useState<string | null>(null);
   const { collection } = useCollectionContext();
   const { control, watch, setValue } = useFormContext<IFinalForm>();
   const { newJobFields, ItemOptions, GlobalOptions } = useLastStep({ initialValues });
-
   const { fields, remove } = useFieldArray<IFinalForm>({
     name: 'items',
     control,
@@ -43,7 +42,7 @@ const LastStep = ({ initialValues, handleFinish }: IProps) => {
       return;
     }
 
-    setDateError('');
+    setDateError(null);
     setStatus('loading');
 
     try {
@@ -68,44 +67,20 @@ const LastStep = ({ initialValues, handleFinish }: IProps) => {
     }
   };
 
-  const timeValue = firstItemGenerationTime
-    ? `${firstItemGenerationTime.getHours()}:${firstItemGenerationTime.getMinutes()}:${firstItemGenerationTime.getSeconds()}`
-    : undefined;
-
-  const handleTimeChange = (time: string) => {
-    const dateToSet = firstItemGenerationTime ? new Date(firstItemGenerationTime) : new Date();
-    const [hours, minutes] = time.split(':');
-    dateToSet.setHours(parseInt(hours, 10));
-    dateToSet.setMinutes(parseInt(minutes, 10));
-
-    setValue('firstItemGenerationTime', dateToSet);
-  };
-
   return (
     <FormWrapper onSubmit={handleSubmit}>
       <Grid gap={4}>
         <GridItem col={6}>
-          <Flex gap={1} direction="column" alignItems="start">
-            <FieldLabel>First item generation date</FieldLabel>
-            <Flex gap={2} alignItems="start">
-              <DatePicker
-                ariaLabel="First item generation date"
-                name="firstItemGenerationTime"
-                onChange={(e: Date) => setValue('firstItemGenerationTime', e)}
-                clearLabel="Clear"
-                selectedDate={firstItemGenerationTime}
-                hint="Select date in the future"
-                error={dateError}
-              />
-              <TimePicker
-                error={dateError && ' '}
-                ariaLabel="time"
-                value={timeValue}
-                step={1}
-                onChange={handleTimeChange}
-              />
-            </Flex>
-          </Flex>
+          <DateTimePicker
+            name="firstItemGenerationTime"
+            onChange={(e: Date) => setValue('firstItemGenerationTime', e)}
+            value={firstItemGenerationTime}
+            hint="Select date in the future"
+            label="First item generation date"
+            clearLabel="Clear"
+            error={dateError}
+            step={1}
+          />
         </GridItem>
         <GridItem col={6}>
           <Select<IFinalForm>

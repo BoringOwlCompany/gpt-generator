@@ -1,5 +1,4 @@
-import { factories, Strapi } from '@strapi/strapi';
-import { CollectionTypeService } from '@strapi/strapi/lib/core-api/service';
+import { Strapi } from '@strapi/strapi';
 
 import {
   Constant,
@@ -11,7 +10,7 @@ import {
 import { openaiSocialMedia } from '../../openai/requests';
 import { getService } from '../../utils';
 
-const socialMediaService = ({ strapi }: { strapi: Strapi }) => ({
+export default ({ strapi }: { strapi: Strapi }) => ({
   async generatePost(data: IGeneratePostContentRequest) {
     return await openaiSocialMedia.generatePost(data);
   },
@@ -113,8 +112,3 @@ const socialMediaService = ({ strapi }: { strapi: Strapi }) => ({
     return null;
   },
 });
-
-export default factories.createCoreService(
-  `plugin::${Constant.PLUGIN_NAME}.gpt-social-media-post`,
-  socialMediaService
-);
