@@ -24,10 +24,10 @@ import { useStatus } from '../../../../../../hooks';
 import { generateApi } from '../../../../../../api';
 import { TextInput, TextArea } from '../../../../../Global';
 import { ImagesResponse } from 'openai';
+import { IModalProps } from '../../../../../../types';
 
 interface IProps {
   initialValues: IGeneratedArticleResponse;
-  onClose: () => void;
   onClearResult: () => void;
 }
 
@@ -43,7 +43,11 @@ interface IForm {
   images?: ImagesResponse | null;
 }
 
-const GenerateArticleResultForm = ({ initialValues, onClose, onClearResult }: IProps) => {
+const GenerateArticleResultForm = ({
+  initialValues,
+  onClearResult,
+  handleClose,
+}: IProps & IModalProps) => {
   const methods = useForm<IForm>({
     defaultValues: {
       articleTitle: initialValues.article.title,
@@ -113,7 +117,7 @@ const GenerateArticleResultForm = ({ initialValues, onClose, onClearResult }: IP
     });
     onChange({ target: { name: 'videoScript', value: state.videoScript } });
 
-    onClose();
+    handleClose({ withConfirmation: false });
   };
 
   return (

@@ -18,7 +18,7 @@ const GenerateArticleModal = ({ handleClose }: IModalProps) => {
       {result ? (
         <GenerateArticleResultForm
           initialValues={result}
-          onClose={handleClose}
+          handleClose={handleClose}
           onClearResult={() => setResult(null)}
         />
       ) : (

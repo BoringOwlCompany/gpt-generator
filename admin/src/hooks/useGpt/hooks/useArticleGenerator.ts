@@ -74,7 +74,10 @@ export const useArticleGenerator = ({
           title,
           content,
           excerpt,
-          slug: slugify(title, { lower: true }),
+          slug: slugify(title, {
+            lower: true,
+            remove: /[*+~.()'"!:@?]/g,
+          }),
         },
         seo,
         faq,
